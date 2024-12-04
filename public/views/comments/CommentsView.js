@@ -38,13 +38,13 @@ export default class CommentsView extends AbstractView {
             <div class="container-comments-main-form-post-create">
                 <div class="container-comments-main-form-post-create-div">
                     <div class="container-comments-main-form-post-create-profile_pic">
-                        <img class="comments-main-form-post-create-profile_pic" id="comments-main-form-post-create-profile_pic" src="${window.app.user.profile_pic.url}" />
+                        <img class="comments-main-form-post-create-profile_pic" id="comments-main-form-post-create-profile_pic" src="${window.app.member.profile_pic.url}" />
                     </div>
 
                     <div class="container-comments-main-form-post-create-body">
                         <div class="container-comments-main-form-post-create-signature">
                             <div class="container-comments-main-form-post-create-name">
-                                <span class="comments-comments-form-post-create-name" id="comments-comments-form-post-create-name">${window.app.user.name}</span>
+                                <span class="comments-comments-form-post-create-name" id="comments-comments-form-post-create-name">${window.app.member.name}</span>
                             </div>
                         </div>
                         
