@@ -257,7 +257,7 @@ export default class Post {
                 fetch(`/api/upvote`, { 
                     method: 'DELETE',
                     headers: { 
-                        "Authorization": "Bearer "+window.app.user.token,
+                        "Authorization": "Bearer "+localStorage.getItem('token'),
                         "Content-Type": "Application/JSON"
                     },
                     body: JSON.stringify({
@@ -272,7 +272,7 @@ export default class Post {
                 fetch(`/api/upvote`, { 
                     method: 'POST',
                     headers: { 
-                        "Authorization": "Bearer "+window.app.user.token,
+                        "Authorization": "Bearer "+localStorage.getItem('token'),
                         "Content-Type": "Application/JSON"
                     },
                     body: JSON.stringify({
@@ -330,7 +330,7 @@ export default class Post {
     async FetchComments () {
         const request = await fetch('/api/post/'+this.post.id+'/comments/count', {
             method: "GET",
-            headers: { "Authorization": "Bearer "+window.app.user.token }
+            headers: { "Authorization": "Bearer "+localStorage.getItem('token') }
         });
         const response = await request.json();
         if (response.ok) this.number.textContent = response.count;
