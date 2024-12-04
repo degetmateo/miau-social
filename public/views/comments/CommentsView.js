@@ -176,7 +176,7 @@ export default class CommentsView extends AbstractView {
         try {
             const request = await fetch('/api/post/'+this.params.id_post+'/comments', {
                 method: "GET",
-                headers: { "Authorization": "Bearer "+window.app.user.token }
+                headers: { "Authorization": "Bearer "+localStorage.getItem('token') }
             });
 
             const response = await request.json();
@@ -221,7 +221,7 @@ export default class CommentsView extends AbstractView {
     async FetchThread () {
         const request = await fetch(`/api/post/${this.params.id_post}/thread`, {
             method: "GET",
-            headers: { "Authorization": "Bearer "+window.app.user.token }
+            headers: { "Authorization": "Bearer "+localStorage.getItem('token') }
         });
         const response = await request.json();
         if (!request.ok) throw new Alert(response.error.message);
