@@ -4,8 +4,10 @@ import {navigateTo} from "../router.js";
 import AbstractView from "./AbstractView.js";
 
 export default class extends AbstractView {
-    constructor () {
+    constructor (params) {
         super();
+        this.params = params;
+        this.init(this.params);
     }
 
     async init (params) {
@@ -33,21 +35,19 @@ export default class extends AbstractView {
         const newUsername = inputNewUsername.value;
         inputUsername.value = '';
         inputNewUsername.value = '';
-        const request = await fetch("/api/admin/user/update/username", {
+        const request = await fetch("/api/admin/member/update/username", {
             method: 'POST',
             headers: {
-                "Authorization": "Bearer "+window.app.user.token,
+                "Authorization": "Bearer "+ localStorage.getItem('token'),
                 "Content-Type": "Application/JSON"
             },
             body: JSON.stringify({
-                user: {
-                    username: username,
-                    new_username: newUsername
-                }
+                username: username,
+                new_username: newUsername
             })
         });
         const response = await request.json();
-        if (!response.ok) return Alert(response.error.message);
+        if (!request.ok) return Alert(response.error.message);
         new Alert('OK - username changed');
     }
 
@@ -58,21 +58,19 @@ export default class extends AbstractView {
         const password = inputPassword.value;
         inputUsername.value = '';
         inputPassword.value = '';
-        const request = await fetch("/api/admin/user/update/password", {
+        const request = await fetch("/api/admin/member/update/password", {
             method: 'POST',
             headers: {
-                "Authorization": "Bearer "+window.app.user.token,
+                "Authorization": "Bearer "+localStorage.getItem('token'),
                 "Content-Type": "Application/JSON"
             },
             body: JSON.stringify({
-                user: {
-                    username: username,
-                    password: password
-                }
+                username: username,
+                password: password
             })
         });
         const response = await request.json();
-        if (!response.ok) return new Alert(response.error.message);
+        if (!request.ok) return new Alert(response.error.message);
         new Alert('OK - password changed');
     }
 }

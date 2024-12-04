@@ -1,21 +1,19 @@
-import auth from "../auth.js";
 import Alert from "../components/alert/alert.js";
 import {init} from "../index.js";
 import { navigateTo } from "../router.js";
 import AbstractView from "./AbstractView.js";
 
 export default class LoginView extends AbstractView {
-    constructor () {
+    constructor (params) {
         super();
+        this.params = params;
+        this.init(this.params);
     }
 
     async init (params) {
         this.params = params;
         this.setTitle('Iniciar Sesion');
         this.clear();
-        if (await auth()) {
-            return navigateTo('/home');
-        };
         const appContainer = document.getElementById('app');
         appContainer.innerHTML = VIEW_CONTENT;
         await this.events();
@@ -41,58 +39,54 @@ export default class LoginView extends AbstractView {
 
         if (password != passwordConfirmation) return new Alert('Las contraseñas no coinciden.');
 
-        const request = await fetch('/api/member/register', {
+        const request = await fetch('/api/authentication/signin', {
             method: 'POST',
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ user: { username: username, password: password } })
+            body: JSON.stringify({ username: username, password: password })
         });
-        const res = await request.json();
 
-        if (res.ok) {
-            localStorage.setItem('user', JSON.stringify({ id: res.user.id, username: res.user.username, token: res.user.token }));
-            window.app.user.id = res.user.id;
-            window.app.user.username = res.user.username;
-            window.app.user.token = res.user.token;
-            await redirect();
-        } else {
-            console.error(res.error.message);
-            return new Alert(res.error.message);
+        const response = await request.json();
+
+        if (!request.ok) {
+            return new Alert(response.error.message);
         }
+
+        window.app = {};
+        window.app.alerts = [];
+        localStorage.setItem('token', response.data.token);
+        delete response.data.token;
+        window.app.member = response.data;
+
+        init();
+        navigateTo('/home');
     }
 
     async eventLogin (event) {
         event.preventDefault()
-
         const inputUsername = document.getElementById('form-login-input-username');
         const inputPassword = document.getElementById('form-login-input-password');
 
-        const name = inputUsername.value;
-        const password = inputPassword.value;
-
-        const request = await fetch('/api/member/login', {
+        const request = await fetch('/api/authentication/login', {
             method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user: { username: name, password: password } })
+            headers: { "Content-Type": "Application/JSON" },
+            body: JSON.stringify({ username: inputUsername.value, password: inputPassword.value })
         });
-        const response = await request.json();
 
-        if (!response.ok) {
+        const response = await request.json();
+        
+        if (!request.ok) {
             return new Alert(response.error.message);
         }
-        localStorage.setItem('user', JSON.stringify({ id: response.user.id, username: response.user.username, token: response.user.token }));
-        window.app.user.id = response.user.id;
-        window.app.user.username = response.user.username;
-        window.app.user.token = response.user.token;
-        await redirect();
-    }
-}
 
-const redirect = async () => {
-    if (!await auth()) {
-        return;
+        window.app = {};
+        window.app.alerts = [];
+        localStorage.setItem('token', response.data.token);
+        delete response.data.token;
+        window.app.member = response.data;
+
+        init();
+        navigateTo('/home');
     }
-    init();
-    navigateTo('/home');
 }
 
 const VIEW_CONTENT = `

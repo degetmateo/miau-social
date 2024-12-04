@@ -7,56 +7,26 @@ import AdminView from "./views/AdminView.js";
 import CommentsView from "./views/comments/CommentsView.js";
 import MessagesView from "./views/messages/MessagesView.js";
 import NotificationsView from "./views/notifications/NotificationsView.js";
-
-const pathToRegex = (path) => {
-    return new RegExp("^" + path.replace(/\//g, "\\/").replace(/:\w+/g, "(.+)") + "$");
-};
-
-const getParams = (match) => {
-    const values = match.result.slice(1);
-    const keys = Array.from(match.route.path.matchAll(/:(\w+)/g)).map(result => result[1]);
-
-    return Object.fromEntries(keys.map((key, i) => {
-        return [key, values[i]];
-    }));
-};
+import FollowedView from "./views/followed/FollowedView.js";
+import FollowersView from "./views/followers/FollowersView.js";
 
 export const navigateTo = (url) => {
-    if (window.location.pathname === url) return;
     window.history.pushState(null, null, url);
-    router();
+    router.resolve();
 };
 
-export const router = async () => {
-    const routes = [
-        { path: "/error", view: new ErrorView() },
-        { path: "/", view: new HomeView() },
-        { path: "/home", view: new HomeView() },
-        { path: "/login", view: new LoginView() },
-        { path: "/settings", view: new SettingsView() },
-        { path: "/member/:username", view: new MemberView() },
-        { path: "/admin", view: new AdminView() },
-        { path: "/post/:id_post/comments", view: new CommentsView() },
-        { path: "/messages", view: new MessagesView() },
-        { path: "/notifications", view: new NotificationsView() }
-    ];
+export const router = new Navigo("/", { hash: false });
 
-    const potentialMatches = routes.map(route => {
-        return {
-            route: route,
-            result: window.location.pathname.match(pathToRegex(route.path))
-        };
-    });
-
-    let match = potentialMatches.find(potentialMatch => potentialMatch.result !== null);
-
-    if (!match) {
-        match = {
-            route: routes[0],
-            result: [window.location.pathname]
-        };
-    };
-
-    const view = match.route.view;
-    await view.init(getParams(match));
-};
+router
+    .on("/", () => new HomeView())
+    .on("/home", () => new HomeView())
+    .on("/login", () => new LoginView())
+    .on("/settings", () => new SettingsView())
+    .on("/member/:username", ({ data }) => new MemberView(data))
+    .on("/member/:username/followed", ({ data }) => new FollowedView(data))
+    .on("/member/:username/followers", ({ data }) => new FollowersView(data))
+    .on("/admin", () => new AdminView())
+    .on("/post/:id_post/comments", ({ data }) => new CommentsView(data))
+    .on("/messages", () => new MessagesView())
+    .on("/notifications", () => new NotificationsView())
+    .notFound(() => new ErrorView());

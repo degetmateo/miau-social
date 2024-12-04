@@ -8,7 +8,9 @@ export default class Notification {
             name: '',
             username: '',
             role: '',
-            pic: ''
+            profile_pic: {
+                url: ''
+            }
         },
         target_post: {
             id: '',
@@ -50,7 +52,7 @@ export default class Notification {
         this.container.innerHTML = `
             <div class="container-notification-comment-signature">
                 <div class="container-notification-comment-pic">
-                    <img class="notification-comment-signature-pic" src="${this.notification.target_member.pic}" href="/member/${this.notification.target_member.username}" data-link />
+                    <img class="notification-comment-signature-pic" src="${this.notification.target_member.profile_pic.url}" href="/member/${this.notification.target_member.username}" data-link />
                 </div>
                 <span class="notification-comment-signature-title"><span class="notification-comment-signature-name" href="/member/${this.notification.target_member.username}" data-link>${this.notification.target_member.name}</span> te ha respondido:</span>
             </div>
@@ -81,7 +83,7 @@ export default class Notification {
         this.container.innerHTML = `
             <div class="container-notification-comment-signature">
                 <div class="container-notification-comment-pic">
-                    <img class="notification-comment-signature-pic" src="${this.notification.target_member.pic}" href="/member/${this.notification.target_member.username}" data-link />
+                    <img class="notification-comment-signature-pic" src="${this.notification.target_member.profile_pic.url}" href="/member/${this.notification.target_member.username}" data-link />
                 </div>
                 <span class="notification-comment-signature-title"><span class="notification-comment-signature-name" href="/member/${this.notification.target_member.username}" data-link>${this.notification.target_member.name}</span> ha indicado que le gusta tu publicación.</span>
             </div>
@@ -95,7 +97,7 @@ export default class Notification {
         this.container.innerHTML = `
             <div class="container-notification-comment-signature">
                 <div class="container-notification-comment-pic">
-                    <img class="notification-comment-signature-pic" src="${this.notification.target_member.pic}" href="/member/${this.notification.target_member.username}" data-link />
+                    <img class="notification-comment-signature-pic" src="${this.notification.target_member.profile_pic.url}" href="/member/${this.notification.target_member.username}" data-link />
                 </div>
                 <span class="notification-comment-signature-title" href="/member/${this.notification.target_member.username}" data-link><span class="notification-comment-signature-name" href="/member/${this.notification.target_member.username}" data-link>${this.notification.target_member.name}</span> te ha seguido.</span>
             </div>

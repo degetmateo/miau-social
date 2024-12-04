@@ -51,4 +51,6 @@
 
 .notification-comment-post-content {
     font-family: "Inter-Regular";
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }

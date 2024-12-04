@@ -99,7 +99,7 @@ export default class Post {
         const containerHeaderPicture = document.createElement('div');
         containerHeaderPicture.classList.add('container-post-header-picture');
         const headerPicture = new Image();
-        headerPicture.src = this.post.creator.profilePicture.url || URL_NO_IMAGE;
+        headerPicture.src = this.post.creator.profile_pic.url || URL_NO_IMAGE;
         headerPicture.classList.add('post-header-picture');
         CreateDataLink(headerPicture, '/member/'+this.post.creator.username);
         containerHeaderPicture.appendChild(headerPicture);
@@ -173,7 +173,7 @@ export default class Post {
             <div class="post-header-button-box"></div>
             <div class="post-header-button-box"></div>
         `;
-        window.app.user.id == this.post.creator.id ?
+        window.app.member.id == this.post.creator.id ?
             headerOptionsButton.addEventListener('click', () => this.CreatePopupMenuSelf()) :
             headerOptionsButton.addEventListener('click', () => this.CreatePopupMenuOther());
         containerHeaderButtonOptions.appendChild(headerOptionsButton);
@@ -192,14 +192,14 @@ export default class Post {
                 this.container.remove();
                 popupConfirmation.delete();
                 popup.delete();
-                const request = await fetch(`/api/post/${this.post.id}/delete`, {
+                const request = await fetch(`/api/post/${this.post.id}`, {
                     method: 'DELETE',
                     headers: {
                         "Authorization": "Bearer " + window.app.user.token
                     }
                 });
                 const response = await request.json();
-                if (!response.ok) return new Alert(response.error.message);
+                if (!request.ok) return new Alert(response.error.message);
             });
             popupConfirmation.CreateButton('No, no quiero.', () => {
                 popupConfirmation.delete();
@@ -219,7 +219,7 @@ export default class Post {
         containerFooterDate.classList.add('container-post-footer-date');
         const footerDate = document.createElement('span');
         footerDate.classList.add('post-footer-date');
-        footerDate.textContent = getDateMessage(this.post.date);
+        footerDate.textContent = new Date(this.post.date).toLocaleString('es-ES');
         containerFooterDate.appendChild(footerDate);
         return containerFooterDate; 
     }
@@ -254,17 +254,31 @@ export default class Post {
                 containerFooterUpvoteIcon.appendChild(IMAGE_POST_UPVOTE_OFF.cloneNode(true));
                 this.post.is_upvoted = false;
                 this.decreaseUpvotes();
-                fetch(`/api/post/${this.post.id}/upvote/delete`, { 
+                fetch(`/api/upvote`, { 
                     method: 'DELETE',
-                    headers: { "Authorization": "Bearer "+window.app.user.token } });
+                    headers: { 
+                        "Authorization": "Bearer "+window.app.user.token,
+                        "Content-Type": "Application/JSON"
+                    },
+                    body: JSON.stringify({
+                        id_post: this.post.id
+                    }) 
+                });
             } else {
                 containerFooterUpvoteIcon.firstChild.remove();
                 containerFooterUpvoteIcon.appendChild(IMAGE_POST_UPVOTE_ON.cloneNode(true));
                 this.post.is_upvoted = true;
                 this.increaseUpvotes();
-                fetch(`/api/post/${this.post.id}/upvote/add`, { 
-                    method: 'PUT',
-                    headers: { "Authorization": "Bearer "+window.app.user.token } });
+                fetch(`/api/upvote`, { 
+                    method: 'POST',
+                    headers: { 
+                        "Authorization": "Bearer "+window.app.user.token,
+                        "Content-Type": "Application/JSON"
+                    },
+                    body: JSON.stringify({
+                        id_post: this.post.id
+                    })
+                });
             }
             this.drawUpvotesCount();
         });

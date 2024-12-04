@@ -1,0 +1,55 @@
+import DatabaseError from "../../errors/DatabaseError";
+import GenericError from "../../errors/GenericError";
+import Postgres from "../Postgres";
+
+const follow = async (data: {
+    id_member_follower: number;
+    id_member_followed: number;
+}) => {
+    try {
+        const response = await Postgres.query()`
+            INSERT INTO
+                follow
+            VALUES (
+                ${data.id_member_follower},
+                ${data.id_member_followed}
+            );
+        `;
+
+        return response;
+    } catch (error) {
+        if (error instanceof GenericError) throw error;
+        else {
+            console.error(error);
+            throw new DatabaseError();
+        }
+    }
+}
+
+const unfollow = async (data: {
+    id_member_follower: number;
+    id_member_followed: number;
+}) => {
+    try {
+        const response = await Postgres.query()`
+            DELETE FROM
+                follow
+            WHERE
+                id_member_follower = ${data.id_member_follower} AND
+                id_member_followed = ${data.id_member_followed};
+        `;
+
+        return response;
+    } catch (error) {
+        if (error instanceof GenericError) throw error;
+        else {
+            console.error(error);
+            throw new DatabaseError();
+        }
+    }
+}
+
+export const followRepository = {
+    follow,
+    unfollow
+}

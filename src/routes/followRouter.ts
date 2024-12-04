@@ -1,0 +1,11 @@
+import { Router } from "express";
+import Authorization from "../middlewares/Authorization";
+import { followController } from "../controllers/followController";
+
+const router: Router = Router();
+
+router.post('/member/:id_member(\\d+)', Authorization.Everyone, followController.follow);
+
+router.delete('/member/:id_member(\\d+)', Authorization.Everyone, followController.unfollow);
+
+export default router;

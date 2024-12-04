@@ -7,9 +7,11 @@ import Post from "../components/post/Post.js";
 import {URL_NO_IMAGE} from "../consts.js";
 
 export default class extends AbstractView {
-    constructor () {
+    constructor (params) {
         super();
         this.cooldown = false;
+        this.params = params;
+        this.init(this.params);
     }
 
     onVisibilityChange = () => {
@@ -20,7 +22,7 @@ export default class extends AbstractView {
         this.cooldown = true;
         setTimeout(() => {
             this.cooldown = false;
-        }, 10000);
+        }, 30000);
     }
 
     async init (params) {
@@ -101,8 +103,9 @@ export default class extends AbstractView {
                         throw new Error("Debes escribir algo o ingresar una imagen.");
                     }
                     if (content && content.length <= 0) throw new Error('Debes escribir algo.');
-                    const result = await this.SendPost({ content, images: this.post.images });
-                    if (!result.ok) throw new Error(result.error.message);
+                    const req = await this.SendPost({ content, images: this.post.images });
+                    const res = await req.json();
+                    if (!req.ok) throw new Error(res.error.message);
                     new Alert('Publicación enviada.');
                     this.mode === 'global' ?
                         this.setGlobalTimeline() : this.setFollowingTimeline();
@@ -122,10 +125,10 @@ export default class extends AbstractView {
 
     CreateMainForm () {
         const profile_pic = document.getElementById('home-main-form-post-create-profile_pic');
-        profile_pic.src = window.app.user.profilePic.url || URL_NO_IMAGE;
+        profile_pic.src = window.app.member.profile_pic.url || URL_NO_IMAGE;
 
         const name = document.getElementById('home-main-form-post-create-name');
-        name.textContent = window.app.user.name;
+        name.textContent = window.app.member.name;
 
         const button = document.getElementById('home-main-form-post-create-button');
         button.addEventListener('click', async () => {
@@ -140,12 +143,13 @@ export default class extends AbstractView {
                 if (value && value.length <= 0) return new Alert('Tenés que escribir algo.');
                 if (value && value.length > 400) return new Alert('Límite de carácteres: 400.');
                 textarea.value = '';
-                const res = await this.SendPost({
+                const req = await this.SendPost({
                     content: value,
                     images: this.post.images
                 });
+                const res = await req.json();
                 this.post.images = new Array();
-                if (!res.ok) throw new Error(res.error.message);
+                if (!req.ok) throw new Error(res.error.message);
                 new Alert('Publicación enviada.');
                 this.setTimeline();
             } catch (error) {
@@ -220,13 +224,8 @@ export default class extends AbstractView {
         this.offset = 0;
         this.mode = 'following';
         const res = await this.getPosts();
-        if (!res.ok) {
-            console.error(res.error.message);
-            new Alert(res.error.message);
-            return navigateTo('/login');
-        }
         this.timelineContainer.innerHTML = '';
-        this.drawPosts(res.posts);
+        this.drawPosts(res.data);
     }
 
     clearPosts () {
@@ -243,22 +242,30 @@ export default class extends AbstractView {
         this.offset = 0;
         this.mode = 'global';
         const res = await this.getPosts();
-        if (!res.ok) {
-            console.error(res.error.message);
-            new Alert(res.error.message);
-            return navigateTo('/login');
-        }
         this.timelineContainer.innerHTML = '';
-        this.drawPosts(res.posts);
+        this.drawPosts(res.data);
     }
 
     async getPosts () {
-        const user = JSON.parse(localStorage.getItem('user'));
-        const request = await fetch (`/api/posts/${this.mode}/${this.limit}/${this.offset}`, {
+        const url = this.mode === 'global' ? 
+            `/api/post?offset=${this.offset}` :
+            `/api/post/following?offset=${this.offset}`
+
+        const request = await fetch(url, {
             method: 'GET',
-            headers: { 'Authorization': `Bearer ${user.token}` }
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
-        return await request.json();
+        const response = await request.json();
+        
+        if (!request.ok) {
+            localStorage.removeItem('user');
+            delete window.app;
+            new Alert(response.error.message);
+            navigateTo('/login');
+            return;
+        }
+        
+        return response;
     }
 
     drawPosts (posts) {
@@ -268,16 +275,15 @@ export default class extends AbstractView {
     }
 
     async SendPost (post) {
-        const user = JSON.parse(localStorage.getItem('user'));
-        const request = await fetch ('/api/post/create', {
+        const request = await fetch ('/api/post/', {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${user.token}`,
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 'Content-Type': "Application/JSON"
             },
-            body: JSON.stringify({ user, post })
+            body: JSON.stringify(post)
         });
-        return await request.json();
+        return request;
     }
 
     eventTimelineScroll () {
@@ -289,12 +295,8 @@ export default class extends AbstractView {
 
             if (scrollTop + clientHeight >= scrollHeight - umbral) {
                 this.offset += this.limit;
-                const res = await this.getPosts();
-                if (!res.ok) {
-                    new Alert(res.error.message);
-                    return navigateTo("/login");
-                }
-                this.drawPosts(res.posts);
+                const response = await this.getPosts();
+                this.drawPosts(response.data);
             }
         });
     }

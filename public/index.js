@@ -1,50 +1,12 @@
-import auth from "./auth.js";
+import Alert from "./components/alert/alert.js";
 import Navigation from "./components/navigation/navigation.js";
 import Listener from "./modules/Listener.js";
 import Notifier from "./modules/Notifier.js";
 import { navigateTo, router } from "./router.js";
 
-window.app = {
-    alerts: new Array(),
-
-    user: {
-        id: -1,
-        name: '',
-        username: '',
-        token: '',
-        role: '',
-        profilePic: {
-            url: '',
-            crop: {
-                x: -1,
-                y: -1,
-                w: -1,
-                h: -1
-            }
-        }
-    },
-
-    views: {
-        home: {
-            timelines: {
-                global: {
-                    posts: new Array()
-                },
-                following: {
-                    posts: new Array()
-                }
-            }
-        },
-
-        member: {
-            members: new Array()
-        }
-    }
-}
-
 if (!localStorage.getItem('notifications')) localStorage.setItem('notifications', JSON.stringify({ last_id: 0 }));
 
-window.addEventListener("popstate", router);
+window.addEventListener("popstate", () => router.resolve());
 
 document.addEventListener('DOMContentLoaded', async () => {
     document.body.addEventListener("click", (e) => {
@@ -54,12 +16,34 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
     });
 
-    if (!await auth()) {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+        localStorage.removeItem('token');
         navigateTo('/login');
-    };
+        return;
+    }
+
+    const request = await fetch ('/api/authentication/authenticate', {
+        method: 'POST',
+        headers: { "Authorization": `Bearer ${token}` }
+    });
+    
+    const response = await request.json();
+
+    if (!request.ok) {
+        localStorage.removeItem('token');
+        new Alert(response.error.message);
+        navigateTo('/login');
+        return;
+    }
+
+    window.app = {};
+    window.app.alerts = [];
+    window.app.member = response.data;
 
     init();
-    router();
+    router.resolve();
 });
 
 export const init = () => {

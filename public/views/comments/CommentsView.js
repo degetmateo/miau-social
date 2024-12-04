@@ -7,8 +7,10 @@ import AbstractView from "../AbstractView.js";
 import {CreateButtonTenor} from "../HomeView.js";
 
 export default class CommentsView extends AbstractView {
-    constructor () {
+    constructor (params) {
         super();
+        this.params = params;
+        this.init(this.params);
     }
 
     async init (params) {
@@ -36,7 +38,7 @@ export default class CommentsView extends AbstractView {
             <div class="container-comments-main-form-post-create">
                 <div class="container-comments-main-form-post-create-div">
                     <div class="container-comments-main-form-post-create-profile_pic">
-                        <img class="comments-main-form-post-create-profile_pic" id="comments-main-form-post-create-profile_pic" src="${window.app.user.profilePic.url}" />
+                        <img class="comments-main-form-post-create-profile_pic" id="comments-main-form-post-create-profile_pic" src="${window.app.user.profile_pic.url}" />
                     </div>
 
                     <div class="container-comments-main-form-post-create-body">
@@ -63,7 +65,7 @@ export default class CommentsView extends AbstractView {
         `;
         this.viewContainer.appendChild(this.main);
 
-        this.CreateMainPost();
+        // this.CreateMainPost();
         this.CreateMainComments();
         this.CreateEventPostCreate();
         this.CreateEventInsertImage();
@@ -122,26 +124,26 @@ export default class CommentsView extends AbstractView {
                 if (content && content.length > 400) return new Alert("La cantidad máxima de carácteres es 400.");
                 textarea.value = '';
                 const user = JSON.parse(localStorage.getItem('user'));
-                const request = await fetch('/api/post/create', {
+                const request = await fetch('/api/post/', {
                     method: "POST",
                     headers: {
-                        "Authorization": "Bearer "+window.app.user.token,
+                        "Authorization": "Bearer "+user.token,
                         "Content-Type": "Application/JSON"
                     },
-                    body: JSON.stringify({ user, post: {
+                    body: JSON.stringify({
                         content: content,
                         images: this.images,
                         id_replied_post: this.params.id_post
-                    } })
+                    })
                 });
                 this.images = new Array();
                 const response = await request.json();
-                if (!response.ok) throw new Error(response.error.message);
+                if (!request.ok) throw new Error(response.error.message);
                 new Alert("Respuesta enviada.");
                 this.commentsContainer.innerHTML = '';
                 this.CreateMainComments();
-                this.post.increaseComments();
-                this.post.drawCommentsCount();
+                this.posts[0].increaseComments();
+                this.posts[0].drawCommentsCount();
             } catch (error) {
                 console.error(error);
                 return new Alert("Ha ocurrido un error.");
@@ -155,10 +157,12 @@ export default class CommentsView extends AbstractView {
                 method: "GET",
                 headers: { "Authorization": "Bearer "+window.app.user.token }
             });
-            const response = await request.json();
-            if (!response.ok) return new Alert(response.error.message);
 
-            this.post = new Post(response.post);
+            const response = await request.json();
+            
+            if (!request.ok) return new Alert(response.error.message);
+
+            this.post = new Post(response.data);
 
             const container = document.getElementById('container-comments-main-post');
             container.appendChild(this.post.getElement());
@@ -174,11 +178,14 @@ export default class CommentsView extends AbstractView {
                 method: "GET",
                 headers: { "Authorization": "Bearer "+window.app.user.token }
             });
+
             const response = await request.json();
-            if (!response.ok) return new Alert(response.error.message);
+            
+            if (!request.ok) return new Alert(response.error.message);
+            
             const container = document.getElementById('container-comments-main-comments');
             container.innerHTML = '';
-            for (const post of response.posts) {
+            for (const post of response.data) {
                 container.appendChild(Post.Create(post));
             }
         } catch (error) {
@@ -196,8 +203,10 @@ export default class CommentsView extends AbstractView {
             const scrollPos = this.main.scrollTop;
             const alturaAntes = this.main.scrollHeight;
 
+            this.posts = [];
             for (const post of thread.reverse()) {
                 const newPost = new Post(post);
+                this.posts.push(newPost)
                 containerThread.appendChild(newPost.getElement());
 
                 const alturaDespues = this.main.scrollHeight;
@@ -205,7 +214,6 @@ export default class CommentsView extends AbstractView {
             }
         } catch (error) {
             console.error(error);
-            if (error.message.includes('innerHTML')) return;
             new Alert('Ha ocurrido un error.');
         }
     }
@@ -216,7 +224,7 @@ export default class CommentsView extends AbstractView {
             headers: { "Authorization": "Bearer "+window.app.user.token }
         });
         const response = await request.json();
-        if (!response.ok) throw new Error(response.error.message);
-        return response.thread;
+        if (!request.ok) throw new Alert(response.error.message);
+        return response.data;
     }
 }

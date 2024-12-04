@@ -3,20 +3,19 @@ import postgres from "postgres";
 export default class Postgres {
     private static db: postgres.Sql<{}>;
 
-    public static init () {
+    public static async init () {
         try {
-            this.db = postgres ({
-                host: process.env.POSTGRES_URL,
-                port: parseInt(process.env.POSTGRES_PORT) || 5432,
-                database: process.env.POSTGRES_DB_NAME,
-                username: process.env.POSTGRES_USERNAME,
-                password: process.env.POSTGRES_PASSWORD,
-                ssl: 'require'
-            });   
-
-            console.log('✅ | Base de datos Postgres conectada.');
+            console.log('🟨 | Conectandose a la base de datos...');
+            this.connect();
+            await this.db`SELECT 1`;
+            console.log('🟩 | Base de datos Postgres conectada.');
         } catch (error) {
             console.error('🟥 | Error: ', error);
+            console.log('🟨 | Reintentando conexion a la base de datos en 10 segundos...');
+
+            setTimeout(async () => {
+                this.init();
+            }, 10000);
         }
     }
 
@@ -24,7 +23,14 @@ export default class Postgres {
         return this.db;
     }
 
-    public static async begin () {
-        return await this.db.begin(async sql => sql);
+    private static connect () {
+        this.db = postgres({
+            host: process.env.POSTGRES_URL,
+            port: Number(process.env.POSTGRES_PORT),
+            database: process.env.POSTGRES_DB_NAME,
+            username: process.env.POSTGRES_USERNAME,
+            password: process.env.POSTGRES_PASSWORD,
+            ssl: 'require'
+        });
     }
 }

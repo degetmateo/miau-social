@@ -4,8 +4,10 @@ import {loadImage} from "../helpers.js";
 import Alert from "../components/alert/alert.js";
 
 export default class extends AbstractView {
-    constructor () {
+    constructor (params) {
         super();
+        this.params = params;
+        this.init(this.params);
     }
 
     async init (params) {
@@ -30,8 +32,9 @@ export default class extends AbstractView {
     eventButtonLogout () {
         document.getElementById('button-logout').addEventListener('click', (event) => {
             event.preventDefault();
-            localStorage.removeItem('user');
+            localStorage.removeItem('token');
             navigateTo('/login');
+            return;
         });
     }
 
@@ -66,16 +69,17 @@ export default class extends AbstractView {
         if (username.length <= 0) return new Alert('Username: Desde 1 caracter.');
         if (username.length > 16) return new Alert('Username: Hasta 16 caracteres.');
         inputUsername.value = '';
+
         const request = await fetch ('/api/member/update/username', {
             method: 'POST',
             headers: { 
                 "Authorization": "Bearer " + window.app.user.token,
                 "Content-Type": "Application/JSON"
             },
-            body: JSON.stringify({ user: window.app.user, username })
+            body: JSON.stringify({ username })
         });
         const response = await request.json();
-        if (!response.ok) return new Alert(response.error.message);
+        if (!request.ok) return new Alert(response.error.message);
         new Alert("Nombre de usuario actualizado.");
     }
 
@@ -91,10 +95,10 @@ export default class extends AbstractView {
                 "Authorization": "Bearer " + window.app.user.token,
                 "Content-Type": "Application/JSON"
             },
-            body: JSON.stringify({ user: window.app.user, name })
+            body: JSON.stringify({ name })
         });
         const response = await request.json();
-        if (!response.ok) return new Alert(response.error.message);
+        if (!request.ok) return new Alert(response.error.message);
         new Alert("Nombre actualizado.");
     }
 
@@ -110,12 +114,11 @@ export default class extends AbstractView {
                 "Content-Type": "Application/JSON"
             },
             body: JSON.stringify({
-                user,
                 bio: content
             })
         });
         const response = await request.json();
-        if (!response.ok) {
+        if (!request.ok) {
             return new Alert(response.error.message);
         }
         new Alert('Biografia actualizada correctamente.');
@@ -140,10 +143,10 @@ export default class extends AbstractView {
                 "Authorization": "Bearer "+window.app.user.token,
                 "Content-Type": "Application/JSON"
             },
-            body: JSON.stringify({ user: { password, new_password: newPassword } })
+            body: JSON.stringify({ password, new_password: newPassword })
         });
         const response = await request.json();
-        if (!response.ok) return new Alert(response.error.message);
+        if (!request.ok) return new Alert(response.error.message);
         new Alert('Contraseña actualizada.'); 
     }
 
@@ -170,24 +173,20 @@ export default class extends AbstractView {
     async uploadImage (image) {
         const user = JSON.parse(localStorage.getItem('user'));
 
-        const request = await fetch("/api/member/update/picture", {
+        const request = await fetch("/api/member/update/profile-picture", {
             method: 'POST',
             headers: {
                 "Authorization": 'Bearer ' + user.token,
                 "Content-Type": 'application/json'
             },
             body: JSON.stringify({
-                user,
-                image: {
-                    url: image.src,
-                    view: { x: null, y: null, w: null, h: null }
-                }
+                url: image.src
             })
         })
 
         const response = await request.json();
         
-        if (!response.ok) {
+        if (!request.ok) {
             throw new Error(response.error.message);
         }
         

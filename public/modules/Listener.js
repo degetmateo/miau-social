@@ -21,4 +21,8 @@ export default class Listener {
             this.observers.forEach(observer => observer.onVisibilityChange());
         }
     }
+
+    clear () {
+        this.observers = new Array();
+    }
 }

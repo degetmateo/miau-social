@@ -1,3 +1,5 @@
+import Alert from "../components/alert/alert.js";
+
 class Notifier {
     STORAGE = 'notifications';
     URL = '/api/notifications/';
@@ -8,6 +10,11 @@ class Notifier {
 
         this.observerId = 'notifier';
         this.cooldown = false;
+    }
+
+    clear () {
+        this.entries = new Array();
+        this.observers = new Array();
     }
 
     init () {
@@ -30,7 +37,7 @@ class Notifier {
         this.cooldown = true;
         setTimeout(() => {
             this.cooldown = false;
-        }, 10000);
+        }, 60000);
     }
 
     notifyObservers () {
@@ -52,13 +59,13 @@ class Notifier {
     }
 
     async fetch (c) {
-        const request = await fetch(this.URL+c, {
+        const request = await fetch(`/api/notification?offset=${c}`, {
             method: "GET",
-            headers: { "Authorization": "Bearer "+window.app.user.token }
+            headers: { "Authorization": "Bearer " + localStorage.getItem('token') }
         });
         const response = await request.json();
-        if (!response.ok) throw new Error(response.error.message);
-        return response.notifications;
+        if (!request.ok) return new Alert(response.error.message);
+        return response.data;
     }
 
     readLast () {

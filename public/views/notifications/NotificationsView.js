@@ -1,10 +1,11 @@
-import Navigation from "../../components/navigation/navigation.js";
 import Notification from "../../components/notification/notification.js";
 import AbstractView from "../AbstractView.js";
 
 export default class NotificationsView extends AbstractView {
-    constructor () {
+    constructor (params) {
         super();
+        this.params = params;
+        this.init(this.params);
     }
 
     onVisibilityChange = () => {
@@ -59,7 +60,8 @@ export default class NotificationsView extends AbstractView {
             this.container_notifications.appendChild(notification.getElement());
         }
 
-        window.app.notifier.updateSave(window.app.notifier.get()[0].id);
+        const ns = window.app.notifier.get();
+        window.app.notifier.updateSave(ns[0] ? ns[0].id : 0);
     }
 
     eventScroll () {

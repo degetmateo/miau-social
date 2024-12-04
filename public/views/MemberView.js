@@ -4,15 +4,18 @@ import AbstractView from "./AbstractView.js";
 import Popup from "../components/popup/Popup.js";
 import Post from "../components/post/Post.js";
 import Alert from "../components/alert/alert.js";
+import {navigateTo} from "../router.js";
 
 export default class extends AbstractView {
-    constructor () {
+    constructor (params) {
         super();
+        this.params = params;
+        this.init(this.params);
     }
 
     async init (params) {
         this.params = params;
-        this.setTitle('Miembro');
+        this.setTitle(this.params.username);
         this.clear();
 
         this.user = {};
@@ -25,25 +28,29 @@ export default class extends AbstractView {
         appContainer.innerHTML = VIEW;
         document.getElementById('container-view').appendChild(window.app.nav.getNode());
     
-        const resUser = await this.getUser();
+        const request = await this.getUser();
+        const response = await request.json();
 
-        if (!resUser.ok) {
-            new Alert(resUser.error.message);
-            return;
+        if (!request.ok) {
+            return new Alert(response.error.message);
         }
 
-        this.user = resUser.user;
+        this.user = response.data;
         this.user.follows = {
-            followed: this.user.follows.followed,
-            followers: this.user.follows.followers,
-            followedCount: this.user.follows.followed.length,
-            followersCount: this.user.follows.followers.length
+            followedCount: this.user.followed_count,
+            followersCount: this.user.followers_count
         }
         this.drawProfile();
 
-        const resUserPosts = await this.getUserPosts();
-        this.posts = resUserPosts.posts;
-        this.drawPosts(resUserPosts.posts);
+        const requestPosts = await this.getUserPosts();
+        const responsePosts = await requestPosts.json();
+
+        if (!requestPosts.ok) {
+            return new Alert(responsePosts.error.message);
+        }
+
+        this.posts = responsePosts.data;
+        this.drawPosts(responsePosts.data);
         this.eventTimelineScroll();
     }
 
@@ -51,22 +58,22 @@ export default class extends AbstractView {
         const request = await fetch(`/api/member/${this.params.username}`, {
             method: "GET",
             headers: {
-                "Authorization": "Bearer " + window.app.user.token
+                "Authorization": "Bearer " + localStorage.getItem('token')
             }
         });
 
-        return await request.json();
+        return request;
     }
 
     async getUserPosts () {
-        const request = await fetch(`/api/posts/member/${this.params.username}/${this.limit}/${this.offset}`, {
+        const request = await fetch(`/api/post?username=${this.params.username}&offset=${this.offset}`, {
             method: "GET",
             headers: {
-                "Authorization": "Bearer " + window.app.user.token
+                "Authorization": "Bearer " + localStorage.getItem('token')
             }
         });
-        const response = await request.json();
-        return response;
+
+        return request;
     }
 
     drawProfile () {
@@ -76,55 +83,58 @@ export default class extends AbstractView {
             <span>@${this.user.username}</span>
         `;
 
-        if (this.user.username != window.app.user.username) {
+        if (this.user.username != window.app.member.username) {
             const containerButtonFollow = document.getElementById('container-button-follow');
-            this.user.isFollowed ?
+            this.user.is_followed ?
                 containerButtonFollow.appendChild(this.createButtonUnfollow()) :
                 containerButtonFollow.appendChild(this.createButtonFollow());
         }
 
         const containerPfp = document.getElementById('container-pfp');
         containerPfp.innerHTML = `
-            <img class="img-profile" src="${this.user.profilePicture.url || URL_NO_IMAGE}" />
+            <img class="img-profile" src="${this.user.profile_pic.url || URL_NO_IMAGE}" />
         `;
         const follows = this.user.follows;
 
         const spanFollowed = document.getElementById('span-followed');
-        spanFollowed.textContent = this.user.follows.followed.length + ' seguidos'
+        spanFollowed.textContent = this.user.follows.followedCount + ' seguidos'
 
         const containerFollows = document.getElementById('container-followed');
         containerFollows.style.cursor = 'pointer';
         containerFollows.addEventListener('click', ()=>{
-            const pop = new Popup();
-            for (const user of follows.followed) {
-                const userContainer = document.createElement('a');
-                userContainer.setAttribute('data-link', '');
-                userContainer.setAttribute('href', '/member/'+user.username_member);
-                userContainer.textContent =  `@${user.username_member}`;
-                userContainer.classList.add('popup-list-item');
-                userContainer.onclick = () => pop.delete();
-                pop.body().appendChild(userContainer);
-            }
+            // const pop = new Popup();
+            // for (const user of follows.followed) {
+            //     const userContainer = document.createElement('a');
+            //     userContainer.setAttribute('data-link', '');
+            //     userContainer.setAttribute('href', '/member/'+user.username_member);
+            //     userContainer.textContent =  `@${user.username_member}`;
+            //     userContainer.classList.add('popup-list-item');
+            //     userContainer.onclick = () => pop.delete();
+            //     pop.body().appendChild(userContainer);
+            // }
+
+            return navigateTo(`/member/${this.user.username}/followed`);
         });
 
         const spanFollowers = document.getElementById('span-followers');
-        spanFollowers.textContent = follows.followers.length === 1 ?
+        spanFollowers.textContent = follows.followersCount === 1 ?
             1 + ' seguidor' : 
-            follows.followers.length + ' seguidores'; 
+            follows.followersCount + ' seguidores'; 
 
         const containerFollowers= document.getElementById('container-followers');
         containerFollowers.style.cursor = 'pointer';
         containerFollowers.addEventListener('click', ()=>{
-            const pop = new Popup();
-            for (const user of follows.followers) {
-                const userContainer = document.createElement('a');
-                userContainer.setAttribute('data-link', '');
-                userContainer.setAttribute('href', '/member/'+user.username_member);
-                userContainer.textContent =  `@${user.username_member}`;
-                userContainer.classList.add('popup-list-item');
-                userContainer.onclick = () => pop.delete();
-                pop.body().appendChild(userContainer);
-            }
+            // const pop = new Popup();
+            // for (const user of follows.followers) {
+            //     const userContainer = document.createElement('a');
+            //     userContainer.setAttribute('data-link', '');
+            //     userContainer.setAttribute('href', '/member/'+user.username_member);
+            //     userContainer.textContent =  `@${user.username_member}`;
+            //     userContainer.classList.add('popup-list-item');
+            //     userContainer.onclick = () => pop.delete();
+            //     pop.body().appendChild(userContainer);
+            // }
+            return navigateTo(`/member/${this.user.username}/followers`);
         });
 
         const spanBio = document.getElementById('span-bio');
@@ -150,13 +160,13 @@ export default class extends AbstractView {
             1 + ' seguidor' : 
             this.user.follows.followersCount + ' seguidores';
 
-        const request = await fetch('/api/member/'+this.user.username+'/follow', {
-            method: 'PUT',
-            headers: { "Authorization": "Bearer "+window.app.user.token }
+        const request = await fetch('/api/follow/member/'+this.user.id, {
+            method: 'POST',
+            headers: { "Authorization": "Bearer " + localStorage.getItem('token') }
         });
 
         const response = await request.json();
-        if (!response.ok) return new Alert(response.error.message);
+        if (!request.ok) return new Alert(response.error.message);
     }
 
     createButtonUnfollow () {
@@ -178,13 +188,13 @@ export default class extends AbstractView {
             1 + ' seguidor' : 
             this.user.follows.followersCount + ' seguidores';
 
-        const request = await fetch('/api/member/'+this.user.username+'/unfollow', {
+        const request = await fetch('/api/follow/member/'+this.user.id, {
             method: 'DELETE',
-            headers: { "Authorization": "Bearer "+window.app.user.token }
+            headers: { "Authorization": "Bearer " + localStorage.getItem('token') }
         });
 
         const response = await request.json();
-        if (!response.ok) return new Alert(response.error.message);
+        if (!request.ok) return new Alert(response.error.message);
     }
     
     drawPosts (posts) {
@@ -205,9 +215,10 @@ export default class extends AbstractView {
 
             if (scrollTop + clientHeight >= scrollHeight - umbral) {
                 this.offset += this.limit;
-                const res = await this.getUserPosts();
-                if (!res.ok) return;
-                this.drawPosts(res.posts);
+                const request = await this.getUserPosts();
+                const response = await request.json();
+                if (!request.ok) return;
+                this.drawPosts(response.data);
             }
         });
     }

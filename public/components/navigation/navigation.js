@@ -49,7 +49,7 @@ export default class Navigation {
         this.buttons = new Array();
 
         this.homeButton = this.CreateButton({ text: 'Inicio', icon_on: HOME_IMAGE_ON, icon_off: HOME_IMAGE_OFF, href: '/home' });
-        this.profileButton = this.CreateButton({ text: 'Perfil', icon_on: PROFILE_IMAGE_ON, icon_off: PROFILE_IMAGE_OFF, href: '/member/'+window.app.user.username });
+        this.profileButton = this.CreateButton({ text: 'Perfil', icon_on: PROFILE_IMAGE_ON, icon_off: PROFILE_IMAGE_OFF, href: '/member/'+window.app.member.username });
         this.notificationsButton = this.CreateNotificationsButton();
         // this.messagesButton = this.CreateButton({ text: 'Mensajes', icon_on: MESSAGES_IMAGES_ON, icon_off: MESSAGES_IMAGES_OFF, href: '/messages' });
         this.settingsButton = this.CreateButton({ text: 'Configuración', icon_on: SETTINGS_IMAGE_ON, icon_off: SETTINGS_IMAGE_OFF, href: '/settings' });

@@ -1,3 +1,7 @@
-require('dotenv').config();
+/// <reference path="../env.d.ts" />
+
+import dotenv from 'dotenv';
 import Server from "./Server";
-new Server(parseInt(process.env.PORT) || 4000);
+
+dotenv.config();
+new Server(Number(process.env.PORT));

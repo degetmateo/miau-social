@@ -1,120 +1,77 @@
 import express from "express";
-import jwt from 'jsonwebtoken';
 import path from 'path';
+import cors from 'cors';
 import fs from 'fs';
 import Postgres from "./database/Postgres";
+import memberRouter from "./routes/memberRouter";
+import authenticationRouter from "./routes/authenticationRouter";
+import postRouter from "./routes/postRouter";
+import notificationRouter from "./routes/notificationRouter";
+import upvoteRouter from "./routes/upvoteRouter";
+import followRouter from "./routes/followRouter";
+import adminRouter from "./routes/adminRouter";
 
 export default class Server {
     private readonly port: number;
     public readonly app: express.Express;
     public readonly router: express.Router;
 
+    private readonly paths = {
+        admin: '/api/admin',
+        authentication: '/api/authentication',
+        post: '/api/post',
+        member: '/api/member',
+        notification: '/api/notification',
+        upvote: '/api/upvote',
+        follow: '/api/follow'
+    }
+
     constructor (port: number) {
         try {
-            this.port = port;
+            this.port = port as number;
             this.app = express();
-            this.router = express.Router();
-    
             this.app.set('port', this.port);
-            this.app.use('/public', express.static(path.join(__dirname + '/../public/')));
-            this.app.use(express.json());
-    
+
+            this.middlewares();
+            this.database();
             this.routes();
-            Postgres.init();
-    
-            this.app.listen(this.port, () => {
-                console.log('✅ | Server listening on port:', this.app.get('port'))
-            });
+            this.listen();
         } catch (error) {
             console.error(error);
         }
     }
 
-    private routes() {
-        try {
-            const files = fs.readdirSync(path.join(__dirname + '/routes/'));
-            for (const file of files) {
-                require(path.join(__dirname + '/routes/' + file))(this);
-                console.log('✅ | Loaded:', file);
-            }
-
-            this.app.use('/*', (_, res) => {
-                res.sendFile(path.join(__dirname + '/../public/app.html'));
-            });
-        } catch (error) {
-            console.error('🟥 |', error);
-        }
+    private middlewares = () => {
+        this.app.use('/public', express.static(path.join(__dirname + '/../public/')));
+        this.app.use(express.json());
+        this.app.use(
+            cors({
+              origin: process.env.FRONTEND_URL
+            })
+        );
     }
 
-    public authenticate (req, res: express.Response, next: express.NextFunction) {
-        try {
-            const header = req.headers['authorization'];
-            const token = header && header.split(' ')[1];
-            if (!token) return res.json({ ok: false, error: { message: 'Error en la autentificacion.' } });
-            jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
-                if (err) return res.json({ ok: false, error: { code: 'auth', message: 'Error en la autentificacion.' } });
-                req.user = { id: user.id_member, username: user.username_member };
-                next();
-            });
-        } catch (error) {
-            console.error(error);
-        }
+    private database = () => {
+        Postgres.init();
     }
 
-    public async authenticateTester (req, res, next) {
-        try {
-            const header = req.headers['authorization'];
-            const token = header && header.split(' ')[1];
-            if (!token) return res.json({ ok: false, error: { message: 'Authorization Error.' } });
-            jwt.verify(token, process.env.SECRET_KEY, async (err, user) => {
-                if (err) return res.json({ ok: false, error: { message: "Authorization Error." } });
-                req.user = { id: user.id_member, username: user.username_member };
-                try {
-                    const query = await Postgres.query()`
-                        SELECT * FROM
-                            member
-                        WHERE
-                            username_member = ${req.user.username} and
-                            (role_member = 'tester' or role_member = 'admin');
-                    `;
-                    if (!query[0]) return res.json({ ok: false, error: { message: "Authorization Error." } });
-                    next();
-                } catch (error) {
-                    console.error(error);
-                    return res.json({ ok: false, error: { message: "Authorization Error." } });
-                }
-            });
-        } catch (error) {
-            console.error(error);
-        }
-        
+    private routes = () => {
+        this.app.use(this.paths.authentication, authenticationRouter);
+        this.app.use(this.paths.member, memberRouter);
+        this.app.use(this.paths.post, postRouter);
+        this.app.use(this.paths.notification, notificationRouter);
+        this.app.use(this.paths.upvote, upvoteRouter);
+        this.app.use(this.paths.follow, followRouter);
+        this.app.use(this.paths.admin, adminRouter);
+
+        this.app.use('*', (_, res) => {
+            res.sendFile(path.join(__dirname + '/../public/app.html'));
+        });
     }
 
-    public async authenticateAdministrator (req, res: express.Response, next: express.NextFunction) {
-        try {
-            const header = req.headers['authorization'];
-            const token = header && header.split(' ')[1];
-            if (!token) return res.json({ ok: false, error: { message: 'Authorization Error.' } });
-            jwt.verify(token, process.env.SECRET_KEY, async (err, user) => {
-                if (err) return res.json({ ok: false, error: { message: "Authorization Error." } });
-                req.user = { id: user.id_member, username: user.username_member };
-                try {
-                    const query = await Postgres.query()`
-                        SELECT * FROM
-                            member
-                        WHERE
-                            username_member = ${req.user.username} and
-                            role_member = 'admin';
-                    `;
-                    if (!query[0]) return res.json({ ok: false, error: { message: "Authorization Error." } });
-                    next();
-                } catch (error) {
-                    console.error(error);
-                    return res.json({ ok: false, error: { message: "Authorization Error." } });
-                }
-            });
-        } catch (error) {
-            console.error(error);
-        }
+    private listen = () =>  {
+        this.app.listen(this.port, () => {
+            console.log(`🟩 | Servidor escuchando en el Puerto: ${this.port}`);
+        });
     }
 }
