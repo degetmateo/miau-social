@@ -123,11 +123,10 @@ export default class CommentsView extends AbstractView {
                 if (content && content.length <= 0) return new Alert("Debes escribir algo.");
                 if (content && content.length > 400) return new Alert("La cantidad máxima de carácteres es 400.");
                 textarea.value = '';
-                const user = JSON.parse(localStorage.getItem('user'));
                 const request = await fetch('/api/post/', {
                     method: "POST",
                     headers: {
-                        "Authorization": "Bearer "+user.token,
+                        "Authorization": "Bearer "+localStorage.getItem('token'),
                         "Content-Type": "Application/JSON"
                     },
                     body: JSON.stringify({
@@ -155,7 +154,7 @@ export default class CommentsView extends AbstractView {
         try {
             const request = await fetch('/api/post/'+this.params.id_post, {
                 method: "GET",
-                headers: { "Authorization": "Bearer "+window.app.user.token }
+                headers: { "Authorization": "Bearer "+localStorage.getItem('token') }
             });
 
             const response = await request.json();
