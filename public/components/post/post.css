@@ -17,6 +17,11 @@ body {
     gap: 20px;
 }
 
+.container-post:hover {
+    cursor: pointer;
+    background-color: var(--hover-color);
+}
+
 .container-post-header {
     display: grid;
     grid-template-columns: min-content auto min-content;
@@ -104,7 +109,7 @@ body {
 .post-header-button {
     border: none;
     outline: none;
-    background-color: var(--primary-color);
+    background-color: inherit;
     color: #FFF;
     cursor: pointer;
 

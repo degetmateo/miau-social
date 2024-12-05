@@ -2,6 +2,7 @@ import AbstractView from "./AbstractView.js";
 import { navigateTo } from '../router.js';
 import {loadImage} from "../helpers.js";
 import Alert from "../components/alert/alert.js";
+import Navigation from "../components/navigation/navigation.js";
 
 export default class extends AbstractView {
     constructor (params) {
@@ -73,13 +74,18 @@ export default class extends AbstractView {
         const request = await fetch ('/api/member/update/username', {
             method: 'POST',
             headers: { 
-                "Authorization": "Bearer " + window.app.user.token,
+                "Authorization": "Bearer " + localStorage.getItem('token'),
                 "Content-Type": "Application/JSON"
             },
             body: JSON.stringify({ username })
         });
+
         const response = await request.json();
         if (!request.ok) return new Alert(response.error.message);
+
+        window.app.member.username = username;
+        window.app.nav.update();
+
         new Alert("Nombre de usuario actualizado.");
     }
 
@@ -92,7 +98,7 @@ export default class extends AbstractView {
         const request = await fetch ('/api/member/update/name', {
             method: 'POST',
             headers: { 
-                "Authorization": "Bearer " + window.app.user.token,
+                "Authorization": "Bearer " + localStorage.getItem('token'),
                 "Content-Type": "Application/JSON"
             },
             body: JSON.stringify({ name })
@@ -106,11 +112,10 @@ export default class extends AbstractView {
         const input = document.getElementById('settings-bio-input');
         const content = input.value;
         input.value = '';
-        const user = JSON.parse(localStorage.getItem('user'));
         const request = await fetch ('/api/member/update/bio', {
             method: 'POST',
             headers: { 
-                "Authorization": "Bearer " + user.token,    
+                "Authorization": "Bearer " + localStorage.getItem('token'),    
                 "Content-Type": "Application/JSON"
             },
             body: JSON.stringify({
@@ -140,7 +145,7 @@ export default class extends AbstractView {
         const request = await fetch('/api/member/update/password', {
             method: 'POST',
             headers: {
-                "Authorization": "Bearer "+window.app.user.token,
+                "Authorization": "Bearer " + localStorage.getItem('token'),
                 "Content-Type": "Application/JSON"
             },
             body: JSON.stringify({ password, new_password: newPassword })
@@ -171,12 +176,10 @@ export default class extends AbstractView {
     }
 
     async uploadImage (image) {
-        const user = JSON.parse(localStorage.getItem('user'));
-
         const request = await fetch("/api/member/update/profile-picture", {
             method: 'POST',
             headers: {
-                "Authorization": 'Bearer ' + user.token,
+                "Authorization": 'Bearer ' + localStorage.getItem('token'),
                 "Content-Type": 'application/json'
             },
             body: JSON.stringify({
@@ -187,18 +190,10 @@ export default class extends AbstractView {
         const response = await request.json();
         
         if (!request.ok) {
-            throw new Error(response.error.message);
+            return new Alert(response.error.message);
         }
         
-        window.app.user.profilePic = {
-            url: image.src,
-            crop: {
-                x: 0,
-                y: 0,
-                w: 0,
-                h: 0
-            }
-        }
+        window.app.member.profile_pic.url = image.src;
         
         new Alert('Imagen de perfil actualizada.');
     }

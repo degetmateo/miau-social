@@ -204,7 +204,7 @@ export default class CommentsView extends AbstractView {
 
             this.posts = [];
             for (const post of thread.reverse()) {
-                const newPost = new Post(post);
+                const newPost = new Post(post, {date: 'date'});
                 this.posts.push(newPost)
                 containerThread.appendChild(newPost.getElement());
 

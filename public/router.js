@@ -1,5 +1,4 @@
 import SettingsView from "./views/SettingsView.js";
-import ErrorView from "./views/ErrorView.js";
 import HomeView from "./views/HomeView.js";
 import LoginView from "./views/LoginView.js";
 import MemberView from "./views/MemberView.js";
@@ -9,6 +8,7 @@ import MessagesView from "./views/messages/MessagesView.js";
 import NotificationsView from "./views/notifications/NotificationsView.js";
 import FollowedView from "./views/followed/FollowedView.js";
 import FollowersView from "./views/followers/FollowersView.js";
+import ErrorView from "./views/error/ErrorView.js";
 
 export const navigateTo = (url) => {
     window.history.pushState(null, null, url);

@@ -45,9 +45,19 @@ export default class Navigation {
     constructor () {
         this.nav = document.createElement('nav');
         this.nav.classList.add('nav');
-
         this.buttons = new Array();
+        this.CreateButtons();
+    }
 
+    update = () => {
+        this.homeButton.remove();
+        this.profileButton.remove();
+        this.notificationsButton.remove();
+        this.settingsButton.remove();
+        this.CreateButtons();
+    }
+
+    CreateButtons = () => {
         this.homeButton = this.CreateButton({ text: 'Inicio', icon_on: HOME_IMAGE_ON, icon_off: HOME_IMAGE_OFF, href: '/home' });
         this.profileButton = this.CreateButton({ text: 'Perfil', icon_on: PROFILE_IMAGE_ON, icon_off: PROFILE_IMAGE_OFF, href: '/member/'+window.app.member.username });
         this.notificationsButton = this.CreateNotificationsButton();

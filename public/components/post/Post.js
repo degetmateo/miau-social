@@ -1,5 +1,6 @@
 import { URL_NO_IMAGE } from "../../consts.js";
 import { cleanContent, getDateMessage } from "../../helpers.js";
+import {navigateTo} from "../../router.js";
 import Alert from "../alert/alert.js";
 import Popup from "../popup/Popup.js";
 
@@ -16,17 +17,22 @@ IMAGE_POST_COMMENTS.src = '/public/components/post/svg/comments.svg';
 IMAGE_POST_COMMENTS.classList.add('post-footer-interactions-icon');
 
 export default class Post {
-    constructor (_post) {
+    constructor (_post, options) {
         this.post = _post;
+        this.options = options || {};
         this.container = document.createElement('div');
+        
         this.container.classList.add('container-post');
+        this.container.setAttribute('data-link', '');
+        this.container.setAttribute('href', '/post/'+this.post.id+'/comments');
+
         this.container.appendChild(this.CreatePostHeader());
         this.container.appendChild(this.CreatePostBody());
         this.container.appendChild(this.CreatePostFooter());
     }
 
-    static Create (_post) {
-        return new Post(_post).getElement();
+    static Create (_post, options) {
+        return new Post(_post, options).getElement();
     }
 
     getElement () {
@@ -101,7 +107,12 @@ export default class Post {
         const headerPicture = new Image();
         headerPicture.src = this.post.creator.profile_pic.url || URL_NO_IMAGE;
         headerPicture.classList.add('post-header-picture');
-        CreateDataLink(headerPicture, '/member/'+this.post.creator.username);
+
+        headerPicture.onclick = (e) => {
+            e.stopPropagation();
+            navigateTo('/member/'+this.post.creator.username);
+        }
+
         containerHeaderPicture.appendChild(headerPicture);
         return containerHeaderPicture;
     }
@@ -115,7 +126,6 @@ export default class Post {
                 <span 
                     class="post-header-signature-name" id="post-member-name"
                     href="/member/${this.post.creator.username}"
-                    data-link
                 >
                     ${this.post.creator.name}
                 </span>
@@ -129,6 +139,11 @@ export default class Post {
 
             <span class="post-header-signature-username" id="post-member-username">@${this.post.creator.username}</span>
         `;
+
+        containerHeaderSignature.onclick = (e) => {
+            e.stopPropagation();
+            navigateTo(`/member/${this.post.creator.username}`)
+        }
 
         // containerHeaderSignature.appendChild(this.CreatePostHeaderSignatureName());
         // containerHeaderSignature.appendChild(this.CreatePostHeaderSignatureRole());
@@ -195,7 +210,7 @@ export default class Post {
                 const request = await fetch(`/api/post/${this.post.id}`, {
                     method: 'DELETE',
                     headers: {
-                        "Authorization": "Bearer " + window.app.user.token
+                        "Authorization": "Bearer " + localStorage.getItem('token')
                     }
                 });
                 const response = await request.json();
@@ -219,9 +234,35 @@ export default class Post {
         containerFooterDate.classList.add('container-post-footer-date');
         const footerDate = document.createElement('span');
         footerDate.classList.add('post-footer-date');
-        footerDate.textContent = new Date(this.post.date).toLocaleString('es-ES');
+
+        if (this.options.date) {
+            this.options.date === 'date' ?
+                footerDate.textContent = new Date(this.post.date).toLocaleString('es-ES') : 
+                footerDate.textContent = this.getTimeElapsedSince(new Date(this.post.date));
+        } else {
+            footerDate.textContent = new Date(this.post.date).toLocaleString('es-ES');
+        }
+
         containerFooterDate.appendChild(footerDate);
-        return containerFooterDate; 
+        return containerFooterDate;
+    }
+
+    getTimeElapsedSince = (date) => {
+        const now = new Date();
+        const dif = now - date;
+        const seconds = Math.floor(dif / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+        const months = Math.floor(days / 30);
+        const years = Math.floor(days / 365);
+    
+        if (years > 0) return `hace ${years} ${years === 1 ? 'año' : 'años'}`;
+        if (months > 0) return `hace ${months} ${months === 1 ? 'mes' : 'meses'}`;
+        if (days > 0) return `hace ${days} ${days === 1 ? 'día' : 'días'}`;
+        if (hours > 0) return `hace ${hours} ${hours === 1 ? 'hora' : 'horas'}`;
+        if (minutes > 0) return `hace ${minutes} ${minutes === 1 ? 'minuto' : 'minutos'}`;
+        return `hace ${seconds} ${seconds === 1 ? 'segundo' : 'segundos'}`;
     }
 
     CreatePostFooterInteractions () {
@@ -248,7 +289,9 @@ export default class Post {
         this.footerUpvoteNumber.style.fontSize = '20px';
         this.footerUpvoteNumber.classList.add('post-footer-interactions-upvote-number');
     
-        containerFooterUpvoteIcon.addEventListener('click', () => {
+        containerFooterUpvoteIcon.addEventListener('click', (e) => {
+            e.stopPropagation();
+
             if (this.isUpvoted()) {
                 containerFooterUpvoteIcon.firstChild.remove();
                 containerFooterUpvoteIcon.appendChild(IMAGE_POST_UPVOTE_OFF.cloneNode(true));

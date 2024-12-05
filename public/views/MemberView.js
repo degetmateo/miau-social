@@ -32,6 +32,7 @@ export default class extends AbstractView {
         const response = await request.json();
 
         if (!request.ok) {
+            if (request.status === 404) return navigateTo('/404');
             return new Alert(response.error.message);
         }
 
@@ -201,7 +202,7 @@ export default class extends AbstractView {
         const postsContainer = document.getElementById('container-posts');
         for (const post of posts) {
             post.creator = this.user;
-            postsContainer.appendChild(Post.Create(post));
+            postsContainer.appendChild(Post.Create(post, {date: 'informal'}));
         }
     }
 

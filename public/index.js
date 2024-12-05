@@ -10,6 +10,7 @@ window.addEventListener("popstate", () => router.resolve());
 
 document.addEventListener('DOMContentLoaded', async () => {
     document.body.addEventListener("click", (e) => {
+        e.stopPropagation();
         if (e.target.matches("[data-link]") || e.target.hasAttribute('data-link')) {
             e.preventDefault();
             navigateTo(e.target.href || e.target.getAttribute('href'));
