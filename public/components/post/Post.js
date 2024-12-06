@@ -252,7 +252,7 @@ export default class Post {
     getTimeElapsedSince = (date) => {
         const now = new Date();
         const dif = now - date;
-        const seconds = Math.floor(dif / 1000);
+        let seconds = Math.floor(dif / 1000);
         const minutes = Math.floor(seconds / 60);
         const hours = Math.floor(minutes / 60);
         const days = Math.floor(hours / 24);
@@ -264,6 +264,7 @@ export default class Post {
         if (days > 0) return `hace ${days} ${days === 1 ? 'día' : 'días'}`;
         if (hours > 0) return `hace ${hours} ${hours === 1 ? 'hora' : 'horas'}`;
         if (minutes > 0) return `hace ${minutes} ${minutes === 1 ? 'minuto' : 'minutos'}`;
+        if (seconds <= 0) return `ahora`;
         return `hace ${seconds} ${seconds === 1 ? 'segundo' : 'segundos'}`;
     }
 
