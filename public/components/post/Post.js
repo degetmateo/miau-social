@@ -185,18 +185,21 @@ export default class Post {
             <div class="post-header-button-box"></div>
         `;
         window.app.member.id == this.post.creator.id ?
-            containerHeaderButtonOptions.addEventListener('click', this.CreatePopupMenuSelf) :
-            containerHeaderButtonOptions.addEventListener('click', this.CreatePopupMenuOther);
+            containerHeaderButtonOptions.addEventListener('click', (e) => this.CreatePopupMenuSelf(e)) :
+            containerHeaderButtonOptions.addEventListener('click', (e) => this.CreatePopupMenuOther(e));
         containerHeaderButtonOptions.appendChild(headerOptionsButton);
         return containerHeaderButtonOptions;
     }
 
     CreatePopupMenuSelf (e) {
         e.stopPropagation();
+        
         const popup = new Popup();
+        
         popup.CreateButton("Reportar Publicación", () => {
             popup.delete();
         });
+
         popup.CreateButton("Eliminar Publicación", () => {
             const popupConfirmation = new Popup();
             popupConfirmation.CreateTitle('¿Estás seguro?');
