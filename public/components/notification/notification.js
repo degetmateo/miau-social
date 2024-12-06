@@ -1,3 +1,5 @@
+import {navigateTo} from "../../router.js";
+
 export default class Notification {
     notification = {
         id: '',
@@ -25,8 +27,20 @@ export default class Notification {
         this.notification = _notification;
         this.container = document.createElement('div');
         this.container.classList.add('container-notification', 'container-notification--'+this.notification.type);
-        this.container.setAttribute('data-link', '');
         this.Create();
+
+        this.isSelectingText = false;
+        this.container.onmousedown = () => {
+            this.isSelectingText = false;
+        }
+        this.container.onmousemove = () => {
+            this.isSelectingText = true;
+        }
+        this.container.onmouseup = (e) => {
+            if (e.target.closest('.container-notification-comment-pic')) return;
+            if (e.target.closest('.notification-comment-signature-name')) return;
+            if (!this.isSelectingText) return navigateTo(this.container.getAttribute('href'));
+        }
     }
 
     getElement () {
@@ -56,7 +70,7 @@ export default class Notification {
                 </div>
                 <span class="notification-comment-signature-title"><span class="notification-comment-signature-name" href="/member/${this.notification.target_member.username}" data-link>${this.notification.target_member.name}</span> te ha respondido:</span>
             </div>
-            ${this.notification.target_post.content.length > 0 ? `<span class="notification-comment-post-content" href="/post/${this.notification.target_post.id}/comments" data-link>${this.notification.target_post.content}</span>` : ''}
+            ${this.notification.target_post.content.length > 0 ? `<span class="notification-comment-post-content">${this.notification.target_post.content}</span>` : ''}
             ${this.notification.target_post.images.length > 0 ? `<div class="container-post-body-images">${this.images()}</div>` : ''}
         `;
     }
@@ -85,9 +99,9 @@ export default class Notification {
                 <div class="container-notification-comment-pic">
                     <img class="notification-comment-signature-pic" src="${this.notification.target_member.profile_pic.url}" href="/member/${this.notification.target_member.username}" data-link />
                 </div>
-                <span class="notification-comment-signature-title"><span class="notification-comment-signature-name" href="/member/${this.notification.target_member.username}" data-link>${this.notification.target_member.name}</span> ha indicado que le gusta tu publicación.</span>
+                <span class="notification-comment-signature-title"><span class="notification-comment-signature-name">${this.notification.target_member.name}</span> ha indicado que le gusta tu publicación.</span>
             </div>
-            ${this.notification.target_post.content.length > 0 ? `<span class="notification-comment-post-content" href="/post/${this.notification.target_post.id}/comments" data-link>${this.notification.target_post.content}</span>` : ''}
+            ${this.notification.target_post.content.length > 0 ? `<span class="notification-comment-post-content">${this.notification.target_post.content}</span>` : ''}
             ${this.notification.target_post.images.length > 0 ? `<div class="container-post-body-images">${this.images()}</div>` : ''}
         `;
     }
@@ -99,7 +113,7 @@ export default class Notification {
                 <div class="container-notification-comment-pic">
                     <img class="notification-comment-signature-pic" src="${this.notification.target_member.profile_pic.url}" href="/member/${this.notification.target_member.username}" data-link />
                 </div>
-                <span class="notification-comment-signature-title" href="/member/${this.notification.target_member.username}" data-link><span class="notification-comment-signature-name" href="/member/${this.notification.target_member.username}" data-link>${this.notification.target_member.name}</span> te ha seguido.</span>
+                <span class="notification-comment-signature-title"><span href="/member/${this.notification.target_member.username}" data-link class="notification-comment-signature-name">${this.notification.target_member.name}</span> te ha seguido.</span>
             </div>
         `;
     }

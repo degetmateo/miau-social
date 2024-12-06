@@ -21,14 +21,26 @@ export default class Post {
         this.post = _post;
         this.options = options || {};
         this.container = document.createElement('div');
-        
+
         this.container.classList.add('container-post');
-        this.container.setAttribute('data-link', '');
-        this.container.setAttribute('href', '/post/'+this.post.id+'/comments');
 
         this.container.appendChild(this.CreatePostHeader());
         this.container.appendChild(this.CreatePostBody());
         this.container.appendChild(this.CreatePostFooter());
+
+        this.isSelectingText = false;
+        this.container.onmousedown = () => {
+            this.isSelectingText = false;
+        }
+        this.container.onmousemove = () => {
+            this.isSelectingText = true;
+        }
+        this.container.onmouseup = (e) => {
+            if (e.target.closest('.container-post-footer-interactions-upvote')) return;
+            if (e.target.closest('.container-post-header-button-delete')) return;
+            if (e.target.closest('.container-post-header-picture')) return;
+            if (!this.isSelectingText) return navigateTo('/post/'+this.post.id+'/comments');
+        }
     }
 
     static Create (_post, options) {
@@ -139,14 +151,6 @@ export default class Post {
 
             <span class="post-header-signature-username" id="post-member-username">@${this.post.creator.username}</span>
         `;
-
-        containerHeaderSignature.onclick = (e) => {
-            e.stopPropagation();
-            navigateTo(`/member/${this.post.creator.username}`)
-        }
-
-        // containerHeaderSignature.appendChild(this.CreatePostHeaderSignatureName());
-        // containerHeaderSignature.appendChild(this.CreatePostHeaderSignatureRole());
         return containerHeaderSignature;
     }
 
@@ -156,14 +160,6 @@ export default class Post {
         const headerSignatureName = document.createElement('span');
         headerSignatureName.classList.add('post-header-signature-name');
         headerSignatureName.textContent = this.post.creator.name;
-        CreateDataLink(headerSignatureName, '/member/'+this.post.creator.username);
-
-
-        // const headerSignatureUsername = document.createElement('span');
-        // headerSignatureUsername.classList.add('post-header-signature-username');
-        // headerSignatureUsername.textContent = '@'+this.post.creator.username;
-        // containerHeaderSignatureName.appendChild(headerSignatureName);
-        // containerHeaderSignatureName.appendChild(headerSignatureUsername);
         return containerHeaderSignatureName;
     }
 
@@ -189,13 +185,14 @@ export default class Post {
             <div class="post-header-button-box"></div>
         `;
         window.app.member.id == this.post.creator.id ?
-            headerOptionsButton.addEventListener('click', () => this.CreatePopupMenuSelf()) :
-            headerOptionsButton.addEventListener('click', () => this.CreatePopupMenuOther());
+            containerHeaderButtonOptions.addEventListener('click', this.CreatePopupMenuSelf) :
+            containerHeaderButtonOptions.addEventListener('click', this.CreatePopupMenuOther);
         containerHeaderButtonOptions.appendChild(headerOptionsButton);
         return containerHeaderButtonOptions;
     }
 
-    CreatePopupMenuSelf () {
+    CreatePopupMenuSelf (e) {
+        e.stopPropagation();
         const popup = new Popup();
         popup.CreateButton("Reportar Publicación", () => {
             popup.delete();
@@ -222,7 +219,9 @@ export default class Post {
         });
     }
 
-    CreatePopupMenuOther () {
+    CreatePopupMenuOther (e) {
+        e.stopPropagation();
+
         const popup = new Popup();
         popup.CreateButton("Reportar Publicación", () => {
             popup.delete();
@@ -279,7 +278,7 @@ export default class Post {
         
         const containerFooterUpvoteIcon = document.createElement('div');
         containerFooterUpvoteIcon.classList.add('container-post-footer-upvote-icon');
-
+        this.upvoteButton = containerFooterUpvoteIcon;
         this.isUpvoted() ?
             containerFooterUpvoteIcon.appendChild(IMAGE_POST_UPVOTE_ON.cloneNode(true)) :
             containerFooterUpvoteIcon.appendChild(IMAGE_POST_UPVOTE_OFF.cloneNode(true));
@@ -289,8 +288,8 @@ export default class Post {
         this.footerUpvoteNumber.style.fontSize = '20px';
         this.footerUpvoteNumber.classList.add('post-footer-interactions-upvote-number');
     
-        containerFooterUpvoteIcon.addEventListener('click', (e) => {
-            e.stopPropagation();
+        containerFooterUpvoteIcon.addEventListener('click', (event) => {
+            event.stopPropagation();
 
             if (this.isUpvoted()) {
                 containerFooterUpvoteIcon.firstChild.remove();
@@ -358,7 +357,6 @@ export default class Post {
         const containerIcon = document.createElement('div');
         containerIcon.classList.add('container-post-footer-interactions-comments-icon');
         const ICON = IMAGE_POST_COMMENTS.cloneNode(true);
-        CreateDataLink(ICON, '/post/'+this.post.id+'/comments');
         containerIcon.appendChild(ICON);
 
         this.number = document.createElement('span');

@@ -103,17 +103,6 @@ export default class extends AbstractView {
         const containerFollows = document.getElementById('container-followed');
         containerFollows.style.cursor = 'pointer';
         containerFollows.addEventListener('click', ()=>{
-            // const pop = new Popup();
-            // for (const user of follows.followed) {
-            //     const userContainer = document.createElement('a');
-            //     userContainer.setAttribute('data-link', '');
-            //     userContainer.setAttribute('href', '/member/'+user.username_member);
-            //     userContainer.textContent =  `@${user.username_member}`;
-            //     userContainer.classList.add('popup-list-item');
-            //     userContainer.onclick = () => pop.delete();
-            //     pop.body().appendChild(userContainer);
-            // }
-
             return navigateTo(`/member/${this.user.username}/followed`);
         });
 
@@ -125,16 +114,6 @@ export default class extends AbstractView {
         const containerFollowers= document.getElementById('container-followers');
         containerFollowers.style.cursor = 'pointer';
         containerFollowers.addEventListener('click', ()=>{
-            // const pop = new Popup();
-            // for (const user of follows.followers) {
-            //     const userContainer = document.createElement('a');
-            //     userContainer.setAttribute('data-link', '');
-            //     userContainer.setAttribute('href', '/member/'+user.username_member);
-            //     userContainer.textContent =  `@${user.username_member}`;
-            //     userContainer.classList.add('popup-list-item');
-            //     userContainer.onclick = () => pop.delete();
-            //     pop.body().appendChild(userContainer);
-            // }
             return navigateTo(`/member/${this.user.username}/followers`);
         });
 
@@ -155,8 +134,8 @@ export default class extends AbstractView {
         document.getElementById('button-follow').remove();
         document.getElementById('container-button-follow').appendChild(this.createButtonUnfollow());
 
-        this.user.follows.followersCount += 1;
-
+        this.user.follows.followersCount = parseInt(this.user.follows.followersCount) + 1;
+        
         document.getElementById('span-followers').textContent = this.user.follows.followersCount === 1 ?
             1 + ' seguidor' : 
             this.user.follows.followersCount + ' seguidores';
@@ -183,7 +162,7 @@ export default class extends AbstractView {
         document.getElementById('button-unfollow').remove();
         document.getElementById('container-button-follow').appendChild(this.createButtonFollow());
 
-        this.user.follows.followersCount -= 1;
+        this.user.follows.followersCount = parseInt(this.user.follows.followersCount) - 1;
 
         document.getElementById('span-followers').textContent = this.user.follows.followersCount === 1 ?
             1 + ' seguidor' : 
