@@ -12,6 +12,7 @@ const get = async (data: {
                 n.id_notification AS id,
                 n.date_notification AS date,
                 n.type_notification AS type,
+                n.status AS status,
                 jsonb_build_object (
                     'id', n.id_member_target_notification,
                     'name', m.name_member,
@@ -52,6 +53,30 @@ const get = async (data: {
     }
 }
 
+const read = async (data: {
+    id_member: number;
+}) => {
+    try {
+        const response = await Postgres.query()`
+            UPDATE
+                notification
+            SET
+                status = 'seen'
+            WHERE
+                status = 'pending' AND
+                id_member = ${data.id_member};
+        `;
+
+        return response;
+    } catch (error) {
+        if (error instanceof GenericError) throw error;
+        else {
+            console.error(error);
+        }
+    }
+}
+
 export const notificationRepository = {
-    get
+    get,
+    read
 }

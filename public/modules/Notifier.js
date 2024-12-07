@@ -58,6 +58,18 @@ class Notifier {
         return this.entries;
     }
 
+    read = async () => {
+        for (const n of this.entries) {
+            n.status = 'seen';
+        }
+        const request = await fetch(`/api/notification`, {
+            method: "POST",
+            headers: { "Authorization": "Bearer " + localStorage.getItem('token') }
+        });
+        const response = await request.json();
+        if (!request.ok) return new Alert(response.error.message);
+    }
+
     async fetch (c) {
         const request = await fetch(`/api/notification?offset=${c}`, {
             method: "GET",
@@ -68,34 +80,8 @@ class Notifier {
         return response.data;
     }
 
-    readLast () {
-        const lastId = this.get()[0].id;
-        this.updateSave(lastId);
-    }
-
-    updateSave (_id) {
-        const saved = localStorage.getItem('notifications');
-        if (!saved) saved = "{last_id:0}";
-        const parsed = JSON.parse(saved);
-        parsed.last_id = _id;
-        this.save(parsed);
-    }
-
-    save (_save) {
-        localStorage.setItem(this.STORAGE, JSON.stringify(_save));
-    }
-
-    load () {
-        return JSON.parse(localStorage.getItem(this.STORAGE) || "{last_id:0}");
-    }
-
-    getLast () {
-        const saved = this.load();
-        return saved.last_id;
-    }
-
     getUnread () {
-        const unread = this.get().filter(n => parseInt(n.id) > parseInt(this.getLast()));
+        const unread = this.get().filter(n => n.status === 'pending');
         return unread;
     }
 

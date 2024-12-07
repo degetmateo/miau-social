@@ -12,6 +12,14 @@ const get = async (data: {
     return response;
 }
 
+const read = async (data: {
+    id_member: number;
+}) => {
+    const response = await notificationRepository.read(data);
+    return response;
+}
+
 export const notificationService = {
-    get
+    get,
+    read
 }

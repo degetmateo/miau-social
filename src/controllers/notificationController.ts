@@ -17,6 +17,20 @@ const get = async (req: Request, res: Response) => {
     }
 }
 
+const read = async (req: Request, res: Response) => {
+    try {
+        const response = await notificationService.read({
+            id_member: Number(req.member.id)
+        });
+
+        ResponseOk(res, RESPONSES.OK, response);
+    } catch (error) {
+        console.error(error);
+        ResponseError(res, error);
+    }
+}
+
 export const notificationController = {
-    get
+    get,
+    read
 }

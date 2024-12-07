@@ -4,8 +4,6 @@ import Listener from "./modules/Listener.js";
 import Notifier from "./modules/Notifier.js";
 import { navigateTo, router } from "./router.js";
 
-if (!localStorage.getItem('notifications')) localStorage.setItem('notifications', JSON.stringify({ last_id: 0 }));
-
 window.addEventListener("popstate", () => router.resolve());
 
 document.addEventListener('DOMContentLoaded', async () => {

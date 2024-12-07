@@ -48,20 +48,17 @@ export default class NotificationsView extends AbstractView {
         this.viewContainer.appendChild(this.main);
 
         this.drawNotifications(await window.app.notifier.fetch(0));
+        window.app.notifier.read();
         this.eventScroll();
     }
 
     async drawNotifications (_entries) {
-        const unread = window.app.notifier.getUnread();
         this.container_notifications.innerHTML = '';
         for (const n of _entries) {
             const notification = new Notification(n);
-            if (unread.find(u => u.id === n.id)) notification.setUnread();
+            if (n.status === 'pending') notification.setUnread();
             this.container_notifications.appendChild(notification.getElement());
         }
-
-        const ns = window.app.notifier.get();
-        window.app.notifier.updateSave(ns[0] ? ns[0].id : 0);
     }
 
     eventScroll () {
