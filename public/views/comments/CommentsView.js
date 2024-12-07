@@ -141,8 +141,11 @@ export default class CommentsView extends AbstractView {
                 new Alert("Respuesta enviada.");
                 this.commentsContainer.innerHTML = '';
                 this.CreateMainComments();
-                this.posts[0].increaseComments();
-                this.posts[0].drawCommentsCount();
+                const p = this.posts.find(e => e.post.id === this.params.id_post);
+                if (p) {
+                    p.increaseComments();
+                    p.drawCommentsCount();
+                }
             } catch (error) {
                 console.error(error);
                 return new Alert("Ha ocurrido un error.");

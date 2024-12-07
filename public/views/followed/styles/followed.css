@@ -1,0 +1,82 @@
+.view-followed {
+    display: grid;
+    grid-template-columns: 0.4fr 1fr 0.4fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-areas: 
+        "nav main aside"
+        "nav main aside"
+        "nav main aside";
+
+    width: 100%;
+    height: 100%;
+}
+
+.container-followed {
+    grid-area: main;
+    height: 100%;
+    border-right: 1px solid gray;
+    border-left: 1px solid gray;
+    overflow-y: scroll;
+}
+
+@media (max-width: 768px) {
+    .view-followed {    
+        grid-template-rows: 1fr 1fr 50px;
+        grid-template-areas: 
+            "main main main"
+            "main main main"
+            "nav nav nav"
+        ;
+    }
+    .container-followed {
+        border: none;
+    }
+}
+
+.followed-container {
+    cursor: pointer;
+
+    display: grid;
+    grid-template-areas: 
+        'icon signature'
+        'icon bio'
+    ;
+    justify-content: start;
+    gap: 10px;
+    padding: 10px;
+}
+
+.followed-container:hover {
+    background-color: var(--hover-color);
+}
+
+.followed-icon-container {
+    grid-area: icon;
+
+    width: 50px;
+    height: 50px;
+    border: 1px solid #FFF;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.followed-icon {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.followed-signature-container {
+    grid-area: signature;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.followed-signature-username {
+    color: rgb(92, 92, 92);
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

@@ -99,7 +99,7 @@ export default class Notification {
                 <div class="container-notification-comment-pic">
                     <img class="notification-comment-signature-pic" src="${this.notification.target_member.profile_pic.url}" href="/member/${this.notification.target_member.username}" data-link />
                 </div>
-                <span class="notification-comment-signature-title"><span class="notification-comment-signature-name">${this.notification.target_member.name}</span> ha indicado que le gusta tu publicación.</span>
+                <span class="notification-comment-signature-title"><span class="notification-comment-signature-name" href="/member/${this.notification.target_member.username}" data-link>${this.notification.target_member.name}</span> ha indicado que le gusta tu publicación.</span>
             </div>
             ${this.notification.target_post.content.length > 0 ? `<span class="notification-comment-post-content">${this.notification.target_post.content}</span>` : ''}
             ${this.notification.target_post.images.length > 0 ? `<div class="container-post-body-images">${this.images()}</div>` : ''}

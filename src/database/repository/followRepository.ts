@@ -49,7 +49,87 @@ const unfollow = async (data: {
     }
 }
 
+const getFollowed = async (data: {
+    username: string;
+    offset: number;
+}) => {
+    try {
+        const response = await Postgres.query()`
+            SELECT
+                m2.id_member AS id,
+                m2.name_member AS name,
+                m2.username_member AS username,
+                m2.role_member AS role,
+                m2.bio_member AS bio,
+                jsonb_build_object (
+                    'url', m2.profile_pic_url_member
+                ) AS profile_pic
+            FROM
+                follow f, member m1, member m2
+            WHERE
+                m1.username_member = ${data.username} AND
+                f.id_member_follower = m1.id_member AND
+                f.id_member_followed = m2.id_member
+            ORDER BY
+                m2.id_member DESC
+            OFFSET
+                ${data.offset}
+            LIMIT
+                20;
+        `;
+
+        return response;
+    } catch (error) {
+        if (error instanceof GenericError) throw error;
+        else {
+            console.error(error);
+            throw new DatabaseError();
+        }
+    }
+}
+
+const getFollowers = async (data: {
+    username: string;
+    offset: number;
+}) => {
+    try {
+        const response = await Postgres.query()`
+            SELECT
+                m2.id_member AS id,
+                m2.username_member AS username,
+                m2.name_member AS name,
+                m2.role_member AS role,
+                m2.bio_member AS bio,
+                jsonb_build_object (
+                    'url', m2.profile_pic_url_member
+                ) AS profile_pic
+            FROM
+                follow f, member m1, member m2
+            WHERE
+                m1.username_member = ${data.username} AND
+                f.id_member_follower = m2.id_member AND
+                f.id_member_followed = m1.id_member
+            ORDER BY
+                m2.id_member DESC
+            OFFSET
+                ${data.offset}
+            LIMIT
+                20;
+        `;
+
+        return response;
+    } catch (error) {
+        if (error instanceof GenericError) throw error;
+        else {
+            console.error(error);
+            throw new DatabaseError();
+        }
+    }
+}
+
 export const followRepository = {
     follow,
-    unfollow
+    unfollow,
+    getFollowed,
+    getFollowers
 }

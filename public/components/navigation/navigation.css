@@ -1,17 +1,15 @@
 .nav {
     grid-area: nav;
-
+    position: sticky;
+    left: 0;
+    top: 0;
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    gap: 10px;
-
-    padding: 20px;
 }
 
 .nav-button {
     padding: 15px;
-
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -19,7 +17,7 @@
 }
 
 .nav-button:hover {
-    background-color: gray;
+    background-color: var(--hover-color);
 }
 
 .nav-button-status--test {
@@ -76,9 +74,10 @@
 @media (max-width: 768px) {
     .nav {
         background-color: var(--primary-color);
-        border-top: 1px solid gray;
+        border-top: 1px solid var(--border-color);
 
         position: fixed;
+        top: auto;
         bottom: 0;
         left: 0;
 

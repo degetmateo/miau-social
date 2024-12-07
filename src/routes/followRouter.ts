@@ -8,4 +8,6 @@ router.post('/member/:id_member(\\d+)', Authorization.Everyone, followController
 
 router.delete('/member/:id_member(\\d+)', Authorization.Everyone, followController.unfollow);
 
+router.get('/', Authorization.Everyone, followController.get);
+
 export default router;

@@ -21,7 +21,23 @@ const unfollow = async (data: {
     return response;
 }
 
+const get = async (data: {
+    username: string;
+    type: 'followed' | 'followers';
+    offset: number;
+}) => {
+    if (!data.username) throw new InvalidArgumentError("Username must be especified.");
+    if (!['followed', 'followers'].includes(data.type)) throw new InvalidArgumentError("Type is invalid.")
+    if (!data.offset || isNaN(data.offset) || data.offset <= 0) data.offset = 0;
+    const response = data.type === 'followers' ?
+        await followRepository.getFollowers(data) :
+        await followRepository.getFollowed(data);
+
+    return response;
+}
+
 export const followService = {
     follow,
-    unfollow
+    unfollow,
+    get
 }

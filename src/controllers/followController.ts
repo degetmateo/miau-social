@@ -31,7 +31,23 @@ const unfollow = async (req: Request, res: Response) => {
     }
 }
 
+const get = async (req: Request, res: Response) => {
+    try {
+        const response = await followService.get({
+            username: req.query.username as string,
+            type: req.query.type as 'followed' | 'followers',
+            offset: Number(req.query.offset)
+        });
+
+        ResponseOk(res, RESPONSES.OK, response);
+    } catch (error) {
+        console.error(error);
+        ResponseError(res, error);
+    }
+}
+
 export const followController = {
     follow,
-    unfollow
+    unfollow,
+    get
 }
