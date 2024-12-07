@@ -9,9 +9,6 @@ const getByUsername = async (data: {
     username: string;
 }) => {
     if (!data.username) throw new InvalidArgumentError("Username not found.");
-    if (data.username.length < PARAMETERS.PASSWORD_MIN_LENGTH) throw new NotFoundError('Username not found.');
-    if (data.username.length > PARAMETERS.USERNAME_MAX_LENGTH) throw new NotFoundError('Username not found.');
-
     const response = await memberRepository.getByUsername(data);
     return response;
 }

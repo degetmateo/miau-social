@@ -23,7 +23,6 @@ export default class extends AbstractView {
 
         this.limit = 20;
         this.offset = 0;
-
         const appContainer = document.getElementById('app');
         appContainer.innerHTML = VIEW;
         document.getElementById('container-view').appendChild(window.app.nav.getNode());
@@ -32,7 +31,6 @@ export default class extends AbstractView {
         const response = await request.json();
 
         if (!request.ok) {
-            if (request.status === 404) return navigateTo('/404');
             return new Alert(response.error.message);
         }
 

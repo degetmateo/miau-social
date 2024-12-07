@@ -11,10 +11,17 @@ window.addEventListener("popstate", () => router.resolve());
 document.addEventListener('DOMContentLoaded', async () => {
     document.body.addEventListener("click", (e) => {
         e.stopPropagation();
-        if (e.target.matches("[data-link]") || e.target.hasAttribute('data-link')) {
+        // if (e.target.matches("[data-link]") || e.target.hasAttribute('data-link')) {
+        //     e.preventDefault();
+        //     navigateTo(e.target.href || e.target.getAttribute('href'));
+        // };
+
+        const linkElement = e.target.closest("[data-link]");
+
+        if (linkElement) {
             e.preventDefault();
-            navigateTo(e.target.href || e.target.getAttribute('href'));
-        };
+            navigateTo(linkElement.href || linkElement.getAttribute('href'));
+        }
     });
 
     const token = localStorage.getItem('token');

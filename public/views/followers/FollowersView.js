@@ -74,18 +74,18 @@ export default class extends AbstractView {
 
     drawFollowed = (members) => {
         for (const member of members) {
-            this.followedContainer.appendChild(new Followed(member).container);
+            this.followedContainer.appendChild(new Follower(member).getElement());
         }
     }
 }
 
-class Followed {
-    container;
-
+class Follower {
     constructor (member) {
         this.member = member;
         this.container = document.createElement('div');
         this.container.classList.add('followed-container');
+        this.container.setAttribute('data-link', '');
+        this.container.setAttribute('href', '/member/'+this.member.username);
         this.container.innerHTML = `
             <div class="followed-icon-container">
                 <img src="${this.member.profile_pic.url || URL_NO_IMAGE}" class="followed-icon" />
@@ -95,34 +95,9 @@ class Followed {
                 <span class="followed-signature-username">@${this.member.username}</span>
             </div>
         `;
-
-        this.isSelectingText = false;
-        this.container.onmousedown = () => {
-            this.isSelectingText = false;
-        }
-        this.container.onmousemove = () => {
-            this.isSelectingText = true;
-        }
-        this.container.onmouseup = () => {
-            if (!this.isSelectingText) return navigateTo('/member/'+this.member.username);
-        }
     }
-}
 
-class ClickableComponent {
-    container;
-
-    constructor (url) {
-        this.container = document.createElement('div');
-        this.isSelectingText = false;
-        this.container.onmousedown = () => {
-            this.isSelectingText = false;
-        }
-        this.container.onmousemove = () => {
-            this.isSelectingText = true;
-        }
-        this.container.onmouseup = () => {
-            if (!this.isSelectingText) return navigateTo(url);
-        }
+    getElement = () => {
+        return this.container;
     }
 }
