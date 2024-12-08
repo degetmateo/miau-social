@@ -7,10 +7,8 @@ import Alert from "../components/alert/alert.js";
 import {navigateTo} from "../router.js";
 
 export default class extends AbstractView {
-    constructor (params) {
+    constructor () {
         super();
-        this.params = params;
-        this.init(this.params);
     }
 
     async init (params) {
@@ -91,7 +89,7 @@ export default class extends AbstractView {
 
         const containerPfp = document.getElementById('container-pfp');
         containerPfp.innerHTML = `
-            <img class="img-profile" src="${this.user.profile_pic.url || URL_NO_IMAGE}" />
+            <img class="img-profile" src="${this.user.icon_url || URL_NO_IMAGE}" />
         `;
         const follows = this.user.follows;
 

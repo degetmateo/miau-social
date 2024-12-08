@@ -18,9 +18,7 @@ const login = async (data: {
                 password_member AS password,
                 name_member AS name,
                 role_member AS role,
-                jsonb_build_object (
-                    'url', profile_pic_url_member
-                ) AS profile_pic
+                icon_url
             FROM
                 member
             WHERE
@@ -85,9 +83,7 @@ const signin = async (data: {
                     password_member AS password,
                     name_member AS name,
                     role_member AS role,
-                    jsonb_build_object (
-                        'url', profile_pic_url_member
-                    ) AS profile_pic
+                    icon_url
                 FROM
                     member
                 WHERE
@@ -124,9 +120,7 @@ const getMemberData = async (data: {
                 username_member AS username,
                 name_member AS name,
                 role_member AS role,
-                jsonb_build_object (
-                    'url', profile_pic_url_member
-                ) AS profile_pic
+                icon_url
             FROM
                 member
             WHERE

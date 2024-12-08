@@ -23,7 +23,7 @@ const getById = async (data: {
                     name_member,
                     date_creation_member,
                     bio_member,
-                    profile_pic_url_member,
+                    icon_url,
                     role_member
                 FROM
                     member
@@ -95,9 +95,7 @@ const getByUsername = async (data: {
                 m.role_member AS role,
                 m.bio_member AS bio,
                 m.date_creation_member AS created_at,
-                jsonb_build_object (
-                    'url', m.profile_pic_url_member
-                ) AS profile_pic,
+                m.icon_url,
                 (SELECT COUNT(*) FROM 
                     follow f 
                 WHERE
@@ -269,7 +267,7 @@ const updateProfilePicture = async (data: {
             UPDATE
                 member
             SET
-                profile_pic_url_member = ${data.url}
+                icon_url = ${data.url}
             WHERE   
                 id_member = ${data.id_member};
         `;

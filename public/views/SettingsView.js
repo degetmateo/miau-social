@@ -2,13 +2,10 @@ import AbstractView from "./AbstractView.js";
 import { navigateTo } from '../router.js';
 import {loadImage} from "../helpers.js";
 import Alert from "../components/alert/alert.js";
-import Navigation from "../components/navigation/navigation.js";
 
 export default class extends AbstractView {
-    constructor (params) {
+    constructor () {
         super();
-        this.params = params;
-        this.init(this.params);
     }
 
     async init (params) {
@@ -193,7 +190,7 @@ export default class extends AbstractView {
             return new Alert(response.error.message);
         }
         
-        window.app.member.profile_pic.url = image.src;
+        window.app.member.icon_url = image.src;
         
         new Alert('Imagen de perfil actualizada.');
     }

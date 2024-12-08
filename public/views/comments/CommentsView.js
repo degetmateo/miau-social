@@ -7,10 +7,8 @@ import AbstractView from "../AbstractView.js";
 import {CreateButtonTenor} from "../HomeView.js";
 
 export default class CommentsView extends AbstractView {
-    constructor (params) {
+    constructor () {
         super();
-        this.params = params;
-        this.init(this.params);
     }
 
     async init (params) {
@@ -38,7 +36,7 @@ export default class CommentsView extends AbstractView {
             <div class="container-comments-main-form-post-create">
                 <div class="container-comments-main-form-post-create-div">
                     <div class="container-comments-main-form-post-create-profile_pic">
-                        <img class="comments-main-form-post-create-profile_pic" id="comments-main-form-post-create-profile_pic" src="${window.app.member.profile_pic.url}" />
+                        <img class="comments-main-form-post-create-profile_pic" id="comments-main-form-post-create-profile_pic" src="${window.app.member.icon_url}" />
                     </div>
 
                     <div class="container-comments-main-form-post-create-body">

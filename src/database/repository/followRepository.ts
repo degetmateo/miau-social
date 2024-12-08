@@ -61,9 +61,7 @@ const getFollowed = async (data: {
                 m2.username_member AS username,
                 m2.role_member AS role,
                 m2.bio_member AS bio,
-                jsonb_build_object (
-                    'url', m2.profile_pic_url_member
-                ) AS profile_pic
+                m2.icon_url
             FROM
                 follow f, member m1, member m2
             WHERE
@@ -100,9 +98,7 @@ const getFollowers = async (data: {
                 m2.name_member AS name,
                 m2.role_member AS role,
                 m2.bio_member AS bio,
-                jsonb_build_object (
-                    'url', m2.profile_pic_url_member
-                ) AS profile_pic
+                m2.icon_url
             FROM
                 follow f, member m1, member m2
             WHERE

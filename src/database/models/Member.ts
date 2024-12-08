@@ -6,8 +6,8 @@ export type Member = {
     password_member: string;
     token_member: string;
     date_creation_member: Date;
-    profile_pic_url_member: string;
-    banner_url_member: string;
+    icon_url: string;
+    banner_url: string;
     role_member: Role;
 }
 

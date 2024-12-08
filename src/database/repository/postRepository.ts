@@ -35,9 +35,7 @@ const get = async (data: {
                     'name', m.name_member,
                     'username', m.username_member,
                     'role', m.role_member,
-                    'profile_pic', jsonb_build_object (
-                        'url', m.profile_pic_url_member
-                    )
+                    'icon_url', m.icon_url
                 ) AS creator
             FROM
                 post p
@@ -92,9 +90,7 @@ const getFollowing = async (data: {
                     'name', m.name_member,
                     'username', m.username_member,
                     'role', m.role_member,
-                    'profile_pic', jsonb_build_object (
-                        'url', m.profile_pic_url_member
-                    )
+                    'icon_url', m.icon_url
                 ) AS creator
             FROM
                 post p
@@ -146,9 +142,7 @@ const getById = async (data: {
                     'name', m.name_member,
                     'username', m.username_member,
                     'role', m.role_member,
-                    'profile_pic', jsonb_build_object (
-                        'url', m.profile_pic_url_member
-                    )
+                    'icon_url', m.icon_url
                 ) AS creator
             FROM
                 post p
@@ -195,9 +189,7 @@ const getComments = async (data: {
                     'name', m.name_member,
                     'username', m.username_member,
                     'role', m.role_member,
-                    'profile_pic', jsonb_build_object (
-                        'url', m.profile_pic_url_member
-                    )
+                    'icon_url', m.icon_url
                 ) AS creator
             FROM
                 post p
@@ -247,9 +239,7 @@ const getThread = async (data: {
                         'name', member_original.name_member,
                         'username', member_original.username_member,
                         'role', member_original.role_member,
-                        'profile_pic', jsonb_build_object (
-                            'url', member_original.profile_pic_url_member
-                        )
+                        'icon_url', member_original.icon_url
                     ) AS creator
                 FROM 
                     post original
@@ -280,9 +270,7 @@ const getThread = async (data: {
                         'name', member_replied.name_member,
                         'username', member_replied.username_member,
                         'role', member_replied.role_member,
-                        'profile_pic', jsonb_build_object (
-                            'url', member_replied.profile_pic_url_member
-                        )
+                        'icon_url', member_replied.icon_url
                     ) AS creator
                 FROM 
                     post replied

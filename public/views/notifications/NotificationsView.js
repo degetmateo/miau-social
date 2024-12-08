@@ -2,10 +2,8 @@ import Notification from "../../components/notification/notification.js";
 import AbstractView from "../AbstractView.js";
 
 export default class NotificationsView extends AbstractView {
-    constructor (params) {
+    constructor () {
         super();
-        this.params = params;
-        this.init(this.params);
     }
 
     onVisibilityChange = () => {

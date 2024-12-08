@@ -117,7 +117,7 @@ export default class Post {
         const containerHeaderPicture = document.createElement('div');
         containerHeaderPicture.classList.add('container-post-header-picture');
         const headerPicture = new Image();
-        headerPicture.src = this.post.creator.profile_pic.url || URL_NO_IMAGE;
+        headerPicture.src = this.post.creator.icon_url || URL_NO_IMAGE;
         headerPicture.classList.add('post-header-picture');
 
         headerPicture.onclick = (e) => {

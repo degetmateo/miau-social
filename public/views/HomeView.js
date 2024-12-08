@@ -7,11 +7,11 @@ import Post from "../components/post/Post.js";
 import {URL_NO_IMAGE} from "../consts.js";
 
 export default class extends AbstractView {
-    constructor (params) {
+    constructor () {
         super();
         this.cooldown = false;
-        this.params = params;
-        this.init(this.params);
+        this.limit = 20;
+        this.observerId = 'home';
     }
 
     onVisibilityChange = () => {
@@ -28,9 +28,8 @@ export default class extends AbstractView {
     async init (params) {
         this.params = params;
         this.clear();
-
         this.setTitle('Inicio');
-        this.limit = 20;
+
         this.offset = 0;
         this.mode = 'global';
 
@@ -38,7 +37,6 @@ export default class extends AbstractView {
             images: new Array()
         }
 
-        this.observerId = 'home';
         window.app.listener.removeObserver(this.observerId);
         window.app.listener.addObserver(this);
 
@@ -125,7 +123,7 @@ export default class extends AbstractView {
 
     CreateMainForm () {
         const profile_pic = document.getElementById('home-main-form-post-create-profile_pic');
-        profile_pic.src = window.app.member.profile_pic.url || URL_NO_IMAGE;
+        profile_pic.src = window.app.member.icon_url || URL_NO_IMAGE;
 
         const name = document.getElementById('home-main-form-post-create-name');
         name.textContent = window.app.member.name;

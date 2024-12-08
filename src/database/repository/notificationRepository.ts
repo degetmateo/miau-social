@@ -18,9 +18,7 @@ const get = async (data: {
                     'name', m.name_member,
                     'username', m.username_member,
                     'role', m.role_member,
-                    'profile_pic', jsonb_build_object (
-                        'url', m.profile_pic_url_member
-                    )
+                    'icon_url', m.icon_url
                 ) AS target_member,
                 jsonb_build_object (
                     'id', n.id_post_target_notification,

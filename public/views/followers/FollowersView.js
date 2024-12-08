@@ -5,10 +5,8 @@ import {followService} from "../../services/followService.js";
 import AbstractView from "../AbstractView.js";
 
 export default class extends AbstractView {
-    constructor (params) {
+    constructor () {
         super();
-        this.params = params;
-        this.init(this.params);
     }
 
     async init (params) {
@@ -88,7 +86,7 @@ class Follower {
         this.container.setAttribute('href', '/member/'+this.member.username);
         this.container.innerHTML = `
             <div class="followed-icon-container">
-                <img src="${this.member.profile_pic.url || URL_NO_IMAGE}" class="followed-icon" />
+                <img src="${this.member.icon_url || URL_NO_IMAGE}" class="followed-icon" />
             </div>
             <div class="followed-signature-container">
                 <span class="followed-signature-name">${this.member.name}</span>
