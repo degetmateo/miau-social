@@ -4,8 +4,11 @@
     left: 50%;
     transform: translate(-50%, 0);
     padding: 10px;
+    text-align: center;
     border-radius: 10px;
     border: 2px solid var(--accent-color);
     background-color: var(--primary-color);
-    width: max-content;
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }

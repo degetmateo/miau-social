@@ -35,12 +35,14 @@ const get = async (data: {
                     'name', m.name_member,
                     'username', m.username_member,
                     'role', m.role_member,
-                    'icon_url', m.icon_url
+                    'icon_url', icon.url
                 ) AS creator
             FROM
                 post p
             LEFT JOIN
                 member m ON p.id_member = m.id_member
+            LEFT JOIN
+                image icon ON icon.member_id = m.id_member AND icon.type = 'icon'
             WHERE
                 p.id_post_replied IS NULL AND
                 (${data.id_member}::TEXT IS NULL OR p.id_member = ${data.id_member}) AND
@@ -90,12 +92,14 @@ const getFollowing = async (data: {
                     'name', m.name_member,
                     'username', m.username_member,
                     'role', m.role_member,
-                    'icon_url', m.icon_url
+                    'icon_url', icon.url
                 ) AS creator
             FROM
                 post p
             LEFT JOIN
                 member m ON p.id_member = m.id_member
+            LEFT JOIN
+                image icon ON icon.member_id = m.id_member AND icon.type = 'icon'
             LEFT JOIN
                 follow f ON f.id_member_followed = p.id_member
             WHERE
@@ -142,12 +146,14 @@ const getById = async (data: {
                     'name', m.name_member,
                     'username', m.username_member,
                     'role', m.role_member,
-                    'icon_url', m.icon_url
+                    'icon_url', icon.url
                 ) AS creator
             FROM
                 post p
             LEFT JOIN
                 member m ON p.id_member = m.id_member
+            LEFT JOIN
+                image icon ON icon.member_id = m.id_member AND icon.type = 'icon'
             WHERE
                 p.id_post = ${data.id_post};
         `;
@@ -189,12 +195,14 @@ const getComments = async (data: {
                     'name', m.name_member,
                     'username', m.username_member,
                     'role', m.role_member,
-                    'icon_url', m.icon_url
+                    'icon_url', icon.url
                 ) AS creator
             FROM
                 post p
             LEFT JOIN
                 member m ON p.id_member = m.id_member
+            LEFT JOIN
+                image icon ON icon.member_id = m.id_member AND icon.type = 'icon'
             WHERE
                 p.id_post_replied = ${data.id_post}
             ORDER BY 
@@ -239,12 +247,14 @@ const getThread = async (data: {
                         'name', member_original.name_member,
                         'username', member_original.username_member,
                         'role', member_original.role_member,
-                        'icon_url', member_original.icon_url
+                        'icon_url', icon_original.url
                     ) AS creator
                 FROM 
                     post original
                 LEFT JOIN
                     member member_original ON original.id_member = member_original.id_member
+                LEFT JOIN
+                    image icon_original ON icon_original.member_id = member_original.id_member AND icon_original.type = 'icon'
                 WHERE 
                     original.id_post = ${data.id_post}
                 
@@ -270,12 +280,14 @@ const getThread = async (data: {
                         'name', member_replied.name_member,
                         'username', member_replied.username_member,
                         'role', member_replied.role_member,
-                        'icon_url', member_replied.icon_url
+                        'icon_url', icon_replied.url
                     ) AS creator
                 FROM 
                     post replied
                 LEFT JOIN
                     member member_replied ON replied.id_member = member_replied.id_member
+                LEFT JOIN
+                    image icon_replied ON icon_replied.member_id = member_replied.id_member AND icon_replied.type = 'icon'
                 INNER JOIN 
                     thread ph ON replied.id_post = ph.id_post_replied
             )
@@ -357,6 +369,39 @@ const remove = async (data: {
     }
 }
 
+const removeAdmin = async (data: {
+    id_post: number;
+}) => {
+    try {
+        const response = await Postgres.query().begin(async transaction => {
+            await transaction`
+                DELETE FROM 
+                    upvote
+                WHERE
+                    id_post = ${data.id_post};
+            `;
+
+            const qDelete = await transaction`
+                DELETE FROM
+                    post
+                WHERE
+                    id_post = ${data.id_post}
+                RETURNING *;
+            `;
+
+            if (!qDelete[0]) throw new DatabaseError("Ha ocurrido un error inesperado.");
+        });
+
+        return response;
+    } catch (error) {
+        if (error instanceof GenericError) throw error;
+        else {
+            console.error(error);
+            throw new DatabaseError();
+        }
+    }
+}
+
 export const postRepository = {
     get,
     getFollowing,
@@ -364,5 +409,6 @@ export const postRepository = {
     getComments,
     getThread,
     post,
-    remove
+    remove,
+    removeAdmin
 }

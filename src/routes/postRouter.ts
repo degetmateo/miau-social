@@ -18,4 +18,6 @@ router.post('/', Authorization.Everyone, postController.post);
 
 router.delete('/:id_post(\\d+)', Authorization.Everyone, postController.remove);
 
+router.delete('/:id_post(\\d+)/admin', Authorization.Custom(['admin']), postController.removeAdmin);
+
 export default router;

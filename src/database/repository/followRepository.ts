@@ -61,9 +61,11 @@ const getFollowed = async (data: {
                 m2.username_member AS username,
                 m2.role_member AS role,
                 m2.bio_member AS bio,
-                m2.icon_url
+                icon.url AS icon_url
             FROM
                 follow f, member m1, member m2
+            LEFT JOIN
+                image icon ON icon.member_id = m2.id_member AND icon.type = 'icon'
             WHERE
                 m1.username_member = ${data.username} AND
                 f.id_member_follower = m1.id_member AND
@@ -98,9 +100,11 @@ const getFollowers = async (data: {
                 m2.name_member AS name,
                 m2.role_member AS role,
                 m2.bio_member AS bio,
-                m2.icon_url
+                icon.url AS icon_url
             FROM
                 follow f, member m1, member m2
+            LEFT JOIN
+                image icon ON icon.member_id = m2.id_member AND icon.type = 'icon'
             WHERE
                 m1.username_member = ${data.username} AND
                 f.id_member_follower = m2.id_member AND

@@ -1,6 +1,7 @@
 import { memberRepository } from "../database/repository/memberRepository";
 import InvalidArgumentError from "../errors/InvalidArgumentError";
 import NotFoundError from "../errors/NotFoundError";
+import ImgBB from "../helpers/ImgBB";
 import Password from "../helpers/Password";
 import { PARAMETERS } from "../static/parameters";
 
@@ -74,13 +75,45 @@ const updatePassword = async (data: {
     return response;
 }
 
-const updateProfilePicture = async (data: {
+const updateIconURL = async (data: {
     id_member: number;
     url: string;
 }) => {    
     if (!data.url) throw new InvalidArgumentError("Debes ingresar el enlace hacia tu imagen.");
 
-    const response = await memberRepository.updateProfilePicture(data);
+    const response = await memberRepository.updateIcon({
+        id_member: data.id_member,
+        source: 'other',
+        url: data.url,
+        delete_url: null,
+        imgbb_id: null
+    });
+    
+    return response;
+}
+
+const updateIconImage = async (data: {
+    id_member: number;
+    buffer: Express.Multer.File['buffer'];
+}) => {
+    const apiResponse: {
+        data: {
+            id: string;
+            url: string;
+            delete_url: string;
+        }
+    } = await ImgBB.upload({
+        buffer: data.buffer
+    });
+
+    const response = await memberRepository.updateIcon({
+        id_member: data.id_member,
+        url: apiResponse.data.url,
+        imgbb_id: apiResponse.data.id,
+        delete_url: apiResponse.data.delete_url,
+        source: 'imgbb'
+    });
+
     return response;
 }
 
@@ -90,5 +123,6 @@ export const memberService = {
     updateUsername,
     updateBio,
     updatePassword,
-    updateProfilePicture
+    updateIconURL,
+    updateIconImage
 }

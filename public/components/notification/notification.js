@@ -1,3 +1,4 @@
+import {URL_NO_IMAGE} from "../../consts.js";
 import {navigateTo} from "../../router.js";
 
 export default class Notification {
@@ -64,7 +65,7 @@ export default class Notification {
         this.container.innerHTML = `
             <div class="container-notification-comment-signature">
                 <div class="container-notification-comment-pic">
-                    <img class="notification-comment-signature-pic" src="${this.notification.target_member.icon_url}" href="/member/${this.notification.target_member.username}" data-link />
+                    <img class="notification-comment-signature-pic" src="${this.notification.target_member.icon_url || URL_NO_IMAGE}" href="/member/${this.notification.target_member.username}" data-link />
                 </div>
                 <span class="notification-comment-signature-title"><span class="notification-comment-signature-name" href="/member/${this.notification.target_member.username}" data-link>${this.notification.target_member.name}</span> te ha respondido:</span>
             </div>
@@ -95,7 +96,7 @@ export default class Notification {
         this.container.innerHTML = `
             <div class="container-notification-comment-signature">
                 <div class="container-notification-comment-pic">
-                    <img class="notification-comment-signature-pic" src="${this.notification.target_member.icon_url}" href="/member/${this.notification.target_member.username}" data-link />
+                    <img class="notification-comment-signature-pic" src="${this.notification.target_member.icon_url || URL_NO_IMAGE}" href="/member/${this.notification.target_member.username}" data-link />
                 </div>
                 <span class="notification-comment-signature-title"><span class="notification-comment-signature-name" href="/member/${this.notification.target_member.username}" data-link>${this.notification.target_member.name}</span> ha indicado que le gusta tu publicación.</span>
             </div>
@@ -109,7 +110,7 @@ export default class Notification {
         this.container.innerHTML = `
             <div class="container-notification-comment-signature">
                 <div class="container-notification-comment-pic">
-                    <img class="notification-comment-signature-pic" src="${this.notification.target_member.icon_url}" href="/member/${this.notification.target_member.username}" data-link />
+                    <img class="notification-comment-signature-pic" src="${this.notification.target_member.icon_url || URL_NO_IMAGE}" href="/member/${this.notification.target_member.username}" data-link />
                 </div>
                 <span class="notification-comment-signature-title"><span href="/member/${this.notification.target_member.username}" data-link class="notification-comment-signature-name">${this.notification.target_member.name}</span> te ha seguido.</span>
             </div>

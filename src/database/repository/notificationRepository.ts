@@ -18,7 +18,7 @@ const get = async (data: {
                     'name', m.name_member,
                     'username', m.username_member,
                     'role', m.role_member,
-                    'icon_url', m.icon_url
+                    'icon_url', icon.url
                 ) AS target_member,
                 jsonb_build_object (
                     'id', n.id_post_target_notification,
@@ -31,6 +31,8 @@ const get = async (data: {
                 notification n
             JOIN 
                 member m ON m.id_member = n.id_member_target_notification
+            LEFT JOIN
+                image icon ON icon.member_id = m.id_member AND icon.type = 'icon'
             LEFT JOIN 
                 post p ON (n.type_notification IN ('comment', 'upvote') AND n.id_post_target_notification = p.id_post)
             WHERE 

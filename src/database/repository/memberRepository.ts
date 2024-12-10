@@ -18,17 +18,19 @@ const getById = async (data: {
         const T = async (_transaction: postgres.TransactionSql<{}>) => {
             const qMember = await _transaction`
                 SELECT 
-                    id_member,
-                    username_member,
-                    name_member,
-                    date_creation_member,
-                    bio_member,
-                    icon_url,
-                    role_member
+                    m.id_member,
+                    m.username_member,
+                    m.name_member,
+                    m.date_creation_member,
+                    m.bio_member,
+                    icon.url AS icon_url,
+                    m.role_member
                 FROM
-                    member
+                    member m 
+                LEFT JOIN
+                    image icon ON icon.member_id = m.id_member AND icon.type = 'icon'
                 WHERE
-                    id_member = ${data.id};
+                    m.id_member = ${data.id};
             `;
 
             if (!qMember[0]) throw new NotFoundError("No se ha encontrado al miembro.");
@@ -95,7 +97,7 @@ const getByUsername = async (data: {
                 m.role_member AS role,
                 m.bio_member AS bio,
                 m.date_creation_member AS created_at,
-                m.icon_url,
+                icon.url AS icon_url,
                 (SELECT COUNT(*) FROM 
                     follow f 
                 WHERE
@@ -113,6 +115,8 @@ const getByUsername = async (data: {
                 ) as is_followed
             FROM
                 member m
+            LEFT JOIN
+                image icon ON icon.member_id = m.id_member AND icon.type = 'icon'
             WHERE
                 m.username_member = ${data.username};
         `;
@@ -282,6 +286,65 @@ const updateProfilePicture = async (data: {
     }
 }
 
+const updateIcon = async (data: {
+    id_member: number;
+    imgbb_id?: string;
+    url: string;
+    delete_url?: string;
+    source: 'imgbb' | 'other';
+}) => {
+    try {
+        let response: any;
+        await Postgres.query().begin(async transaction => {
+            response = await transaction`
+                UPDATE  
+                    image
+                SET
+                    imgbb_id = ${data.imgbb_id || null},
+                    url = ${data.url},
+                    delete_url = ${data.delete_url || null},
+                    source = ${data.source}
+                WHERE
+                    member_id = ${data.id_member} AND
+                    type = 'icon'
+                RETURNING 
+                    url;
+            `;
+
+            if (!response[0]) {
+                response = await transaction`
+                    INSERT INTO image (
+                        source,
+                        imgbb_id,
+                        url,
+                        delete_url,
+                        type,
+                        member_id,
+                        post_id
+                    ) VALUES (
+                        ${data.source},
+                        ${data.imgbb_id || null},
+                        ${data.url},
+                        ${data.delete_url || null},
+                        'icon',
+                        ${data.id_member},
+                        null
+                    )
+                    RETURNING url;
+                `;
+            }
+        });
+
+        return response[0];
+    } catch (error) {
+        if (error instanceof GenericError) throw error;
+        else {
+            console.error(error);
+            throw new DatabaseError();
+        }
+    }
+}
+
 export const memberRepository = {
     getById,
     getPrivateByUsername,
@@ -290,5 +353,6 @@ export const memberRepository = {
     updateUsername,
     updateBio,
     updatePassword,
-    updateProfilePicture
+    updateProfilePicture,
+    updateIcon
 }

@@ -229,6 +229,31 @@ export default class Post {
         popup.CreateButton("Reportar Publicación", () => {
             popup.delete();
         });
+
+        if (window.app.member.role === 'admin') {
+            const btn = popup.CreateButton("Eliminar Publicación", async () => {
+                popup.delete();
+                new Alert("Espere...");
+                const request = await fetch(`/api/post/${this.post.id}/admin`, {
+                    method: "DELETE",
+                    headers: { "Authorization": "Bearer " + localStorage.getItem('token') }
+                });
+                const response = await request.json();
+                if (!request.ok) return new Alert(response.error.message);
+                this.container.remove();
+                return new Alert("Publicación eliminada correctamente.");
+            });
+
+            btn.innerHTML = `
+                <span class="post-header-signature-role post-header-signature-role--admin">ADMIN</span>
+                <span>Eliminar Publicación</span>
+            `;
+
+            btn.style.display = 'flex';
+            btn.style.alignItems = 'center';
+            btn.style.justifyContent = 'center';
+            btn.style.gap = '10px';
+        }
     }
 
     CreatePostFooterDate () {

@@ -2,6 +2,7 @@ import { Request, Response } from "express"
 import { ResponseError, ResponseOk } from "../helpers/ControllerResponse";
 import { RESPONSES } from "../static/responses";
 import { postService } from "../services/postService";
+import { Role } from "../database/models/Member";
 
 const get = async (req: Request, res: Response) => {
     try {
@@ -105,6 +106,21 @@ const remove = async (req: Request, res: Response) => {
     }
 }
 
+const removeAdmin = async (req: Request, res: Response) => {
+    try {
+        const response = await postService.removeAdmin({
+            id_member: req.member.id,
+            role_member: req.member.role as Role,
+            id_post: Number(req.params.id_post)
+        });
+
+        ResponseOk(res, RESPONSES.OK, response);
+    } catch (error) {
+        console.error(error);
+        ResponseError(res, error);
+    }
+}
+
 export const postController = {
     get,
     getFollowing,
@@ -112,5 +128,6 @@ export const postController = {
     getComments,
     getThread,
     post,
-    remove
+    remove,
+    removeAdmin
 }

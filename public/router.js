@@ -1,4 +1,4 @@
-import SettingsView from "./views/SettingsView.js";
+import SettingsView from "./views/settings/SettingsView.js";
 import HomeView from "./views/HomeView.js";
 import LoginView from "./views/LoginView.js";
 import MemberView from "./views/MemberView.js";

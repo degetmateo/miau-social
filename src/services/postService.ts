@@ -1,3 +1,4 @@
+import { Role } from "../database/models/Member";
 import { postRepository } from "../database/repository/postRepository";
 import InvalidArgumentError from "../errors/InvalidArgumentError";
 import NotFoundError from "../errors/NotFoundError";
@@ -122,6 +123,16 @@ const remove = async (data: {
     return response;
 }
 
+const removeAdmin = async (data: {
+    id_member: number;
+    role_member: Role;
+    id_post: number;
+}) => {
+    if (data.role_member != 'admin') throw new UnauthorizedError("No tienes permisos para realizar esta accion.");
+    const response = await postRepository.removeAdmin(data);
+    return response;
+}
+
 export const postService = {
     get,
     getFollowing,
@@ -129,5 +140,6 @@ export const postService = {
     getComments,
     getThread,
     post,
-    remove
+    remove,
+    removeAdmin
 }

@@ -13,16 +13,18 @@ const login = async (data: {
     try {
         const response: any[] = await Postgres.query()`
             SELECT
-                id_member AS id,
-                username_member AS username,
-                password_member AS password,
-                name_member AS name,
-                role_member AS role,
-                icon_url
+                m.id_member AS id,
+                m.username_member AS username,
+                m.password_member AS password,
+                m.name_member AS name,
+                m.role_member AS role,
+                icon.url AS icon_url
             FROM
-                member
+                member m
+            LEFT JOIN
+                image icon ON icon.member_id = m.id_member AND icon.type = 'icon'
             WHERE
-                username_member = ${data.username};
+                m.username_member = ${data.username};
         `;
 
         if (!response[0]) throw new UnauthorizedError("Algunas de tus credenciales son incorrectas.");
@@ -78,16 +80,18 @@ const signin = async (data: {
 
             const qRegisteredMember: any[] = await transaction`
                 SELECT
-                    id_member AS id,
-                    username_member AS username,
-                    password_member AS password,
-                    name_member AS name,
-                    role_member AS role,
-                    icon_url
+                    m.id_member AS id,
+                    m.username_member AS username,
+                    m.password_member AS password,
+                    m.name_member AS name,
+                    m.role_member AS role,
+                    icon.url AS icon_url
                 FROM
-                    member
+                    member m
+                LEFT JOIN
+                    image icon ON icon.member_id = m.id_member AND icon.type = 'icon'
                 WHERE
-                    username_member = ${data.username};
+                    m.username_member = ${data.username};
             `;
 
             const TOKEN = await JWT.Generate({ 
@@ -116,15 +120,17 @@ const getMemberData = async (data: {
     try {
         const response = await Postgres.query()`
             SELECT
-                id_member AS id,
-                username_member AS username,
-                name_member AS name,
-                role_member AS role,
-                icon_url
+                m.id_member AS id,
+                m.username_member AS username,
+                m.name_member AS name,
+                m.role_member AS role,
+                icon.url AS icon_url
             FROM
-                member
+                member m
+            LEFT JOIN
+                image icon ON icon.member_id = m.id_member AND icon.type = 'icon'
             WHERE
-                id_member = ${data.id};
+                m.id_member = ${data.id};
         `;
 
         if (!response[0]) throw new UnauthorizedError("No se ha encontrado al usuario especificado.");

@@ -2,6 +2,7 @@ import { Request, Response } from "express"
 import { ResponseError, ResponseOk } from "../helpers/ControllerResponse";
 import { RESPONSES } from "../static/responses";
 import { memberService } from "../services/memberService";
+import BadGatewayError from "../errors/BadGatewayError";
 
 const getByUsername = async (req: Request, res: Response) => {
     try {
@@ -74,14 +75,28 @@ const updatePassword = async (req: Request, res: Response) => {
     }
 }
 
-const updateProfilePicture = async (req: Request, res: Response) => {
+const updateIconURL = async (req: Request, res: Response) => {
     try {
-        const response = await memberService.updateProfilePicture({
+        const response = await memberService.updateIconURL({
             id_member: req.member.id,
             url: req.body.url
         });
 
         ResponseOk(res, RESPONSES.ACCEPTED, response);
+    } catch (error) {
+        console.error(error);
+        ResponseError(res, error);
+    }
+}
+
+const updateIconImage = async (req: Request, res: Response) => {
+    try {
+        const response = await memberService.updateIconImage({
+            id_member: req.member.id,
+            buffer: req.file.buffer
+        });
+
+        ResponseOk(res, RESPONSES.OK, response);
     } catch (error) {
         console.error(error);
         ResponseError(res, error);
@@ -94,5 +109,6 @@ export const memberController = {
     updateUsername,
     updateBio,
     updatePassword,
-    updateProfilePicture
+    updateIconURL,
+    updateIconImage
 }

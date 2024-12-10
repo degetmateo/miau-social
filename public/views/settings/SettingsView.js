@@ -1,0 +1,34 @@
+import AbstractView from '../AbstractView.js';
+import FormUpdateIcon from './FormUpdateIcon.js';
+import FormLogout from './FormLogout.js';
+import FormUpdateBio from './FormUpdateBio.js';
+import FormUpdateName from './FormUpdateName.js';
+import FormUpdateUsername from './FormUpdateUsername.js';
+import FormUpdatePassword from './FormUpdatePassword.js';
+
+export default class extends AbstractView {
+    constructor () {
+        super();
+    }
+
+    async init (params) {
+        this.params = params;
+        this.setTitle('Configuración');
+        this.clear();
+
+        this.view = document.createElement('div');
+        this.view.classList.add('settings-view');
+        this.view.appendChild(window.app.nav.getNode());
+        this.main = document.createElement('div');
+        this.main.classList.add('settings-main');
+        this.view.appendChild(this.main);
+        this.appContainer.appendChild(this.view);
+
+        this.main.appendChild(FormLogout.getNode());
+        this.main.appendChild(FormUpdateIcon.getNode());
+        this.main.appendChild(FormUpdateBio.node());
+        this.main.appendChild(FormUpdateName.node());
+        this.main.appendChild(FormUpdateUsername.node());
+        this.main.appendChild(FormUpdatePassword.node());
+    }
+}

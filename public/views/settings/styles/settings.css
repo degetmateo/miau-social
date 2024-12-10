@@ -1,0 +1,156 @@
+.settings-view {
+    display: grid;
+    grid-template-columns: 0.4fr 1fr 0.4fr;
+    grid-template-rows: auto;
+    grid-template-areas: 
+        "nav main aside"
+        "nav main aside"
+        "nav main aside"
+    ;
+}
+
+.settings-main {
+    grid-area: main;
+
+    border-left: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+}
+
+@media (max-width: 768px) {
+    .settings-view {
+        grid-template-rows: auto auto 50px;
+        grid-template-areas: 
+            "main main main"
+            "main main main"
+            "nav nav nav"
+        ;
+    }
+
+    .settings-main {
+        border: none;
+    }
+}
+
+.form_update_icon_url-container {
+    border-bottom: 1px solid var(--border-color);
+    padding: 20px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.form_update_icon_url-input-container {
+    display: flex;
+    gap: 20px;
+}
+
+.form_update_icon_url-input {
+    width: 100%;
+}
+
+.form_update_icon_url-button {
+    width: 100%;
+    cursor: pointer;
+
+    border: none;
+    outline: none;
+
+    background-color: var(--primary-color);
+    color: #FFF;
+    border: 1px solid #FFF;
+}
+
+.form_update_icon_url-button:hover {
+    background-color: var(--hover-color);
+}
+
+.form_update_icon_image-container {
+    border-bottom: 1px solid var(--border-color);
+    padding: 20px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.form_update_icon_image-input-container {
+    display: flex;
+    gap: 20px;
+}
+
+.form_update_icon_image-input {
+    width: 100%;
+}
+
+.form_update_icon_image-label {
+    width: 100%;
+    border: 1px solid #FFF;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.form_update_icon_image-label:hover {
+    background-color: var(--hover-color);
+}
+
+.form_update_icon_image-container {
+    gap: 10px;
+}
+
+.form_update_icon_image-cropper-container {
+    max-width: 100%;
+    z-index: 0;
+}
+
+.cropper-container {
+    max-width: 100%;
+    display: block;
+    border: 1px solid #FFF;
+}
+
+.form_logout-container {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.form_logout-button {
+    border: none;
+    outline: none;
+
+    cursor: pointer;
+    border: 1px solid #FFF;
+    background-color: var(--primary-color);
+    color: #FFF;
+    text-align: center;
+    padding: 10px;
+    width: 100%;
+}
+
+.form_logout-button:hover {
+    background-color: var(--hover-color);
+}
+
+
+/* FORM BIOGRAFIA */
+
+.form_update_bio-container {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    border-bottom: 1px solid var(--border-color);
+}
+
+.form_update_bio-textarea {
+    padding: 10px;
+    resize: none;
+    border: 1px solid #FFF;
+    color: #FFF;
+    outline: none;
+    background-color: var(--primary-color);
+    height: 100px;
+}
