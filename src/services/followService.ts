@@ -6,6 +6,7 @@ const follow = async (data: {
     id_member_followed: number;
 }) => {
     if (data.id_member_followed <= 0) throw new InvalidArgumentError("La ID del miembro a seguir debe ser positiva.");
+    if (data.id_member_followed == data.id_member_follower) throw new InvalidArgumentError("No puedes seguir a ti mismo.");
 
     const response = await followRepository.follow(data);
     return response;
@@ -16,6 +17,7 @@ const unfollow = async (data: {
     id_member_followed: number;
 }) => {
     if (data.id_member_followed <= 0) throw new InvalidArgumentError("La ID del miembro a dejar de seguir debe ser positiva.");
+    if (data.id_member_followed == data.id_member_follower) throw new InvalidArgumentError("No puedes dejar de seguirte a ti mismo.");
 
     const response = await followRepository.unfollow(data);
     return response;

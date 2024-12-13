@@ -12,7 +12,7 @@ class FormUpdateIcon {
         this.formUpdateIconURLMessage = document.createElement('div');
         this.formUpdateIconURLMessage.classList.add('form_update_icon_url-message');
         this.formUpdateIconURLMessage.innerHTML = `
-            <h3>Actualizar icon con enlace.</h3>
+            <h3>Actualiza tu icon con un enlace.</h3>
             <p>1) Ingresa un enlace a una imagen o GIF. La URL debe ser directa a la imagen. Se recomienda que la imagen sea cuadrada.</p>
             <p>2) Presiona el botón para cargar la imagen. Si el enlace no es valido, te lo haremos saber.</p>
         `;
@@ -43,17 +43,9 @@ class FormUpdateIcon {
             this.formUpdateIconImageMessage = document.createElement('div');
             this.formUpdateIconImageMessage.classList.add('form_update_icon_image-message');
             this.formUpdateIconImageMessage.innerHTML = `
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <span style="    
-                        color: #CECE77;
-                        border: 1px solid #CECE77;
-                        font-size: 12px;
-                        text-transform: uppercase;
-                        padding: 5px;
-                        border-radius: 8px;
-                    ">TEST</span> <h3>Actualizar icon con tu propia imagen.</h3>
+                <h3>Actualiza tu icon con una imagen.</h3>
                 </div>
-                <p>Selecciona una imagen de tu galería y recórtala. No se admiten GIFs.</p>
+                <p>Selecciona una imagen de tu galería y recórtala. Por el momento, no se admiten GIFs con esta opción.</p>
             `;
     
             this.formUpdateIconImageInputContainer = document.createElement('div');
@@ -97,15 +89,13 @@ class FormUpdateIcon {
     }
 
     getNode = () => {
-        if (window.app.member.role === 'member') this.formUpdateIconImage.style.display = 'none';
-        else this.formUpdateIconImage.style.display = 'flex';
         return this.container;
     };
 
     EventFormIconURL = async () => {
         this.formUpdateIconURLButton.onclick = async () => {
-            if (!this.formUpdateIconURLInput.value) return new Alert('Debes ingresar un enlace.');
-    
+            if (!this.formUpdateIconURLInput.value) return new Alert('Tenés que ingresar un enlace.', { error: true });
+
             try {
                 const image = await loadImage(this.formUpdateIconURLInput.value);
                 this.formUpdateIconURLInput.value = '';
@@ -178,7 +168,7 @@ class FormUpdateIcon {
                     return new Alert("Imagen de perfil actualizada.");
                 }, type);
             } else {
-                return new Alert('Selecciona una imagen primero.');
+                return new Alert('Tenés que seleccionar una imagen.', { error: true });
             }
         }
     }

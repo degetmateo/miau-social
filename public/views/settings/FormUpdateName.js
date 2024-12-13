@@ -8,7 +8,7 @@ class FormUpdateName {
         this.container.classList.add('form-container', 'form_update_name-container');
         
         this.title = document.createElement('h3');
-        this.title.textContent = 'Actualizar nombre de perfil.';
+        this.title.textContent = 'Actualiza tu nombre de perfil.';
         this.container.appendChild(this.title);
 
         this.inputContainer = document.createElement('div');
@@ -32,11 +32,11 @@ class FormUpdateName {
     event = () => {
         this.button.onclick = async () => {
             const name = this.input.value;
-            if (!name || name.length <= 0) return new Alert("Tenés que escribir algo.");
-            if (name.length > 16) return new Alert('Hasta 16 carácteres.');
+            if (!name || name.length <= 0) return new Alert("Tenés que escribir algo.", { error: true });
+            if (name.length > 16) return new Alert('Hasta 16 carácteres.', { error: true });
             this.input.value = '';
 
-            if (this.cooldown) return new Alert("Esperá un rato.");
+            if (this.cooldown) return new Alert("Esperá un rato.", { error: true });
             this.setCooldown();
 
             const request = await fetch ('/api/member/update/name', {
@@ -48,7 +48,7 @@ class FormUpdateName {
                 body: JSON.stringify({ name })
             });
             const response = await request.json();
-            if (!request.ok) return new Alert(response.error.message);
+            if (!request.ok) return new Alert(response.error.message, { error: true });
             new Alert("Nombre actualizado.");
         }
     }

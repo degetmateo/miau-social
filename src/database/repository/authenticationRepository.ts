@@ -23,6 +23,8 @@ const login = async (data: {
                 member m
             LEFT JOIN
                 image icon ON icon.member_id = m.id_member AND icon.type = 'icon'
+            LEFT JOIN
+                image banner ON banner.member_id = m.id_member AND banner.type = 'banner'
             WHERE
                 m.username_member = ${data.username};
         `;
@@ -90,6 +92,8 @@ const signin = async (data: {
                     member m
                 LEFT JOIN
                     image icon ON icon.member_id = m.id_member AND icon.type = 'icon'
+                LEFT JOIN
+                    image banner ON banner.member_id = m.id_member AND banner.type = 'banner'
                 WHERE
                     m.username_member = ${data.username};
             `;
@@ -129,6 +133,8 @@ const getMemberData = async (data: {
                 member m
             LEFT JOIN
                 image icon ON icon.member_id = m.id_member AND icon.type = 'icon'
+            LEFT JOIN
+                image banner ON banner.member_id = m.id_member AND banner.type = 'banner'
             WHERE
                 m.id_member = ${data.id};
         `;

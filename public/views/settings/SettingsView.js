@@ -5,6 +5,8 @@ import FormUpdateBio from './FormUpdateBio.js';
 import FormUpdateName from './FormUpdateName.js';
 import FormUpdateUsername from './FormUpdateUsername.js';
 import FormUpdatePassword from './FormUpdatePassword.js';
+import FormUpdateBannerURL from './FormUpdateBannerURL.js';
+import FormUpdateBannerImage from './FormUpdateBannerImage.js';
 
 export default class extends AbstractView {
     constructor () {
@@ -26,6 +28,8 @@ export default class extends AbstractView {
 
         this.main.appendChild(FormLogout.getNode());
         this.main.appendChild(FormUpdateIcon.getNode());
+        this.main.appendChild(new FormUpdateBannerURL().render());
+        this.main.appendChild(new FormUpdateBannerImage().render());
         this.main.appendChild(FormUpdateBio.node());
         this.main.appendChild(FormUpdateName.node());
         this.main.appendChild(FormUpdateUsername.node());

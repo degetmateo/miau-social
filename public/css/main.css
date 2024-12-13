@@ -2,8 +2,11 @@
     --primary-color: #111921;
     --hover-color: #1c2630;
     --border-color: #4b5c6d;
+    --white-color: #FFFBDF;
+    --accent-color: #04D458;
+    --error-color: #d40404;
+
     --secondary-color: #2ecc71;
-    --accent-color: #D36666;
     --background-color: #ecf0f1;
     --text-color: #2c3e50;
 }

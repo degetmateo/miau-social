@@ -14,8 +14,8 @@
 .container-followed {
     grid-area: main;
     height: 100%;
-    border-right: 1px solid gray;
-    border-left: 1px solid gray;
+    border-right: 1px solid var(--border-color);
+    border-left: 1px solid var(--border-color);
     overflow-y: scroll;
 }
 

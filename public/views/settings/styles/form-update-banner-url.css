@@ -1,0 +1,32 @@
+.form-update-banner-url-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.form-update-banner-url-input-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.form-update-banner-url-input {
+    width: 100%;
+}
+
+.form-update-banner-url-button {
+    width: 100%;
+    border: none;
+    outline: none;
+
+    border: 1px solid #FFF;
+    color: #FFF;
+    background-color: var(--primary-color);
+    cursor: pointer;
+}
+
+.form-update-banner-url-button:hover {
+    background-color: var(--hover-color);
+}

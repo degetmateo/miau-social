@@ -1,0 +1,42 @@
+.form-update-banner-image-container {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-update-banner-image-input-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.form_update_banner_image-label {
+    width: 100%;
+    border: 1px solid #FFF;
+    color: #FFF;
+    background-color: var(--primary-color);
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.form_update_banner_image-label:hover {
+    background-color: var(--hover-color);
+}
+
+.form-update-banner-image-button {
+    width: 100%;
+    border: none;
+    border: 1px solid #FFF;
+    outline: none;
+    color: #FFF;
+    background-color: var(--primary-color);
+    cursor: pointer;
+    text-align: center;
+}
+
+.form-update-banner-image-button:hover {
+    background-color: var(--hover-color);
+}

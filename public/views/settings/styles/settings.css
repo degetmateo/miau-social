@@ -7,28 +7,14 @@
         "nav main aside"
         "nav main aside"
     ;
+    height: 100%;
 }
 
 .settings-main {
     grid-area: main;
-
+    overflow-y: scroll;
     border-left: 1px solid var(--border-color);
     border-right: 1px solid var(--border-color);
-}
-
-@media (max-width: 768px) {
-    .settings-view {
-        grid-template-rows: auto auto 50px;
-        grid-template-areas: 
-            "main main main"
-            "main main main"
-            "nav nav nav"
-        ;
-    }
-
-    .settings-main {
-        border: none;
-    }
 }
 
 .form_update_icon_url-container {
@@ -67,7 +53,6 @@
 .form_update_icon_image-container {
     border-bottom: 1px solid var(--border-color);
     padding: 20px;
-
     display: flex;
     flex-direction: column;
 }
@@ -95,11 +80,32 @@
 
 .form_update_icon_image-container {
     gap: 10px;
+    max-width: 100%;
 }
 
 .form_update_icon_image-cropper-container {
     max-width: 100%;
+    max-height: 400px;
     z-index: 0;
+}
+
+@media (max-width: 768px) {
+    .settings-view {
+        grid-template-rows: auto auto 50px;
+        grid-template-areas: 
+            "main main main"
+            "main main main"
+            "nav nav nav"
+        ;
+    }
+
+    .settings-main {
+        border: none;
+    }
+    
+    .form_update_icon_image-cropper-container {
+        max-height: 150px;
+    }
 }
 
 .cropper-container {

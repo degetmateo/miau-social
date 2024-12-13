@@ -27,6 +27,23 @@ class ImgBB {
             }
         }
     }
+
+    delete = async (data: {
+        delete_url: string;
+    }) => {
+        try {
+            const request = await fetch(data.delete_url, { method: "GET" });
+            const response = await request.json();
+            if (!request.ok) throw new BadGatewayError(response.error.message);
+            return response.data;
+        } catch (error) {
+            if (error instanceof GenericError) throw error;
+            else {
+                console.error(error);
+                throw new BadGatewayError('Ha ocurrido un error inesperado.');
+            }
+        }
+    }
 }
 
 export default new ImgBB();

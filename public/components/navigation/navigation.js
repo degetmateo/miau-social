@@ -1,4 +1,3 @@
-import Notifications from "../../modules/Notifier.js";
 import {navigateTo} from "../../router.js";
 
 const HOME_IMAGE_OFF = new Image();
@@ -70,12 +69,17 @@ export default class Navigation {
         button.classList.add('nav-button');
         button.setAttribute('data-link', '');
         button.href = href;
-        window.location.pathname === href ?
-            button.appendChild(icon_on) :
-            button.appendChild(icon_off);
 
         const buttonText = document.createElement('span');
         buttonText.classList.add('nav-button-text');
+
+        if (window.location.pathname === href) {
+            button.appendChild(icon_on);
+            buttonText.classList.add('nav-button-text--active');
+        } else {
+            button.appendChild(icon_off);
+        }
+
         buttonText.innerText = text;
         button.appendChild(buttonText);
         
@@ -113,11 +117,16 @@ export default class Navigation {
         const iconImageContainer = document.createElement('div');
         iconImageContainer.classList.add('nav-button-icon-image-container');
 
+        const buttonText = document.createElement('span');
         button.updateIcon = () => {
             if (iconImageContainer.children[0]) iconImageContainer.children[0].remove();
-            window.location.href === button.href ?
-                iconImageContainer.appendChild(IMAGE_NOTIFICATIONS_ON) :
+
+            if (window.location.pathname == '/notifications') {
+                iconImageContainer.appendChild(IMAGE_NOTIFICATIONS_ON);
+                buttonText.classList.add('nav-button-text--active');
+            } else {
                 iconImageContainer.appendChild(IMAGE_NOTIFICATIONS_OFF);
+            }
         }
 
         button.updateIcon();
@@ -130,7 +139,6 @@ export default class Navigation {
 
         button.appendChild(iconContainer);
 
-        const buttonText = document.createElement('span');
         buttonText.classList.add('nav-button-text');
         buttonText.innerText = 'Notificaciones';
         button.appendChild(buttonText);

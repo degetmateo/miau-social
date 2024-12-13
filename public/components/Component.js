@@ -1,4 +1,4 @@
-class Form {
+class Component {
     constructor () {
         this.cooldown = false;
     }
@@ -18,4 +18,4 @@ class Form {
     }
 }
 
-export default Form;
+export default Component;

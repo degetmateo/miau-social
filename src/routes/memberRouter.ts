@@ -14,4 +14,7 @@ router.post('/update/password', Authorization.Everyone, memberController.updateP
 router.post('/update/icon/url', Authorization.Everyone, memberController.updateIconURL);
 router.post('/update/icon/image', Authorization.Everyone, Multer.Upload('image'), memberController.updateIconImage);
 
+router.post('/update/banner/url', Authorization.Everyone, memberController.updateBannerURL);
+router.post('/update/banner/image', Authorization.Everyone, Multer.Upload('image'), memberController.updateBannerImage);
+
 export default router;

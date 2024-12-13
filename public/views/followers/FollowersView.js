@@ -48,11 +48,12 @@ export default class extends AbstractView {
                 if (!this.continue) return;
                 this.offset += 20;
                 const followed = await this.getFollowed();
+                if (!this.continue) return;
                 if (followed.length <= 0) {
-                    this.followedContainer.innerHTML += `
-                        <div style="padding: 20px; text-align: center;">No hay más que ver acá.</div>
-                    `;
                     this.continue = false;
+                    this.followedContainer.innerHTML += `
+                        <div style="padding: 20px; text-align: center;">No hay nada más que ver acá.</div>
+                    `;
                     return;
                 }
                 this.drawFollowed(followed);

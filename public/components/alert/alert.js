@@ -1,8 +1,15 @@
 export default class Alert {
-    constructor (message) {
+    constructor (message, options = {
+        error: false
+    }) {
         this.message = message;
         this.container = document.createElement('div');
         this.container.classList.add('container-alert');
+
+        options.error ?
+            this.container.classList.add('container-alert--error') :
+            this.container.classList.add('container-alert--success');
+
         this.containerContent = document.createElement('div');
         this.containerContent.classList.add('container-alert-content');
         this.container.appendChild(this.containerContent);

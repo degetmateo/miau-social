@@ -1,6 +1,6 @@
 .container-notification {
     padding: 20px;
-    border-bottom: 1px solid gray;
+    border-bottom: 1px solid var(--border-color);
     cursor: pointer;
 }
 

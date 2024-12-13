@@ -103,6 +103,34 @@ const updateIconImage = async (req: Request, res: Response) => {
     }
 }
 
+const updateBannerURL = async (req: Request, res: Response) => {
+    try {
+        const response = await memberService.updateBannerURL({
+            id_member: req.member.id,
+            url: req.body.url as string
+        });
+
+        ResponseOk(res, RESPONSES.OK, response);
+    } catch (error) {
+        console.error(error);
+        ResponseError(res, error);
+    }
+}
+
+const updateBannerImage = async (req: Request, res: Response) => {
+    try {
+        const response = await memberService.updateBannerImage({
+            id_member: req.member.id,
+            buffer: req.file.buffer
+        });
+
+        ResponseOk(res, RESPONSES.OK, response);
+    } catch (error) {
+        console.error(error);
+        ResponseError(res, error);
+    }
+}
+
 export const memberController = {
     getByUsername,
     updateName,
@@ -110,5 +138,7 @@ export const memberController = {
     updateBio,
     updatePassword,
     updateIconURL,
-    updateIconImage
+    updateIconImage,
+    updateBannerURL,
+    updateBannerImage
 }

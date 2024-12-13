@@ -7,6 +7,7 @@ import UnauthorizedError from "../../errors/UnauthorizedError";
 import { Member } from "../models/Member";
 import InvalidArgumentError from "../../errors/InvalidArgumentError";
 import Password from "../../helpers/Password";
+import ImgBB from "../../helpers/ImgBB";
 
 const getById = async (data: {
     transaction?: postgres.TransactionSql<{}>;
@@ -98,6 +99,7 @@ const getByUsername = async (data: {
                 m.bio_member AS bio,
                 m.date_creation_member AS created_at,
                 icon.url AS icon_url,
+                banner.url AS banner_url,
                 (SELECT COUNT(*) FROM 
                     follow f 
                 WHERE
@@ -117,6 +119,8 @@ const getByUsername = async (data: {
                 member m
             LEFT JOIN
                 image icon ON icon.member_id = m.id_member AND icon.type = 'icon'
+            LEFT JOIN
+                image banner ON banner.member_id = m.id_member AND banner.type = 'banner'
             WHERE
                 m.username_member = ${data.username};
         `;
@@ -262,30 +266,6 @@ const updatePassword = async (data: {
     }
 }
 
-const updateProfilePicture = async (data: {
-    id_member: number;
-    url: string;
-}) => {
-    try {
-        const response = await Postgres.query()`
-            UPDATE
-                member
-            SET
-                icon_url = ${data.url}
-            WHERE   
-                id_member = ${data.id_member};
-        `;
-
-        return response;
-    } catch (error) {
-        if (error instanceof GenericError) throw error;
-        else {
-            console.error(error);
-            throw new DatabaseError();
-        }
-    }
-}
-
 const updateIcon = async (data: {
     id_member: number;
     imgbb_id?: string;
@@ -297,45 +277,127 @@ const updateIcon = async (data: {
         let response: any;
         await Postgres.query().begin(async transaction => {
             response = await transaction`
-                UPDATE  
+                SELECT * FROM
                     image
-                SET
-                    imgbb_id = ${data.imgbb_id || null},
-                    url = ${data.url},
-                    delete_url = ${data.delete_url || null},
-                    source = ${data.source}
                 WHERE
                     member_id = ${data.id_member} AND
-                    type = 'icon'
-                RETURNING 
-                    url;
+                    type = 'icon';
             `;
 
-            if (!response[0]) {
+            if (response[0]) {
+                if (response[0].type === 'imgbb') await ImgBB.delete(response[0].delete_url);
+                
                 response = await transaction`
-                    INSERT INTO image (
-                        source,
-                        imgbb_id,
-                        url,
-                        delete_url,
-                        type,
-                        member_id,
-                        post_id
-                    ) VALUES (
-                        ${data.source},
-                        ${data.imgbb_id || null},
-                        ${data.url},
-                        ${data.delete_url || null},
-                        'icon',
-                        ${data.id_member},
-                        null
-                    )
-                    RETURNING url;
+                    UPDATE  
+                        image
+                    SET
+                        imgbb_id = ${data.imgbb_id || null},
+                        url = ${data.url},
+                        delete_url = ${data.delete_url || null},
+                        source = ${data.source}
+                    WHERE
+                        member_id = ${data.id_member} AND
+                        type = 'icon'
+                    RETURNING 
+                        url;
                 `;
+            } else {
+                if (!response[0]) {
+                    response = await transaction`
+                        INSERT INTO image (
+                            source,
+                            imgbb_id,
+                            url,
+                            delete_url,
+                            type,
+                            member_id,
+                            post_id
+                        ) VALUES (
+                            ${data.source},
+                            ${data.imgbb_id || null},
+                            ${data.url},
+                            ${data.delete_url || null},
+                            'icon',
+                            ${data.id_member},
+                            null
+                        )
+                        RETURNING url;
+                    `;
+                }
             }
         });
 
         return response[0];
+    } catch (error) {
+        if (error instanceof GenericError) throw error;
+        else {
+            console.error(error);
+            throw new DatabaseError();
+        }
+    }
+}
+
+const updateBanner = async (data: {
+    id_member: number;
+    imgbb_id?: string;
+    url: string;
+    delete_url?: string;
+    source: 'imgbb' | 'other';
+}) => {
+    try {
+        let response: any;
+        await Postgres.query().begin(async transaction => {
+            response = await transaction`
+                SELECT * FROM
+                    image
+                WHERE
+                    member_id = ${data.id_member} AND
+                    type = 'banner';
+            `;
+
+            if (response[0]) {
+                if (response[0].type === 'imgbb') await ImgBB.delete(response[0].delete_url);
+                
+                response = await transaction`
+                    UPDATE  
+                        image
+                    SET
+                        imgbb_id = ${data.imgbb_id || null},
+                        url = ${data.url},
+                        delete_url = ${data.delete_url || null},
+                        source = ${data.source}
+                    WHERE
+                        member_id = ${data.id_member} AND
+                        type = 'banner'
+                    RETURNING 
+                        url;
+                `;
+            } else {
+                if (!response[0]) {
+                    response = await transaction`
+                        INSERT INTO image (
+                            source,
+                            imgbb_id,
+                            url,
+                            delete_url,
+                            type,
+                            member_id,
+                            post_id
+                        ) VALUES (
+                            ${data.source},
+                            ${data.imgbb_id || null},
+                            ${data.url},
+                            ${data.delete_url || null},
+                            'banner',
+                            ${data.id_member},
+                            null
+                        )
+                        RETURNING url;
+                    `;
+                }
+            }
+        });
+        return response;
     } catch (error) {
         if (error instanceof GenericError) throw error;
         else {
@@ -353,6 +415,6 @@ export const memberRepository = {
     updateUsername,
     updateBio,
     updatePassword,
-    updateProfilePicture,
-    updateIcon
+    updateIcon,
+    updateBanner
 }

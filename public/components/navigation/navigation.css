@@ -4,6 +4,7 @@
     left: 0;
     top: 0;
     padding: 20px;
+
     display: flex;
     flex-direction: column;
     z-index: 1;
@@ -12,8 +13,8 @@
 .nav-button {
     padding: 15px;
     display: flex;
-    justify-content: flex-start;
     align-items: center;
+    justify-content: flex-start;
     gap: 10px;
 }
 
@@ -43,6 +44,10 @@
 .nav-button-icon {
     width: 20px;
     height: 20px;
+}
+
+.nav-button-text--active {
+    font-weight: bolder;
 }
 
 /* NOTIFICATIONS BUTTON */

@@ -1,6 +1,5 @@
 import { memberRepository } from "../database/repository/memberRepository";
 import InvalidArgumentError from "../errors/InvalidArgumentError";
-import NotFoundError from "../errors/NotFoundError";
 import ImgBB from "../helpers/ImgBB";
 import Password from "../helpers/Password";
 import { PARAMETERS } from "../static/parameters";
@@ -21,7 +20,7 @@ const updateName = async (data: {
     data.name = data.name + '';
     data.name = data.name.trim();
     
-    if (!data.name) throw new InvalidArgumentError("Debes escribir tu nuevo nombre.");
+    if (!data.name) throw new InvalidArgumentError("Tenés que escribir tu nuevo nombre.");
 
     if (data.name.length > PARAMETERS.NAME_MAX_LENGTH) throw new InvalidArgumentError(`Tu nuevo nombre debe tener como máximo ${PARAMETERS.NAME_MAX_LENGTH} carácteres.`);
     if (data.name.length < PARAMETERS.NAME_MIN_LENGTH) throw new InvalidArgumentError(`Tu nuevo nombre debe tener como mínimo ${PARAMETERS.NAME_MIN_LENGTH} carácteres.`);
@@ -37,7 +36,7 @@ const updateUsername = async (data: {
     data.username = data.username + '';
     data.username = data.username.trim();
     
-    if (!data.username) throw new InvalidArgumentError("Debes escribir tu nuevo nombre de usuario.");
+    if (!data.username) throw new InvalidArgumentError("Tenés que escribir tu nuevo nombre de usuario.");
 
     if (data.username.length > PARAMETERS.USERNAME_MAX_LENGTH) throw new InvalidArgumentError(`Tu nuevo nombre debe tener como máximo ${PARAMETERS.USERNAME_MAX_LENGTH} carácteres.`);
     if (data.username.length < PARAMETERS.USERNAME_MIN_LENGTH) throw new InvalidArgumentError(`Tu nuevo nombre debe tener como mínimo ${PARAMETERS.USERNAME_MIN_LENGTH} carácteres.`);
@@ -50,8 +49,6 @@ const updateBio = async (data: {
     id_member: number;
     bio: string;
 }) => {    
-    if (!data.bio) throw new InvalidArgumentError("Debes escribir tu nueva biografia.");
-
     if (data.bio.length > PARAMETERS.BIO_MAX_LENGTH) throw new InvalidArgumentError(`Tu nueva biografia debe tener como máximo ${PARAMETERS.BIO_MAX_LENGTH} carácteres.`);
 
     const response = await memberRepository.updateBio(data);
@@ -63,11 +60,11 @@ const updatePassword = async (data: {
     password: string;
     new_password: string;
 }) => {
-    if (!data.password) throw new InvalidArgumentError("Debes escribir tu clave anterior.")
-    if (!data.new_password) throw new InvalidArgumentError("Debes escribir tu nueva clave.");
+    if (!data.password) throw new InvalidArgumentError("Tenés que escribir tu clave anterior.")
+    if (!data.new_password) throw new InvalidArgumentError("Tenés que escribir tu nueva clave.");
 
-    if (data.password.length > PARAMETERS.PASSWORD_MAX_LENGTH) throw new InvalidArgumentError(`Tu nueva clave debe tener como máximo ${PARAMETERS.PASSWORD_MAX_LENGTH} carácteres.`);
-    if (data.password.length < PARAMETERS.PASSWORD_MIN_LENGTH) throw new InvalidArgumentError(`Tu nueva clave debe tener como mínimo ${PARAMETERS.PASSWORD_MIN_LENGTH} carácteres.`);
+    if (data.password.length > PARAMETERS.PASSWORD_MAX_LENGTH) throw new InvalidArgumentError(`Tu nueva clave tiene que tener como máximo ${PARAMETERS.PASSWORD_MAX_LENGTH} carácteres.`);
+    if (data.password.length < PARAMETERS.PASSWORD_MIN_LENGTH) throw new InvalidArgumentError(`Tu nueva clave tiene que tener como mínimo ${PARAMETERS.PASSWORD_MIN_LENGTH} carácteres.`);
 
     data.new_password = await Password.hash(data.new_password);
 
@@ -79,7 +76,7 @@ const updateIconURL = async (data: {
     id_member: number;
     url: string;
 }) => {    
-    if (!data.url) throw new InvalidArgumentError("Debes ingresar el enlace hacia tu imagen.");
+    if (!data.url) throw new InvalidArgumentError("Tenés que ingresar el enlace hacia tu imagen.");
 
     const response = await memberRepository.updateIcon({
         id_member: data.id_member,
@@ -117,6 +114,48 @@ const updateIconImage = async (data: {
     return response;
 }
 
+const updateBannerURL = async (data: {
+    id_member: number;
+    url: string;
+}) => {    
+    if (!data.url) throw new InvalidArgumentError("Tenés que ingresar el enlace hacia tu imagen.");
+
+    const response = await memberRepository.updateBanner({
+        id_member: data.id_member,
+        source: 'other',
+        url: data.url,
+        delete_url: null,
+        imgbb_id: null
+    });
+    
+    return response;
+}
+
+const updateBannerImage = async (data: {
+    id_member: number;
+    buffer: Express.Multer.File['buffer'];
+}) => {
+    const apiResponse: {
+        data: {
+            id: string;
+            url: string;
+            delete_url: string;
+        }
+    } = await ImgBB.upload({
+        buffer: data.buffer
+    });
+
+    const response = await memberRepository.updateBanner({
+        id_member: data.id_member,
+        url: apiResponse.data.url,
+        imgbb_id: apiResponse.data.id,
+        delete_url: apiResponse.data.delete_url,
+        source: 'imgbb'
+    });
+
+    return response;
+}
+
 export const memberService = {
     getByUsername,
     updateName,
@@ -124,5 +163,7 @@ export const memberService = {
     updateBio,
     updatePassword,
     updateIconURL,
-    updateIconImage
+    updateIconImage,
+    updateBannerURL,
+    updateBannerImage
 }

@@ -6,9 +6,16 @@
     padding: 10px;
     text-align: center;
     border-radius: 10px;
-    border: 2px solid var(--accent-color);
     background-color: var(--primary-color);
     max-width: 100%;
     word-wrap: break-word;
     overflow-wrap: break-word;
+}
+
+.container-alert--success {
+    border: 2px solid var(--accent-color);
+}
+
+.container-alert--error {
+    border: 2px solid var(--error-color);
 }

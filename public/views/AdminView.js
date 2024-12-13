@@ -12,7 +12,7 @@ export default class extends AbstractView {
         this.params = params;
         this.setTitle('Panel de Administracion');
         this.clear();
-        if (window.app.user.role != 'admin') return navigateTo('/home');
+        if (window.app.member.role != 'admin') return navigateTo('/home');
         const appContainer = document.getElementById('app');
         appContainer.innerHTML = VIEW_CONTENT;
         document.getElementById('container-view').appendChild(window.app.nav.getNode());

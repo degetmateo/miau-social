@@ -1,5 +1,5 @@
 import { URL_NO_IMAGE } from "../../consts.js";
-import { cleanContent, getDateMessage } from "../../helpers.js";
+import { cleanContent } from "../../helpers.js";
 import {navigateTo} from "../../router.js";
 import Alert from "../alert/alert.js";
 import Popup from "../popup/Popup.js";

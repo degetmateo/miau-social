@@ -10,7 +10,7 @@ class FormUpdatePassword extends Form {
         this.container.classList.add('form_update_password-container');
 
         this.title = document.createElement('h3');
-        this.title.textContent = 'Actualizar contraseña.';
+        this.title.textContent = 'Actualiza tu contraseña.';
 
         this.inputPassword = document.createElement('input');
         this.inputPassword.type = 'password';
@@ -53,15 +53,15 @@ class FormUpdatePassword extends Form {
             const newPassword = this.inputNewPassword.value;
             const newPasswordConfirmation = this.inputConfirmNewPassword.value;
 
-            if (!password || password.length <= 0) return new Alert('Tenés que ingresar tu contraseña actual.');
-            if (!newPassword || newPassword.length <= 5) return new Alert('Tenés ingresar una nueva contraseña más larga.');
-            if (newPassword != newPasswordConfirmation) return new Alert('Tu nueva contraseña y su confirmación no coinciden.');
+            if (!password || password.length <= 0) return new Alert('Tenés que ingresar tu contraseña actual.', { error: true });
+            if (!newPassword || newPassword.length <= 5) return new Alert('Tenés ingresar una nueva contraseña más larga.', { error: true });
+            if (newPassword != newPasswordConfirmation) return new Alert('Tu nueva contraseña y su confirmación no coinciden.', { error: true });
             this.inputPassword.value = '';
             this.inputNewPassword.value = '';
             this.inputConfirmNewPassword.value = '';
 
-            if (this.cooldown) return new Alert("Esperá un rato antes de volver a intentarlo.");
-            this.setCooldown();
+            if (this.cooldown) return new Alert("Esperá un rato antes de volver a intentarlo.", { error: true });
+            this.setCooldown(); 
 
             const request = await fetch('/api/member/update/password', {
                 method: 'POST',
@@ -73,7 +73,7 @@ class FormUpdatePassword extends Form {
             });
             
             const response = await request.json();
-            if (!request.ok) return new Alert(response.error.message);
+            if (!request.ok) return new Alert(response.error.message, { error: true });
             new Alert('Contraseña actualizada.'); 
         }
     }

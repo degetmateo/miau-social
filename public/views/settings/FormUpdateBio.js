@@ -6,7 +6,7 @@ class FormUpdateBio {
         this.container.classList.add('form_update_bio-container');
 
         this.formUpdateBioMessage = document.createElement('h3');
-        this.formUpdateBioMessage.textContent = 'Actualizar biografía.';
+        this.formUpdateBioMessage.textContent = 'Actualiza tu biografía.';
         this.container.appendChild(this.formUpdateBioMessage);
 
         this.formUpdateBioTextarea = document.createElement('textarea');
@@ -41,7 +41,7 @@ class FormUpdateBio {
                 })
             });
             const response = await request.json();
-            if (!request.ok) return new Alert(response.error.message);
+            if (!request.ok) return new Alert(response.error.message, { error: true });
             new Alert('Biografia actualizada correctamente.');
         }
     }
