@@ -131,6 +131,7 @@ class Profile extends Component {
         this.urlInfo.textContent = 'enlace.com.ar';
         this.followedNumber.textContent = 0;
         this.followersNumber.textContent = 0;
+        this.topContainer.style.backgroundImage = 'none';
         this.button.remove();
     }
 
