@@ -1,3 +1,8 @@
+.container-view {
+    grid-template-columns: min-content 1fr 250px;
+}
+
+
 .notifications-view-main {
     grid-area: main;
     overflow-y: scroll;
@@ -13,7 +18,7 @@
     min-height: 100%;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
     .container-view-notifications {
         display: flex;
     }

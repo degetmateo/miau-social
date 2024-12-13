@@ -18,6 +18,7 @@ export default class CommentsView extends AbstractView {
 
         this.viewContainer = document.createElement('div');
         this.viewContainer.classList.add('container-view-comments');
+        this.viewContainer.style.gridTemplateColumns = `min-content 1fr ${window.app.nav.getNode().innerWidth};`;
         this.appContainer.appendChild(this.viewContainer);
         this.images = new Array();
 

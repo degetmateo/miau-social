@@ -46,7 +46,9 @@ export default class extends AbstractView {
 
         this.mainContainer = document.getElementById('container-main');
         this.timelineContainer = document.getElementById('container-timeline');
-        document.getElementById('container-view').appendChild(window.app.nav.getNode());
+        this.view = document.getElementById('container-view'); 
+        this.view.appendChild(window.app.nav.getNode());
+        this.view.style.gridTemplateColumns = `min-content 1fr ${window.app.nav.getNode().innerWidth};`;
         this.setGlobalTimeline();
         this.events();
         this.CreateMobileButtonPost();

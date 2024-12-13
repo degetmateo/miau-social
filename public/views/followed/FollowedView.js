@@ -17,6 +17,7 @@ export default class extends AbstractView {
 
         this.view = document.createElement('div');
         this.view.classList.add('view', 'view-followed');
+        this.view.style.gridTemplateColumns = `min-content 1fr ${window.app.nav.getNode().innerWidth};`;
 
         this.view.appendChild(window.app.nav.getNode());
         

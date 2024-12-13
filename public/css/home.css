@@ -3,7 +3,7 @@
     height: 100%;
 
     display: grid;
-    grid-template-columns: 0.4fr 1fr 0.4fr;
+    grid-template-columns: min-content 1fr 250px;
     grid-template-rows: 1fr 1fr 1fr;
     grid-template-areas: 
         "nav main aside"
@@ -252,7 +252,7 @@
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
     .container-home-view {
         grid-template-areas: 
             "main main main"

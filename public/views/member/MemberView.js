@@ -25,6 +25,8 @@ export default class extends AbstractView {
         this.view.appendChild(window.app.nav.getNode());
         this.view.appendChild(this.main);
 
+        this.view.style.gridTemplateColumns = `min-content 1fr ${window.app.nav.getNode().innerWidth};`;
+
         this.appContainer.appendChild(this.view);
         this.main.appendChild(Profile.node());
         const postsContainer = new PostsContainer();

@@ -11,10 +11,9 @@
 }
 
 .nav-button {
-    padding: 15px;
+    padding: 25px;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
     gap: 10px;
 }
 
@@ -77,7 +76,7 @@
     align-items: center;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
     .nav {
         background-color: var(--primary-color);
         border-top: 1px solid var(--border-color);

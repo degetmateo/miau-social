@@ -21,6 +21,7 @@ export default class NotificationsView extends AbstractView {
         this.setTitle("Notificaciones");
         this.viewContainer = document.createElement('div');
         this.viewContainer.classList.add('container-view', 'container-view-notifications');
+        this.viewContainer.style.gridTemplateColumns = `min-content 1fr ${window.app.nav.getNode().innerWidth};`;
         this.appContainer.appendChild(this.viewContainer);
         
         this.offset = 0;
