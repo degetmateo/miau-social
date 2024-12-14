@@ -149,14 +149,14 @@ class Profile extends Component {
 
         if (window.app.member.id === member.id) {
             this.button.textContent = 'Editar perfil';
-            this.button.classList.remove('profile-button');
+            this.button.classList.remove('profile-button--other');
             this.button.classList.add('profile-button--self');
             this.button.onclick = () => {
                 return navigateTo('/settings');
             }
         } else {
-            this.button.classList.add('profile-button');
             this.button.classList.remove('profile-button--self');
+            this.button.classList.add('profile-button--other');
 
             if (member.is_followed) {
                 this.button.textContent = 'Dejar de seguir';

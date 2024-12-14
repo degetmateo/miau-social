@@ -91,9 +91,7 @@
     border: none;
     outline: none;
     text-align: center;
-    border: 1px solid #04D458;
     background-color: var(--primary-color);
-    color: #04D458;
     cursor: pointer;
     padding: 10px 25px;
     align-self: center;
@@ -101,27 +99,25 @@
     white-space: nowrap;
 }
 
+.profile-button--other {
+    border: 1px solid #04D458;
+    color: #04D458;
+}
+
 .profile-button--self {
-    grid-area: button;
-    border: none;
-    outline: none;
-    text-align: center;
     border: 1px solid #FFFBDF;
-    background-color: var(--primary-color);
     color: #FFFBDF;
-    cursor: pointer;
-    padding: 10px 25px;
-    align-self: center;
-    justify-self: end;
-    white-space: nowrap;
 }
 
 .profile-button:hover {
     background-color: var(--hover-color);
 }
 
-.profile-button--self:hover {
-    background-color: var(--hover-color);
+@media (max-width: 900px) {
+    .profile-button {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
 }
 
 .profile-bio {

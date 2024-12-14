@@ -14,6 +14,7 @@ export default class extends AbstractView {
 
     async init (params) {
         this.params = params;
+        this.offset = 0;
         this.setTitle(this.params.username);
         this.clear();
         this.view = document.createElement('div');
