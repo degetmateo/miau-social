@@ -31,7 +31,10 @@ export default class Textarea extends Component {
         this.length.innerText = `${this.min}/${this.max}`;
         this.container.appendChild(this.length);
 
-        this.container.onclick = () => this.textarea.focus();
+        this.container.onmousedown = (e) => {
+            e.preventDefault();
+            this.textarea.focus();
+        }
 
         this.textarea.onfocus = () => {
             this.container.classList.add('textarea-container--active');
