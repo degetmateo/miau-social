@@ -150,7 +150,12 @@ class Profile extends Component {
         else this.urlContainer.style.display = 'flex';
         this.locationInfo.textContent = member.location;
         this.urlInfo.textContent = shortenLink(member.link);
-        this.urlInfo.href = member.link;
+        
+        if (member.link) {
+            const url = member.link.startsWith('http') ? new URL(member.link) : new URL('http://' + member.link);
+            this.urlInfo.href = url.href;
+        }
+
         this.followedNumber.textContent = member.followed_count;
         this.followersNumber.textContent = member.followers_count;
         this.topContainer.style.backgroundImage = member.banner_url ? `url(${member.banner_url})` : 'none';
@@ -240,7 +245,8 @@ class Profile extends Component {
         if (!link) return this.urlContainer.style.display = 'none';
         this.urlContainer.style.display = 'flex';
         this.urlInfo.textContent = shortenLink(link);
-        this.urlInfo.href = link;
+        const url = link.startsWith('http') ? new URL(link) : new URL('http://' + link);
+        this.urlInfo.href = url.href;
     }
 }
 

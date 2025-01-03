@@ -33,6 +33,7 @@ export default class Input extends Component {
         this.length.innerText = `${this.min}/${this.max}`;
         this.container.appendChild(this.length);
 
+        this.container.onclick = () => this.input.focus();
         this.input.onfocus = this.onFocus;
         this.input.onblur = this.onBlur;
         this.input.oninput = this.onInput;
