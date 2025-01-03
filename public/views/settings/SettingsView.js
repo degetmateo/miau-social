@@ -1,12 +1,9 @@
 import AbstractView from '../AbstractView.js';
 import FormUpdateIcon from './FormUpdateIcon.js';
 import FormLogout from './FormLogout.js';
-import FormUpdateBio from './FormUpdateBio.js';
-import FormUpdateName from './FormUpdateName.js';
 import FormUpdateUsername from './FormUpdateUsername.js';
 import FormUpdatePassword from './FormUpdatePassword.js';
 import FormUpdateBannerURL from './FormUpdateBannerURL.js';
-import FormUpdateBannerImage from './FormUpdateBannerImage.js';
 
 export default class extends AbstractView {
     constructor () {
