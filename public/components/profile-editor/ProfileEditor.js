@@ -3,12 +3,12 @@ import { importCSS } from '../../helpers.js';
 import Input from '../input/input.js';
 import Textarea from '../textarea/textarea.js';
 import CloseButton from '../close-button/CloseButton.js';
-import Button from "/public/components/button/button.js";
 import IconInput from '../icon-input/IconInput.js';
 import BannerInput from '../banner-input/BannerInput.js';
 import Alert from '../alert/alert.js';
 import ScreenSpinner from '../screen-spinner/ScreenSpinner.js';
 import Profile from '../../views/member/Profile.js';
+import Button from '../button/Button.js';
 
 importCSS('/public/components/profile-editor/styles/profile-editor.css');
 

@@ -1,5 +1,5 @@
 import Alert from "../../components/alert/alert.js";
-import Button from "/public/components/button/button.js";
+import Button from "../../components/button/Button.js";
 import {loadImage} from "../../helpers.js";
 
 class FormUpdateIcon {

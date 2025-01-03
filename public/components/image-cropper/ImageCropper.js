@@ -1,5 +1,5 @@
 import {importCSS} from "../../helpers.js";
-import Button from "/public/components/button/button.js";
+import Button from "../button/Button.js";
 
 importCSS('/public/components/image-cropper/styles/image-cropper.css');
 
