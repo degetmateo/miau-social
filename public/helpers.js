@@ -33,6 +33,7 @@ export function cleanContent (content) {
 }
 
 export function shortenLink(url, maxLength = 20) {
+    if (!url) return '';
     let cleanedUrl = url.replace(/^https?:\/\//, '');
 
     if (cleanedUrl.length > maxLength) {
