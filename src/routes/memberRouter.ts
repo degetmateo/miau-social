@@ -17,4 +17,6 @@ router.post('/update/icon/image', Authorization.Everyone, Multer.Upload('image')
 router.post('/update/banner/url', Authorization.Everyone, memberController.updateBannerURL);
 router.post('/update/banner/image', Authorization.Everyone, Multer.Upload('image'), memberController.updateBannerImage);
 
+router.post('/update-profile', Authorization.Everyone, Multer.MultipleUploads(['icon', 'banner']), memberController.updateProfile);
+
 export default router;

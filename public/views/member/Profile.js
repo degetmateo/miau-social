@@ -1,6 +1,8 @@
 import Alert from "../../components/alert/alert.js";
 import Component from "../../components/Component.js";
+import ProfileEditor from "../../components/profile-editor/ProfileEditor.js";
 import {URL_NO_IMAGE} from "../../consts.js";
+import {shortenLink} from "../../helpers.js";
 import { navigateTo } from '../../router.js';
 import {followService} from "../../services/followService.js";
 
@@ -81,7 +83,8 @@ class Profile extends Component {
         this.urlIcon = IMAGE_LINK;
         this.urlContainer.appendChild(this.urlIcon);
 
-        this.urlInfo = document.createElement('span');
+        this.urlInfo = document.createElement('a');
+        this.urlInfo.target = '_blank';
         this.urlInfo.classList.add('profile-url-info');
         this.urlContainer.appendChild(this.urlInfo);
 
@@ -141,18 +144,21 @@ class Profile extends Component {
         this.username.textContent = '@' + member.username;
         this.icon.src = member.icon_url;
         this.bio.innerText = member.bio;
-        this.locationInfo.textContent = 'la vía láctea';
-        this.urlInfo.textContent = 'enlace.com.ar';
+        if (!member.location) this.locationContainer.style.display = 'none';
+        if (!member.link) this.urlContainer.style.display = 'none';
+        this.locationInfo.textContent = member.location;
+        this.urlInfo.textContent = shortenLink(member.link);
+        this.urlInfo.href = member.link;
         this.followedNumber.textContent = member.followed_count;
         this.followersNumber.textContent = member.followers_count;
-        this.topContainer.style.backgroundImage = member.banner_url ? `url(${member.banner_url})` : '';
+        this.topContainer.style.backgroundImage = member.banner_url ? `url(${member.banner_url})` : 'none';
 
         if (window.app.member.id === member.id) {
             this.button.textContent = 'Editar perfil';
             this.button.classList.remove('profile-button--other');
             this.button.classList.add('profile-button--self');
             this.button.onclick = () => {
-                return navigateTo('/settings');
+                ProfileEditor.render(this.member);
             }
         } else {
             this.button.classList.remove('profile-button--self');
@@ -198,6 +204,41 @@ class Profile extends Component {
             return new Alert(error.message);
         }
         this.button.onclick = this.follow;
+    }
+
+    setName = (name) => {
+        this.name.textContent = name;
+        this.member.name = name;
+    }
+
+    setBio = (bio) => {
+        this.bio.textContent = bio;
+        this.member.bio = bio;
+    }
+
+    setIcon = (url) => {
+        this.icon.src = url;
+        this.member.icon_url = url;
+    }
+
+    setBanner = (url) => {
+        this.topContainer.style.backgroundImage = url ? `url(${url})` : 'none';
+        this.member.banner_url = url;
+    }
+
+    setLocation = (location) => {
+        this.member.location = location;
+        if (!location) return this.locationContainer.style.display = 'none';
+        this.locationContainer.style.display = 'flex';
+        this.locationInfo.textContent = location;
+    }
+
+    setLink = (link) => {
+        this.member.link = link;
+        if (!link) return this.urlContainer.style.display = 'none';
+        this.urlContainer.style.display = 'flex';
+        this.urlInfo.textContent = shortenLink(link);
+        this.urlInfo.href = link;
     }
 }
 

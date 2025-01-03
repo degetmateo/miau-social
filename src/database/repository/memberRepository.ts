@@ -98,6 +98,8 @@ const getByUsername = async (data: {
                 m.role_member AS role,
                 m.bio_member AS bio,
                 m.date_creation_member AS created_at,
+                m.location AS location,
+                m.link AS link,
                 icon.url AS icon_url,
                 banner.url AS banner_url,
                 (SELECT COUNT(*) FROM 
@@ -407,6 +409,193 @@ const updateBanner = async (data: {
     }
 }
 
+const updateProfile = async (data: {
+    id_member: number;
+    name: string;
+    bio: string;
+    location: string;
+    link: string;
+    icon: {
+        url: string;
+        imgbb_id: string;
+        delete_url: string;
+        source: "imgbb" | "other";
+    } | null,
+    icon_action: 'none' | 'update' | 'delete';
+    banner: {
+        url: string;
+        imgbb_id: string;
+        delete_url: string;
+        source: "imgbb" | "other";
+    } | null;
+    banner_action: 'none' | 'update' | 'delete';
+}) => {
+    try {
+        let response: any;
+        await Postgres.query().begin(async transaction => {
+            await transaction`
+                UPDATE
+                    member
+                SET
+                    name_member = ${data.name},
+                    bio_member = ${data.bio},
+                    location = ${data.location},
+                    link = ${data.link}
+                WHERE
+                    id_member = ${data.id_member};
+            `;
+
+            if (data.icon_action != 'none') {
+                if (data.icon_action === 'delete') {
+                    await transaction`
+                        DELETE FROM
+                            image
+                        WHERE
+                            member_id = ${data.id_member} AND
+                            type = 'icon';
+                    `;
+                } else {
+                    const queryIcon = await transaction`
+                        SELECT * FROM
+                            image
+                        WHERE
+                            member_id = ${data.id_member} AND
+                            type = 'icon';
+                    `;
+
+                    if (queryIcon[0]) {
+                        if (queryIcon[0].type === 'imgbb') await ImgBB.delete(queryIcon[0].delete_url);
+                        
+                        await transaction`
+                            UPDATE  
+                                image
+                            SET
+                                imgbb_id = ${data.icon.imgbb_id || null},
+                                url = ${data.icon.url},
+                                delete_url = ${data.icon.delete_url || null},
+                                source = ${data.icon.source}
+                            WHERE
+                                member_id = ${data.id_member} AND
+                                type = 'icon';
+                        `;
+                    } else {
+                        if (!queryIcon[0]) {
+                            await transaction`
+                                INSERT INTO image (
+                                    source,
+                                    imgbb_id,
+                                    url,
+                                    delete_url,
+                                    type,
+                                    member_id,
+                                    post_id
+                                ) VALUES (
+                                    ${data.icon.source},
+                                    ${data.icon.imgbb_id || null},
+                                    ${data.icon.url},
+                                    ${data.icon.delete_url || null},
+                                    'icon',
+                                    ${data.id_member},
+                                    null
+                                );
+                            `;
+                        }
+                    }
+                }
+            }
+
+            if (data.banner_action != 'none') {
+                if (data.banner_action === 'delete') {
+                    await transaction`
+                        DELETE FROM
+                            image
+                        WHERE
+                            member_id = ${data.id_member} AND
+                            type = 'banner';
+                    `;
+                } else {
+                    const queryBanner = await transaction`
+                        SELECT * FROM
+                            image
+                        WHERE
+                            member_id = ${data.id_member} AND
+                            type = 'banner';
+                    `;
+
+                    if (queryBanner[0]) {
+                        if (queryBanner[0].type === 'imgbb') await ImgBB.delete(queryBanner[0].delete_url);
+                        
+                        await transaction`
+                            UPDATE  
+                                image
+                            SET
+                                imgbb_id = ${data.banner.imgbb_id || null},
+                                url = ${data.banner.url},
+                                delete_url = ${data.banner.delete_url || null},
+                                source = ${data.banner.source}
+                            WHERE
+                                member_id = ${data.id_member} AND
+                                type = 'banner';
+                        `;
+                    } else {
+                        if (!queryBanner[0]) {
+                            await transaction`
+                                INSERT INTO image (
+                                    source,
+                                    imgbb_id,
+                                    url,
+                                    delete_url,
+                                    type,
+                                    member_id,
+                                    post_id
+                                ) VALUES (
+                                    ${data.banner.source},
+                                    ${data.banner.imgbb_id || null},
+                                    ${data.banner.url},
+                                    ${data.banner.delete_url || null},
+                                    'banner',
+                                    ${data.id_member},
+                                    null
+                                );
+                            `;
+                        }
+                    }
+                }
+            }
+
+            response = await transaction`
+                SELECT 
+                    m.id_member AS id,
+                    m.username_member AS username,
+                    m.name_member AS name,
+                    m.role_member AS role,
+                    m.bio_member AS bio,
+                    m.date_creation_member AS created_at,
+                    m.location AS location,
+                    m.link AS link,
+                    icon.url AS icon_url,
+                    banner.url AS banner_url
+                FROM
+                    member m
+                LEFT JOIN
+                    image icon ON icon.member_id = m.id_member AND icon.type = 'icon'
+                LEFT JOIN
+                    image banner ON banner.member_id = m.id_member AND banner.type = 'banner'
+                WHERE
+                    m.id_member = ${data.id_member};
+            `;
+        });
+
+        return response[0];
+    } catch (error) {
+        if (error instanceof GenericError) throw error;
+        else {
+            console.error(error);
+            throw new DatabaseError();
+        }
+    }
+}
+
 export const memberRepository = {
     getById,
     getPrivateByUsername,
@@ -416,5 +605,6 @@ export const memberRepository = {
     updateBio,
     updatePassword,
     updateIcon,
-    updateBanner
+    updateBanner,
+    updateProfile
 }

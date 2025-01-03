@@ -33,7 +33,7 @@ export default class extends AbstractView {
         this.drawFollowed(followed);
         if (followed.length < 20) {
             this.followedContainer.innerHTML += `
-                <div style="padding: 20px; text-align: center;">No hay más que ver acá.</div>
+                <div style="padding: 20px; text-align: center;">No hay nada más que ver acá.</div>
             `;
             this.continue = false;
             return;

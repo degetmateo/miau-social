@@ -30,9 +30,9 @@ export default class extends AbstractView {
         this.main.appendChild(FormLogout.getNode());
         this.main.appendChild(FormUpdateIcon.getNode());
         this.main.appendChild(new FormUpdateBannerURL().render());
-        this.main.appendChild(new FormUpdateBannerImage().render());
-        this.main.appendChild(FormUpdateBio.node());
-        this.main.appendChild(FormUpdateName.node());
+        // this.main.appendChild(new FormUpdateBannerImage().render());
+        // this.main.appendChild(FormUpdateBio.node());
+        // this.main.appendChild(FormUpdateName.node());
         this.main.appendChild(FormUpdateUsername.node());
         this.main.appendChild(FormUpdatePassword.node());
     }

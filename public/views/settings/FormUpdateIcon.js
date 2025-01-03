@@ -1,4 +1,5 @@
 import Alert from "../../components/alert/alert.js";
+import Button from "../../components/button/button.js";
 import {loadImage} from "../../helpers.js";
 
 class FormUpdateIcon {
@@ -25,100 +26,100 @@ class FormUpdateIcon {
         this.formUpdateIconURLInput.setAttribute('type', 'text');
         this.formUpdateIconURLInput.setAttribute('autocomplete', 'off');
         this.formUpdateIconURLInput.setAttribute('placeholder', 'Enlace');
-        
-        this.formUpdateIconURLButton = document.createElement('button');
-        this.formUpdateIconURLButton.classList.add('button', 'form_update_icon_url-button');
-        this.formUpdateIconURLButton.textContent = 'Enviar';
+
+        this.button = new Button({
+            text: 'Enviar',
+            appearance: 'default',
+            onClick: this.submit
+        });
 
         this.formUpdateIconURLInputContainer.appendChild(this.formUpdateIconURLInput);
-        this.formUpdateIconURLInputContainer.appendChild(this.formUpdateIconURLButton);
+        this.formUpdateIconURLInputContainer.appendChild(this.button.render());
 
         this.formUpdateIconURL.appendChild(this.formUpdateIconURLMessage);
         this.formUpdateIconURL.appendChild(this.formUpdateIconURLInputContainer);
 
-        this.EventFormIconURL();
-            this.formUpdateIconImage = document.createElement('div');
-            this.formUpdateIconImage.classList.add('form_update_icon_image-container');
+        // this.EventFormIconURL();
+            // this.formUpdateIconImage = document.createElement('div');
+            // this.formUpdateIconImage.classList.add('form_update_icon_image-container');
     
-            this.formUpdateIconImageMessage = document.createElement('div');
-            this.formUpdateIconImageMessage.classList.add('form_update_icon_image-message');
-            this.formUpdateIconImageMessage.innerHTML = `
-                <h3>Actualiza tu icon con una imagen.</h3>
-                </div>
-                <p>Selecciona una imagen de tu galería y recórtala. Por el momento, no se admiten GIFs con esta opción.</p>
-            `;
+            // this.formUpdateIconImageMessage = document.createElement('div');
+            // this.formUpdateIconImageMessage.classList.add('form_update_icon_image-message');
+            // this.formUpdateIconImageMessage.innerHTML = `
+            //     <h3>Actualiza tu icon con una imagen.</h3>
+            //     </div>
+            //     <p>Selecciona una imagen de tu galería y recórtala. Por el momento, no se admiten GIFs con esta opción.</p>
+            // `;
     
-            this.formUpdateIconImageInputContainer = document.createElement('div');
-            this.formUpdateIconImageInputContainer.classList.add('form_update_icon_image-input-container');
+            // this.formUpdateIconImageInputContainer = document.createElement('div');
+            // this.formUpdateIconImageInputContainer.classList.add('form_update_icon_image-input-container');
     
-            this.formUpdateIconImageLabel = document.createElement('label');
-            this.formUpdateIconImageLabel.setAttribute('for', "form_update_icon_image-input");
-            this.formUpdateIconImageLabel.classList.add('form_update_icon_image-label');
-            this.formUpdateIconImageLabel.textContent = 'Cargar';
+            // this.formUpdateIconImageLabel = document.createElement('label');
+            // this.formUpdateIconImageLabel.setAttribute('for', "form_update_icon_image-input");
+            // this.formUpdateIconImageLabel.classList.add('form_update_icon_image-label');
+            // this.formUpdateIconImageLabel.textContent = 'Cargar';
     
-            this.formUpdateIconImageInput = document.createElement('input');
-            this.formUpdateIconImageInput.setAttribute('id', "form_update_icon_image-input");
-            this.formUpdateIconImageInput.classList.add('form_update_icon_image-input');
-            this.formUpdateIconImageInput.setAttribute('type', 'file');
-            this.formUpdateIconImageInput.setAttribute('accept', 'image/png, image/jpeg, image/gif');
-            this.formUpdateIconImageInput.hidden = true;
+            // this.formUpdateIconImageInput = document.createElement('input');
+            // this.formUpdateIconImageInput.setAttribute('id', "form_update_icon_image-input");
+            // this.formUpdateIconImageInput.classList.add('form_update_icon_image-input');
+            // this.formUpdateIconImageInput.setAttribute('type', 'file');
+            // this.formUpdateIconImageInput.setAttribute('accept', 'image/png, image/jpeg, image/gif');
+            // this.formUpdateIconImageInput.hidden = true;
     
-            this.formUpdateIconImageButton = document.createElement('button');
-            this.formUpdateIconImageButton.classList.add('form_update_icon_url-button');
-            this.formUpdateIconImageButton.textContent = 'Enviar';
+            // this.formUpdateIconImageButton = document.createElement('button');
+            // this.formUpdateIconImageButton.classList.add('form_update_icon_url-button');
+            // this.formUpdateIconImageButton.textContent = 'Enviar';
     
-            this.formUpdateIconImageCropperContainer = document.createElement('div');
-            this.formUpdateIconImageCropperContainer.classList.add('form_update_icon_image-cropper-container');
-            this.formUpdateIconImageCropperContainer.style.display = 'none';
+            // this.formUpdateIconImageCropperContainer = document.createElement('div');
+            // this.formUpdateIconImageCropperContainer.classList.add('form_update_icon_image-cropper-container');
+            // this.formUpdateIconImageCropperContainer.style.display = 'none';
     
-            this.formUpdateIconImageCropperImage = document.createElement('img');
-            this.formUpdateIconImageCropperContainer.appendChild(this.formUpdateIconImageCropperImage);
+            // this.formUpdateIconImageCropperImage = document.createElement('img');
+            // this.formUpdateIconImageCropperContainer.appendChild(this.formUpdateIconImageCropperImage);
     
-            this.formUpdateIconImageInputContainer.appendChild(this.formUpdateIconImageLabel);
-            this.formUpdateIconImageInputContainer.appendChild(this.formUpdateIconImageInput);
-            this.formUpdateIconImageInputContainer.appendChild(this.formUpdateIconImageButton);
+            // this.formUpdateIconImageInputContainer.appendChild(this.formUpdateIconImageLabel);
+            // this.formUpdateIconImageInputContainer.appendChild(this.formUpdateIconImageInput);
+            // this.formUpdateIconImageInputContainer.appendChild(this.formUpdateIconImageButton);
             
-            this.formUpdateIconImage.appendChild(this.formUpdateIconImageMessage);
-            this.formUpdateIconImage.appendChild(this.formUpdateIconImageInputContainer);
-            this.formUpdateIconImage.appendChild(this.formUpdateIconImageCropperContainer);
+            // this.formUpdateIconImage.appendChild(this.formUpdateIconImageMessage);
+            // this.formUpdateIconImage.appendChild(this.formUpdateIconImageInputContainer);
+            // this.formUpdateIconImage.appendChild(this.formUpdateIconImageCropperContainer);
     
             this.container.appendChild(this.formUpdateIconURL);
-            this.container.appendChild(this.formUpdateIconImage);
+            // this.container.appendChild(this.formUpdateIconImage);
             
-            this.EventFormIconImage();
+            // this.EventFormIconImage();
     }
 
     getNode = () => {
         return this.container;
     };
 
-    EventFormIconURL = async () => {
-        this.formUpdateIconURLButton.onclick = async () => {
-            if (!this.formUpdateIconURLInput.value) return new Alert('Tenés que ingresar un enlace.', { error: true });
+    submit = async () => {
+        if (!this.formUpdateIconURLInput.value) return new Alert('Tenés que ingresar un enlace.', { error: true });
 
-            try {
-                const image = await loadImage(this.formUpdateIconURLInput.value);
-                this.formUpdateIconURLInput.value = '';
+        try {
+            const image = await loadImage(this.formUpdateIconURLInput.value);
+            this.formUpdateIconURLInput.value = '';
 
-                const request = await fetch("/api/member/update/icon/url", {
-                    method: 'POST',
-                    headers: {
-                        "Authorization": 'Bearer ' + localStorage.getItem('token'),
-                        "Content-Type": 'application/json'
-                    },
-                    body: JSON.stringify({
-                        url: image.src
-                    })
-                });
-        
-                const response = await request.json();
-                if (!request.ok) return new Alert(response.error.message);
-                
-                window.app.member.icon_url = image.src;
-                return new Alert('Imagen de perfil actualizada.');
-            } catch (error) {
-                return new Alert(error.message);
-            }
+            const request = await fetch("/api/member/update/icon/url", {
+                method: 'POST',
+                headers: {
+                    "Authorization": 'Bearer ' + localStorage.getItem('token'),
+                    "Content-Type": 'application/json'
+                },
+                body: JSON.stringify({
+                    url: image.src
+                })
+            });
+    
+            const response = await request.json();
+            if (!request.ok) return new Alert(response.error.message);
+            
+            window.app.member.icon_url = image.src;
+            return new Alert('Imagen de perfil actualizada.');
+        } catch (error) {
+            return new Alert(error.message);
         }
     }
 

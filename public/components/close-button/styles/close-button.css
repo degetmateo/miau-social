@@ -1,0 +1,11 @@
+.close-button-container {
+    cursor: pointer;
+    justify-self: start;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-button-container:hover {
+    background-color: var(--hover-color);
+}

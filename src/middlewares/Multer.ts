@@ -22,6 +22,10 @@ class Multer {
     Upload = (filename: string) => {
         return this.multer.single(filename);
     }
+
+    MultipleUploads = (fields: string[]) => {
+        return this.multer.fields(fields.map(field => ({ name: field, maxCount: 1 })));
+    }
 }
 
 export default new Multer();

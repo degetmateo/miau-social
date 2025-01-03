@@ -9,11 +9,6 @@ window.addEventListener("popstate", () => router.resolve());
 document.addEventListener('DOMContentLoaded', async () => {
     document.body.addEventListener("click", (e) => {
         e.stopPropagation();
-        // if (e.target.matches("[data-link]") || e.target.hasAttribute('data-link')) {
-        //     e.preventDefault();
-        //     navigateTo(e.target.href || e.target.getAttribute('href'));
-        // };
-
         const linkElement = e.target.closest("[data-link]");
 
         if (linkElement) {
@@ -39,10 +34,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (!request.ok) {
         localStorage.removeItem('token');
-        new Alert(response.error.message);
+        new Alert('La sesión expiró.', { error: true });
         navigateTo('/login');
         return;
     }
+
+    localStorage.setItem('token', response.data.token);
 
     window.app = {};
     window.app.alerts = [];

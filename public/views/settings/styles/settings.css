@@ -111,7 +111,6 @@
 .cropper-container {
     max-width: 100%;
     display: block;
-    border: 1px solid #FFF;
 }
 
 .form_logout-container {

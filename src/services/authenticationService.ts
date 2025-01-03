@@ -1,6 +1,7 @@
 import { authenticationRepository } from "../database/repository/authenticationRepository";
 import InvalidArgumentError from "../errors/InvalidArgumentError";
 import UnauthorizedError from "../errors/UnauthorizedError";
+import JWT from "../helpers/JWT";
 import Password from "../helpers/Password";
 import { PARAMETERS } from "../static/parameters";
 import { REGEX } from "../static/regex";
@@ -45,6 +46,8 @@ const authenticate = async (data: {
     if (data.id <= 0) throw new UnauthorizedError("Datos de autorizacio invalidos.");
 
     const response = await authenticationRepository.getMemberData({ id: data.id });
+    const token = await JWT.Generate({ id: response.id, username: response.username, role: response.role }, "30d");
+    response.token = token;
     return response;
 }
 

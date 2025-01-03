@@ -31,3 +31,13 @@ export function cleanContent (content) {
 
     return clickableText.replace(/\n/g, '<br>').trim();   
 }
+
+export function shortenLink(url, maxLength = 20) {
+    let cleanedUrl = url.replace(/^https?:\/\//, '');
+
+    if (cleanedUrl.length > maxLength) {
+        cleanedUrl = cleanedUrl.substring(0, maxLength) + '...';
+    }
+
+    return cleanedUrl;
+}

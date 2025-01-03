@@ -14,11 +14,30 @@ export default class Listener {
 
     events () {
         this.onVisibilityChange();
+        this.onKeyDown();
     }
 
     onVisibilityChange () {
         document.onvisibilitychange = () => {
-            this.observers.forEach(observer => observer.onVisibilityChange());
+            for (const observer of this.observers) {
+                if (observer.onVisibilityChange) observer.onVisibilityChange();
+            }
+        }
+    }
+
+    onKeyDown () {
+        document.onkeydown = (e) => {
+            if (e.code === 'Escape') {
+                for (const observer of this.observers) {
+                    if (observer.onEscape) observer.onEscape();
+                }
+            }
+
+            if (e.code === 'Enter') {
+                for (const observer of this.observers) {
+                    if (observer.onEnter) observer.onEnter();
+                }
+            }
         }
     }
 

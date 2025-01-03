@@ -156,6 +156,71 @@ const updateBannerImage = async (data: {
     return response;
 }
 
+const updateProfile = async (data: {
+    id_member: number;
+    name: string;
+    bio: string;
+    location: string;
+    link: string;
+    icon: Express.Multer.File['buffer'] | null,
+    icon_action: 'none' | 'update' | 'delete';
+    banner: Express.Multer.File['buffer'] | null
+    banner_action: 'none' | 'update' | 'delete';
+}) => {
+    if (data.name) data.name = data.name.trim();
+    
+    if (!data.name || data.name.length <= 0) throw new InvalidArgumentError("Tenés que escribir tu nuevo nombre.");
+
+    if (data.name.length > PARAMETERS.NAME_MAX_LENGTH) throw new InvalidArgumentError(`Tu nuevo nombre debe tener como máximo ${PARAMETERS.NAME_MAX_LENGTH} carácteres.`);
+    if (data.name.length < PARAMETERS.NAME_MIN_LENGTH) throw new InvalidArgumentError(`Tu nuevo nombre debe tener como mínimo ${PARAMETERS.NAME_MIN_LENGTH} carácteres.`);
+
+    if (data.bio) data.bio = data.bio.trim();
+
+    if (data.bio && data.bio.length > PARAMETERS.BIO_MAX_LENGTH) throw new InvalidArgumentError(`Tu nueva biografia debe tener como máximo ${PARAMETERS.BIO_MAX_LENGTH} carácteres.`);
+
+    if (data.location) data.location = data.location.trim();
+
+    if (data.location && data.location.length > PARAMETERS.LOCATION_MAX_LENGTH) throw new InvalidArgumentError(`Tu nueva ubicación debe tener como máximo ${PARAMETERS.LOCATION_MAX_LENGTH} carácteres.`);
+
+    if (data.link) data.link = data.link.trim();
+
+    if (data.link && data.link.length > PARAMETERS.LINK_MAX_LENGTH) throw new InvalidArgumentError(`Tu nuevo enlace debe tener como máximo ${PARAMETERS.LINK_MAX_LENGTH} carácteres.`);
+
+    let apiResponseIcon: any = null;
+    if (data.icon_action === 'update' && data.icon) {
+        apiResponseIcon = await ImgBB.upload({ buffer: data.icon });
+    }
+
+    let apiResponseBanner: any = null;
+    if (data.banner_action === 'update' && data.banner) {
+        apiResponseBanner = await ImgBB.upload({ buffer: data.banner });
+    }
+
+    const response = await memberRepository.updateProfile({
+        id_member: data.id_member,
+        name: data.name,
+        bio: data.bio,
+        location: data.location,
+        link: data.link,
+        icon: apiResponseIcon ? {
+            url: apiResponseIcon.data.url,
+            imgbb_id: apiResponseIcon.data.id,
+            delete_url: apiResponseIcon.data.delete_url,
+            source: 'imgbb'
+        } : null,
+        icon_action: data.icon_action,
+        banner: apiResponseBanner ? {
+            url: apiResponseBanner.data.url,
+            imgbb_id: apiResponseBanner.data.id,
+            delete_url: apiResponseBanner.data.delete_url,
+            source: 'imgbb'
+        } : null,
+        banner_action: data.banner_action
+    });
+
+    return response;
+}
+
 export const memberService = {
     getByUsername,
     updateName,
@@ -165,5 +230,6 @@ export const memberService = {
     updateIconURL,
     updateIconImage,
     updateBannerURL,
-    updateBannerImage
+    updateBannerImage,
+    updateProfile
 }

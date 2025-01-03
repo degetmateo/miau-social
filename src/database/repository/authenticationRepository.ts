@@ -37,7 +37,7 @@ const login = async (data: {
             id: response[0].id, 
             username: response[0].username,
             role: response[0].role
-        }, "24h");
+        }, "30d");
 
         delete response[0].password;
         response[0].token = TOKEN;
@@ -102,7 +102,7 @@ const signin = async (data: {
                 id: qRegisteredMember[0].id, 
                 username: qRegisteredMember[0].username,
                 role: qRegisteredMember[0].role
-            }, "24h");
+            }, "30d");
 
             delete qRegisteredMember[0].password;
             qRegisteredMember[0].token = TOKEN;
@@ -128,7 +128,8 @@ const getMemberData = async (data: {
                 m.username_member AS username,
                 m.name_member AS name,
                 m.role_member AS role,
-                icon.url AS icon_url
+                icon.url AS icon_url,
+                banner.url AS banner_url
             FROM
                 member m
             LEFT JOIN

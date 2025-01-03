@@ -131,6 +131,29 @@ const updateBannerImage = async (req: Request, res: Response) => {
     }
 }
 
+const updateProfile = async (req: Request, res: Response) => {
+    try {
+        const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+
+        const response = await memberService.updateProfile({
+            id_member: req.member.id,
+            name: req.body.name,
+            bio: req.body.bio ? req.body.bio : '',
+            location: req.body.location ? req.body.location : '',
+            link: req.body.link ? req.body.link : '',
+            icon: files?.icon ? files.icon[0].buffer : null,
+            icon_action: req.body.icon_action as 'none' | 'update' | 'delete',
+            banner: files?.banner ? files.banner[0].buffer : null,
+            banner_action: req.body.banner_action as 'none' | 'update' | 'delete'
+        });
+
+        ResponseOk(res, RESPONSES.OK, response);
+    } catch (error) {
+        console.error(error);
+        ResponseError(res, error);
+    }
+}
+
 export const memberController = {
     getByUsername,
     updateName,
@@ -140,5 +163,6 @@ export const memberController = {
     updateIconURL,
     updateIconImage,
     updateBannerURL,
-    updateBannerImage
+    updateBannerImage,
+    updateProfile
 }

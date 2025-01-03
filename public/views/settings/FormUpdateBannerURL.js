@@ -1,4 +1,5 @@
 import Alert from "../../components/alert/alert.js";
+import Button from "../../components/button/button.js";
 import { importCSS, loadImage } from "../../helpers.js";
 
 importCSS('/public/views/settings/styles/form-update-banner-url.css');
@@ -28,9 +29,11 @@ class FormUpdateBannerURL {
         this.input.autocomplete = 'off';
         this.input.placeholder = 'Enlace';
 
-        this.button = document.createElement('button');
-        this.button.classList.add('form-update-banner-url-button');
-        this.button.innerText = 'Enviar';
+        this.button = new Button({
+            text: 'Enviar',
+            appearance: 'default',
+            onClick: this.submit
+        });
 
         this.container.appendChild(this.messageContainer);
         this.container.appendChild(this.inputContainer);
@@ -39,37 +42,37 @@ class FormUpdateBannerURL {
         this.messageContainer.appendChild(this.message);
 
         this.inputContainer.appendChild(this.input);
-        this.inputContainer.appendChild(this.button);
+        this.inputContainer.appendChild(this.button.render());
+    }
 
-        this.button.onclick = async () => {
-            const value = this.input.value;
-            if (!value) return new Alert("Tenés que ingresar un enlace.", { error: true });
+    submit = async () => {
+        const value = this.input.value;
+        if (!value) return new Alert("Tenés que ingresar un enlace.", { error: true });
 
-            this.input.value = '';
+        this.input.value = '';
 
-            try {
-                await loadImage(value);
-            } catch (error) {
-                return new Alert("La imagen no está disponible.");
-            }
+        try {
+            await loadImage(value);
+        } catch (error) {
+            return new Alert("La imagen no está disponible.");
+        }
 
-            try {
-                const request = await fetch('/api/member/update/banner/url', {
-                    method: "POST",
-                    headers: {
-                        "Authorization": "Bearer " + localStorage.getItem('token'),
-                        "Content-Type": "Application/JSON"
-                    },   
-                    body: JSON.stringify({ url: value })
-                });
-    
-                const response = await request.json();
-                if (!request.ok) return new Alert(response.error.message);
-                window.app.member.banner_url = value;
-                new Alert('Banner actualizado correctamente.');
-            } catch (error) {
-                return new Alert(error.message);
-            }
+        try {
+            const request = await fetch('/api/member/update/banner/url', {
+                method: "POST",
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem('token'),
+                    "Content-Type": "Application/JSON"
+                },   
+                body: JSON.stringify({ url: value })
+            });
+
+            const response = await request.json();
+            if (!request.ok) return new Alert(response.error.message);
+            window.app.member.banner_url = value;
+            new Alert('Banner actualizado correctamente.');
+        } catch (error) {
+            return new Alert(error.message);
         }
     }
 
