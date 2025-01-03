@@ -1,5 +1,6 @@
 import Alert from "../../components/alert/alert.js";
 import Button from "../../components/button/Button.js";
+import ScreenSpinner from "../../components/screen-spinner/ScreenSpinner.js";
 import { importCSS, loadImage } from "../../helpers.js";
 
 importCSS('/public/views/settings/styles/form-update-banner-url.css');
@@ -51,9 +52,11 @@ class FormUpdateBannerURL {
 
         this.input.value = '';
 
+        const spinner = new ScreenSpinner();
         try {
             await loadImage(value);
         } catch (error) {
+            spinner.remove();
             return new Alert("La imagen no está disponible.");
         }
 
@@ -68,10 +71,12 @@ class FormUpdateBannerURL {
             });
 
             const response = await request.json();
+            spinner.remove();
             if (!request.ok) return new Alert(response.error.message);
             window.app.member.banner_url = value;
-            new Alert('Banner actualizado correctamente.');
+            new Alert('¡Banner actualizado!', { error: false });
         } catch (error) {
+            spinner.remove();
             return new Alert(error.message);
         }
     }

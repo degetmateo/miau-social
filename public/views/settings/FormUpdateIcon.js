@@ -1,5 +1,6 @@
 import Alert from "../../components/alert/alert.js";
 import Button from "../../components/button/Button.js";
+import ScreenSpinner from "../../components/screen-spinner/ScreenSpinner.js";
 import {loadImage} from "../../helpers.js";
 
 class FormUpdateIcon {
@@ -99,6 +100,7 @@ class FormUpdateIcon {
         if (!this.formUpdateIconURLInput.value) return new Alert('Tenés que ingresar un enlace.', { error: true });
 
         try {
+            const spinner = new ScreenSpinner();
             const image = await loadImage(this.formUpdateIconURLInput.value);
             this.formUpdateIconURLInput.value = '';
 
@@ -114,11 +116,13 @@ class FormUpdateIcon {
             });
     
             const response = await request.json();
+            spinner.remove();
             if (!request.ok) return new Alert(response.error.message);
             
             window.app.member.icon_url = image.src;
-            return new Alert('Imagen de perfil actualizada.');
+            return new Alert('¡Icon actualizado!', { error: false });
         } catch (error) {
+            spinner.remove();
             return new Alert(error.message);
         }
     }

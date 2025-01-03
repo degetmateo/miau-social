@@ -130,8 +130,8 @@ class Profile extends Component {
         this.username.textContent = '';
         this.icon.src = URL_NO_IMAGE;
         this.bio.innerText = '';
-        this.locationInfo.textContent = 'la vía láctea';
-        this.urlInfo.textContent = 'enlace.com.ar';
+        this.locationContainer.style.display = 'none';
+        this.urlContainer.style.display = 'none';
         this.followedNumber.textContent = 0;
         this.followersNumber.textContent = 0;
         this.topContainer.style.backgroundImage = 'none';

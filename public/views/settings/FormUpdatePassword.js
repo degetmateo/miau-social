@@ -1,4 +1,5 @@
 import Alert from "../../components/alert/alert.js";
+import ScreenSpinner from "../../components/screen-spinner/ScreenSpinner.js";
 import Form from "./Form.js";
 
 class FormUpdatePassword extends Form {
@@ -63,6 +64,7 @@ class FormUpdatePassword extends Form {
             if (this.cooldown) return new Alert("Esperá un rato antes de volver a intentarlo.", { error: true });
             this.setCooldown(); 
 
+            const spinner = new ScreenSpinner();
             const request = await fetch('/api/member/update/password', {
                 method: 'POST',
                 headers: {
@@ -73,8 +75,9 @@ class FormUpdatePassword extends Form {
             });
             
             const response = await request.json();
+            spinner.remove();
             if (!request.ok) return new Alert(response.error.message, { error: true });
-            new Alert('Contraseña actualizada.'); 
+            new Alert('¡Contraseña actualizada!', { error: false }); 
         }
     }
 }

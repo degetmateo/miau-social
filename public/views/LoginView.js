@@ -1,4 +1,5 @@
 import Alert from "../components/alert/alert.js";
+import ScreenSpinner from "../components/screen-spinner/ScreenSpinner.js";
 import {init} from "../index.js";
 import { navigateTo } from "../router.js";
 import AbstractView from "./AbstractView.js";
@@ -37,6 +38,8 @@ export default class LoginView extends AbstractView {
 
         if (password != passwordConfirmation) return new Alert('Las contraseñas no coinciden.');
 
+        const spinner = new ScreenSpinner();
+
         const request = await fetch('/api/authentication/signin', {
             method: 'POST',
             headers: { "content-type": "application/json" },
@@ -44,6 +47,7 @@ export default class LoginView extends AbstractView {
         });
 
         const response = await request.json();
+        spinner.remove();
 
         if (!request.ok) {
             return new Alert(response.error.message);
@@ -64,6 +68,7 @@ export default class LoginView extends AbstractView {
         const inputUsername = document.getElementById('form-login-input-username');
         const inputPassword = document.getElementById('form-login-input-password');
 
+        const spinner = new ScreenSpinner();
         const request = await fetch('/api/authentication/login', {
             method: 'POST',
             headers: { "Content-Type": "Application/JSON" },
@@ -71,7 +76,8 @@ export default class LoginView extends AbstractView {
         });
 
         const response = await request.json();
-        
+        spinner.remove();
+
         if (!request.ok) {
             return new Alert(response.error.message);
         }

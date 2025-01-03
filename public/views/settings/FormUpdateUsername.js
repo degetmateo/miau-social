@@ -1,5 +1,6 @@
 import Alert from "../../components/alert/alert.js";
 import Button from "../../components/button/Button.js";
+import ScreenSpinner from "../../components/screen-spinner/ScreenSpinner.js";
 import Form from "./Form.js";
 
 class FormUpdateUsername extends Form {
@@ -47,6 +48,7 @@ class FormUpdateUsername extends Form {
         if (this.cooldown) return new Alert("Esperá un rato.", { error: true });
         this.setCooldown();
 
+        const spinner = new ScreenSpinner();
         const request = await fetch ('/api/member/update/username', {
             method: 'POST',
             headers: { 
@@ -56,12 +58,13 @@ class FormUpdateUsername extends Form {
             body: JSON.stringify({ username })
         });
         const response = await request.json();
+        spinner.remove();
         if (!request.ok) return new Alert(response.error.message, { error: true });
 
         window.app.member.username = username;
         window.app.nav.update();
 
-        new Alert("Nombre de usuario actualizado.");
+        new Alert("¡Nombre de usuario actualizado!", { error: false });
     }
 
     node = () => {
