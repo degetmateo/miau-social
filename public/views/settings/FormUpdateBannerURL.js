@@ -1,5 +1,5 @@
 import Alert from "../../components/alert/alert.js";
-import Button from "../../components/button/button.js";
+import Button from "/public/components/button/button.js";
 import { importCSS, loadImage } from "../../helpers.js";
 
 importCSS('/public/views/settings/styles/form-update-banner-url.css');
