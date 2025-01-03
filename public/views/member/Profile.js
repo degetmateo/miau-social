@@ -145,7 +145,9 @@ class Profile extends Component {
         this.icon.src = member.icon_url;
         this.bio.innerText = member.bio;
         if (!member.location) this.locationContainer.style.display = 'none';
+        else this.locationContainer.style.display = 'flex';
         if (!member.link) this.urlContainer.style.display = 'none';
+        else this.urlContainer.style.display = 'flex';
         this.locationInfo.textContent = member.location;
         this.urlInfo.textContent = shortenLink(member.link);
         this.urlInfo.href = member.link;
