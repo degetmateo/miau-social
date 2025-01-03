@@ -56,6 +56,10 @@ export default class IconInput {
         }
     }
 
+    setChanged = (changed) => {
+        this.changed = changed;
+    }
+
     isChanged = () => {
         return this.changed;
     }

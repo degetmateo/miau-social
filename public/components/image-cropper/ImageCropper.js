@@ -9,6 +9,9 @@ export default class ImageCropper {
         file: null,
         onSubmit: () => {}
     }) {
+        this.observerId = 'image-cropper';
+        window.app.listener.addObserver(this);
+
         this.container = document.createElement('div');
         this.container.classList.add('image-cropper-overlay');
         document.getElementById('app').appendChild(this.container);
@@ -67,5 +70,10 @@ export default class ImageCropper {
     
             this.reader.readAsDataURL(options.file);
         }
+    }
+
+    onEscape = () => {
+        this.container.remove();
+        window.app.listener.removeObserver(this.observerId);
     }
 }

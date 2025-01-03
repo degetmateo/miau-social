@@ -73,6 +73,10 @@ export default class BannerInput {
         }
     }
 
+    setChanged = (changed) => {
+        this.changed = changed;
+    }
+
     isChanged = () => {
         return this.changed;
     }

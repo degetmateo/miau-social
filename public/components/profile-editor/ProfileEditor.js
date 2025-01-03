@@ -191,6 +191,8 @@ class ProfileEditor extends Component {
     }
 
     close = () => {
+        this.icon.setChanged(false);
+        this.banner.setChanged(false);
         window.app.listener.removeObserver(this.observerId);
         this.background.remove();
     }
