@@ -1,8 +1,8 @@
 import Alert from "./components/alert/alert.js";
 import Navigation from "./components/navigation/navigation.js";
-import Listener from "./modules/Listener.js";
 import Notifier from "./modules/Notifier.js";
 import { navigateTo, router } from "./router.js";
+import EventsHandler from "./modules/EventsHandler.js";
 
 window.addEventListener("popstate", () => router.resolve());
 
@@ -50,11 +50,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 export const init = () => {
-    window.app.notifier = new Notifier();
-    window.app.listener = new Listener();
-    window.app.listener.addObserver(window.app.notifier);
-
+    EventsHandler.clear();
+    
+    window.app.notifier = new Notifier(); 
     window.app.nav = new Navigation();
+    
+    EventsHandler.addObserver(window.app.notifier);
+
     window.app.notifier.addObserver(window.app.nav);
     window.app.notifier.init();
 }

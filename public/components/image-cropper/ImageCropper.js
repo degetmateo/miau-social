@@ -1,16 +1,19 @@
 import {importCSS} from "../../helpers.js";
+import EventsHandler from "../../modules/EventsHandler.js";
 import Button from "../button/Button.js";
+import Component from "../Component.js";
 
 importCSS('/public/components/image-cropper/styles/image-cropper.css');
 
-export default class ImageCropper {
+export default class ImageCropper extends Component {
     constructor (options = {
         aspectRatio: 1,
         file: null,
         onSubmit: () => {}
     }) {
+        super();
         this.observerId = 'image-cropper';
-        window.app.listener.addObserver(this);
+        EventsHandler.addObserver(this);
 
         this.container = document.createElement('div');
         this.container.classList.add('image-cropper-overlay');
@@ -28,8 +31,8 @@ export default class ImageCropper {
             text: 'Cancelar',
             appearance: 'default',
             onClick: () => {
-                this.container.remove();
                 options.onSubmit(null);
+                this.close();
             }
         });
 
@@ -37,11 +40,11 @@ export default class ImageCropper {
             text: 'Guardar',
             appearance: 'default',
             onClick: () => {
-                this.container.remove();
                 const canvas = this.cropper.getCroppedCanvas();
                 canvas.toBlob((blob) => {
                     options.onSubmit(blob);
                 });
+                this.close();
             }
         });
 
@@ -72,8 +75,12 @@ export default class ImageCropper {
         }
     }
 
-    onEscape = () => {
+    close = () => {
         this.container.remove();
-        window.app.listener.removeObserver(this.observerId);
+        EventsHandler.removeObserver(this);
+    }
+ 
+    onEscape = () => {
+        this.close();
     }
 }

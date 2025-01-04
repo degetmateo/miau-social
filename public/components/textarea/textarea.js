@@ -32,7 +32,7 @@ export default class Textarea extends Component {
         this.container.appendChild(this.length);
 
         this.container.onmousedown = (e) => {
-            e.preventDefault();
+            if (e.target !== this.textarea) e.preventDefault();
             this.textarea.focus();
         }
 

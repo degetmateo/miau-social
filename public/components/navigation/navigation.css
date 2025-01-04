@@ -15,6 +15,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    color: var(--font-color);
 }
 
 .nav-button:hover {
@@ -58,9 +59,9 @@
 
     background-color: var(--accent-color);
     border-radius: 2px;
-    border: 1px solid #FFF;
+    border: 1px solid var(--border-color--yellow);
 
-    color: #FFF;
+    color: var(--font-color);
 
     position: relative;
     top: -5px;

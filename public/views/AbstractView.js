@@ -1,5 +1,8 @@
-export default class {
+import Observer from "../interfaces/Observer.js";
+
+export default class extends Observer {
     constructor () {
+        super();
         this.appContainer = document.getElementById('app');
     }
 

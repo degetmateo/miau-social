@@ -9,12 +9,14 @@ import Alert from '../alert/alert.js';
 import ScreenSpinner from '../screen-spinner/ScreenSpinner.js';
 import Profile from '../../views/member/Profile.js';
 import Button from '../button/Button.js';
+import EventsHandler from '../../modules/EventsHandler.js';
 
 importCSS('/public/components/profile-editor/styles/profile-editor.css');
 
 class ProfileEditor extends Component {
     constructor () {
         super();
+        this.observerId = 'profile-editor';
         this.app = document.getElementById('app');
 
         this.background = document.createElement('div');
@@ -113,8 +115,6 @@ class ProfileEditor extends Component {
         this.background.onclick = (e) => {
             if (e.target === this.background) this.close();
         }
-
-        this.observerId = 'profileEditor';
     }
 
     onEscape = () => {
@@ -193,7 +193,7 @@ class ProfileEditor extends Component {
     close = () => {
         this.icon.setChanged(false);
         this.banner.setChanged(false);
-        window.app.listener.removeObserver(this.observerId);
+        EventsHandler.removeObserver(this);
         this.background.remove();
     }
 
@@ -205,7 +205,7 @@ class ProfileEditor extends Component {
         this.icon.set(member.icon_url || '');
         this.banner.set(member.banner_url || '');
 
-        window.app.listener.addObserver(this);
+        EventsHandler.addObserver(this);
         this.app.appendChild(this.background);        
     }
 }

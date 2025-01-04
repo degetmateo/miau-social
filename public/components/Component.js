@@ -1,5 +1,8 @@
-class Component {
+import Observer from "../interfaces/Observer.js";
+
+class Component extends Observer {
     constructor () {
+        super();
         this.cooldown = false;
     }
 

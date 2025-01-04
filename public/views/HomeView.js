@@ -5,6 +5,7 @@ import Alert from "../components/alert/alert.js";
 import Popup from "../components/popup/Popup.js";
 import Post from "../components/post/Post.js";
 import {URL_NO_IMAGE} from "../consts.js";
+import EventsHandler from "../modules/EventsHandler.js";
 
 export default class extends AbstractView {
     constructor () {
@@ -37,8 +38,8 @@ export default class extends AbstractView {
             images: new Array()
         }
 
-        window.app.listener.removeObserver(this.observerId);
-        window.app.listener.addObserver(this);
+        EventsHandler.removeObserver(this);
+        EventsHandler.addObserver(this);
 
         if (window.location.pathname === '/') return navigateTo('/home');
         const appContainer = document.getElementById('app');

@@ -34,7 +34,8 @@ export default class Input extends Component {
         this.container.appendChild(this.length);
 
         this.container.onmousedown = (e) => {
-            e.preventDefault();
+            // evitar comportamiento por defecto excepto seleccionar texto
+            if (e.target !== this.input) e.preventDefault();
             this.input.focus();
         }
         this.input.onfocus = this.onFocus;

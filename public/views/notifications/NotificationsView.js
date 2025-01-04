@@ -1,4 +1,5 @@
 import Notification from "../../components/notification/notification.js";
+import EventsHandler from "../../modules/EventsHandler.js";
 import AbstractView from "../AbstractView.js";
 
 export default class NotificationsView extends AbstractView {
@@ -28,8 +29,8 @@ export default class NotificationsView extends AbstractView {
         this.limit = 20;
 
         this.observerId = 'notificationsView';
-        window.app.listener.removeObserver(this.observerId);
-        window.app.listener.addObserver(this);
+        EventsHandler.removeObserver(this);
+        EventsHandler.addObserver(this);
 
         window.app.notifier.removeObserver(this.observerId);
         window.app.notifier.addObserver(this);

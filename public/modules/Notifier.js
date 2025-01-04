@@ -1,14 +1,15 @@
 import Alert from "../components/alert/alert.js";
+import Observer from "../interfaces/Observer.js";
 
-class Notifier {
+class Notifier extends Observer {
     STORAGE = 'notifications';
     URL = '/api/notifications/';
 
     constructor () {
+        super();
+        this.observerId = 'notifier';
         this.entries = new Array();
         this.observers = new Array();
-
-        this.observerId = 'notifier';
         this.cooldown = false;
     }
 

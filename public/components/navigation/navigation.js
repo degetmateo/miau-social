@@ -1,3 +1,4 @@
+import Observer from "../../interfaces/Observer.js";
 import {navigateTo} from "../../router.js";
 
 const HOME_IMAGE_OFF = new Image();
