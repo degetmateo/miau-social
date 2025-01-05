@@ -24,6 +24,8 @@ export default class Textarea extends Component {
 
         this.textarea = document.createElement('textarea');
         this.textarea.classList.add('textarea');
+        this.textarea.minLength = options.min;
+        this.textarea.maxLength = options.max;
         this.container.appendChild(this.textarea);
 
         this.length = document.createElement('span');

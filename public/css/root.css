@@ -11,8 +11,9 @@
 
     --border-color--yellow: #FFFBDF;
 
+    --background-color: rgba(68, 78, 88, 0.604);
+
     --secondary-color: #2ecc71;
-    --background-color: #ecf0f1;
     --text-color: #2c3e50;
 }
 

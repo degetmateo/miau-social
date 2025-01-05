@@ -11,6 +11,7 @@
     background-position: center;
     background-color: var(--border-color);
     border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
 }
 
 .profile-bottom-container {
@@ -41,6 +42,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    cursor: pointer;
 }
 
 @media (max-width: 1280px) {

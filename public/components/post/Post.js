@@ -2,6 +2,7 @@ import { URL_NO_IMAGE } from "../../consts.js";
 import { cleanContent } from "../../helpers.js";
 import {navigateTo} from "../../router.js";
 import Alert from "../alert/alert.js";
+import ImageViewer from "../image-viewer/ImageViewer.js";
 import Popup from "../popup/Popup.js";
 
 const IMAGE_POST_UPVOTE_ON = new Image();

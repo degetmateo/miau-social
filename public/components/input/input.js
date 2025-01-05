@@ -8,7 +8,7 @@ export default class Input extends Component {
         title: 'input',
         type: 'text',
         max: 16,
-        min: 0
+        min: 1
     }) {
         super();
         this.max = options.max;
@@ -26,6 +26,8 @@ export default class Input extends Component {
         this.input = document.createElement('input');
         this.input.classList.add('input-input');
         this.input.type = options.type;
+        this.input.minLength = options.min;
+        this.input.maxLength = options.max;
         this.container.appendChild(this.input);
 
         this.length = document.createElement('span');

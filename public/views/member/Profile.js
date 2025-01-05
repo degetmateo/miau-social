@@ -1,5 +1,6 @@
 import Alert from "../../components/alert/alert.js";
 import Component from "../../components/Component.js";
+import ImageViewer from "../../components/image-viewer/ImageViewer.js";
 import ProfileEditor from "../../components/profile-editor/ProfileEditor.js";
 import {URL_NO_IMAGE} from "../../consts.js";
 import {shortenLink} from "../../helpers.js";
@@ -24,6 +25,12 @@ class Profile extends Component {
         this.topContainer = document.createElement('div');
         this.topContainer.classList.add('profile-top-container');
 
+        this.topContainer.onclick = () => {
+            this.member.banner_url ?
+                new ImageViewer({ url: this.member.banner_url }) :
+                null;
+        }
+
         this.bottomContainer = document.createElement('div');
         this.bottomContainer.classList.add('profile-bottom-container');
 
@@ -38,10 +45,11 @@ class Profile extends Component {
         this.icon.classList.add('profile-icon');
         this.iconContainer.appendChild(this.icon);
 
-        // this.infoContainer = document.createElement('div');
-        // this.infoContainer.classList.add('profile-info-container');
-
-        // this.bottomContainer.appendChild(this.infoContainer);
+        this.icon.onclick = () => {
+            this.member.icon_url ?
+                new ImageViewer({ url: this.member.icon_url }) :
+                null;
+        }
 
         this.signatureContainer = document.createElement('div');
         this.signatureContainer.classList.add('profile-signature-container');
@@ -143,6 +151,7 @@ class Profile extends Component {
         this.name.textContent = member.name;
         this.username.textContent = '@' + member.username;
         this.icon.src = member.icon_url;
+
         this.bio.innerText = member.bio;
         if (!member.location) this.locationContainer.style.display = 'none';
         else this.locationContainer.style.display = 'flex';
