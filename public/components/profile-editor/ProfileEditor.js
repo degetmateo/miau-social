@@ -10,6 +10,7 @@ import ScreenSpinner from '../screen-spinner/ScreenSpinner.js';
 import Profile from '../../views/member/Profile.js';
 import Button from '../button/Button.js';
 import EventsHandler from '../../modules/EventsHandler.js';
+import {memberService} from '../../services/memberService.js';
 
 importCSS('/public/components/profile-editor/styles/profile-editor.css');
 
@@ -142,49 +143,49 @@ class ProfileEditor extends Component {
             blob: this.banner.getBlob()
         }
 
-        this.close();
         const loader = new ScreenSpinner();
+        this.close();
 
-        const form = new FormData();
-        form.append('name', name);
-        form.append('bio', bio);
-        form.append('location', location);
-        form.append('link', link);
-        form.append('icon', icon.blob);  
-        form.append('banner', banner.blob);
+        let icon_action;
 
-        if (icon.changed && icon.blob) form.append('icon_action', 'update');
-        if (icon.changed && !icon.blob) form.append('icon_action', 'delete');
-        if (!icon.changed) form.append('icon_action', 'none');
+        if (icon.changed && icon.blob) icon_action = 'update';
+        if (icon.changed && !icon.blob) icon_action = 'delete';
+        if (!icon.changed) icon_action = 'none';
 
-        if (banner.changed && banner.blob) form.append('banner_action', 'update');
-        if (banner.changed && !banner.blob) form.append('banner_action', 'delete');
-        if (!banner.changed) form.append('banner_action', 'none');
+        let banner_action;
 
-        const request = await fetch('/api/member/update-profile', {
-            method: 'POST',
-            headers: { "Authorization": "Bearer " + localStorage.getItem('token') },
-            body: form
-        });
+        if (banner.changed && banner.blob) banner_action = 'update';
+        if (banner.changed && !banner.blob) banner_action = 'delete';
+        if (!banner.changed) banner_action = 'none';
 
-        const response = await request.json();
-        if (!request.ok) {
+        let response;
+        try {
+            response = await memberService.updateProfile({
+                name: name,
+                bio: bio,
+                location: location,
+                link: link,
+                icon: icon.blob,
+                icon_action: icon_action,
+                banner: banner.blob,
+                banner_action: banner_action
+            });
+        } catch (error) {
             loader.remove();
-            new Alert('¡Ocurrió un error!', { error: true });
-            return;
+            return new Alert(error.message, { error: true });
         }
 
-        window.app.member.icon_url = response.data.icon_url;
-        window.app.member.banner_url = response.data.banner_url;
+        window.app.member.icon_url = response.icon_url;
+        window.app.member.banner_url = response.banner_url;
 
-        Profile.setIcon(response.data.icon_url);
-        Profile.setBanner(response.data.banner_url);
+        Profile.setIcon(response.icon_url);
+        Profile.setBanner(response.banner_url);
 
-        Profile.setName(response.data.name);
-        Profile.setBio(response.data.bio);
+        Profile.setName(response.name);
+        Profile.setBio(response.bio);
 
-        Profile.setLocation(response.data.location);
-        Profile.setLink(response.data.link);
+        Profile.setLocation(response.location);
+        Profile.setLink(response.link);
 
         loader.remove();
         new Alert('¡Perfil actualizado!', { error: false });

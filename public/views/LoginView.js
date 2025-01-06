@@ -103,7 +103,7 @@ const VIEW_CONTENT = `
                         <input placeholder="Nombre de Usuario" type="text" name="input-name" id="form-register-input-username" required>
                         <input placeholder="Contraseña" type="password" name="input-password" id="form-register-input-password" required>
                         <input placeholder="Confirmar Contraseña" type="password" name="input-password-confirmation" id="form-register-input-password-confirmation" required>
-                        <button type="submit">Enviar</button>
+                        <button type="submit">Registrarse</button>
                     </form>    
                 </div>
 
@@ -112,7 +112,7 @@ const VIEW_CONTENT = `
                     <form class="form" action="/" method="post" id="form-login">
                         <input placeholder="Nombre de Usuario" type="text" name="form-login-input-name" id="form-login-input-username" required>
                         <input placeholder="Contraseña" type="password" name="form-login-input-password" id="form-login-input-password" required>
-                        <button type="submit">Enviar</button>
+                        <button type="submit">Ingresar</button>
                     </form> 
                 </div>
             <div>

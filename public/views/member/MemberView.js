@@ -11,7 +11,7 @@ export default class extends AbstractView {
         this.css('/public/views/member/styles/member.css');
         this.offset = 0;
     }
-
+    
     async init (params) {
         this.params = params;
         this.offset = 0;
@@ -32,7 +32,6 @@ export default class extends AbstractView {
         this.main.appendChild(Profile.node());
         const postsContainer = new PostsContainer();
         this.main.appendChild(postsContainer.render());
-
         Profile.clear();
         let member;
         try {

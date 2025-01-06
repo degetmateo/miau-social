@@ -186,6 +186,12 @@ const updateProfile = async (data: {
 
     if (data.link && data.link.length > PARAMETERS.LINK_MAX_LENGTH) throw new InvalidArgumentError(`Tu nuevo enlace debe tener como máximo ${PARAMETERS.LINK_MAX_LENGTH} carácteres.`);
 
+    if (!data.icon_action) throw new InvalidArgumentError("ICON_ACTION is missing.");
+    if (!data.banner_action) throw new InvalidArgumentError("BANNER_ACTION is missing.");
+    const allowedActions = ['none', 'update', 'delete'];
+    if (!allowedActions.includes(data.icon_action)) throw new InvalidArgumentError("ICON_ACTION is invalid.");
+    if (!allowedActions.includes(data.banner_action)) throw new InvalidArgumentError("BANNER_ACTION is invalid.");
+
     let apiResponseIcon: any = null;
     if (data.icon_action === 'update' && data.icon) {
         apiResponseIcon = await ImgBB.upload({ buffer: data.icon });

@@ -150,7 +150,9 @@ class Profile extends Component {
         this.member = member;
         this.name.textContent = member.name;
         this.username.textContent = '@' + member.username;
-        this.icon.src = member.icon_url;
+        this.icon.src = this.member.icon_url ?
+            this.member.icon_url : 
+            URL_NO_IMAGE;
 
         this.bio.innerText = member.bio;
         if (!member.location) this.locationContainer.style.display = 'none';
@@ -233,7 +235,9 @@ class Profile extends Component {
     }
 
     setIcon = (url) => {
-        this.icon.src = url;
+        this.icon.src = url ?
+        url : 
+        URL_NO_IMAGE;
         this.member.icon_url = url;
     }
 

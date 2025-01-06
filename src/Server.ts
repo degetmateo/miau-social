@@ -43,6 +43,7 @@ export default class Server {
 
     private middlewares = () => {
         this.app.use('/public', express.static(path.join(__dirname + '/../public/')));
+
         this.app.use(express.json());
         this.app.use(
             cors({
