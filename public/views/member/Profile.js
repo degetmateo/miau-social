@@ -176,7 +176,7 @@ class Profile extends Component {
             this.button.classList.remove('profile-button--other');
             this.button.classList.add('profile-button--self');
             this.button.onclick = () => {
-                ProfileEditor.render(this.member);
+                new ProfileEditor(this.member);
             }
         } else {
             this.button.classList.remove('profile-button--self');

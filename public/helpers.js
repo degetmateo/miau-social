@@ -5,6 +5,12 @@ export const importCSS = (href) => {
     document.head.appendChild(link);
 }
 
+export const importJS = (href) => {
+    const script = document.createElement('script');
+    script.src = href;
+    document.head.appendChild(script);
+}
+
 export async function loadImage (url) {
     return new Promise(async (resolve, reject) => {
         const image = new Image();
@@ -41,4 +47,17 @@ export function shortenLink(url, maxLength = 20) {
     }
 
     return cleanedUrl;
+}
+
+export function dataURLToBlob (dataURL) {
+    const [header, base64Data] = dataURL.split(',');
+    const mimeType = header.match(/:(.*?);/)[1]
+
+    const binaryData = atob(base64Data);
+    const arrayBuffer = new Uint8Array(binaryData.length);
+    for (let i = 0; i < binaryData.length; i++) {
+        arrayBuffer[i] = binaryData.charCodeAt(i);
+    }
+
+    return new Blob([arrayBuffer], { type: mimeType });
 }

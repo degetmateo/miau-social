@@ -10,6 +10,7 @@
     max-width: 100%;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    z-index: 1000;
 }
 
 .container-alert--success {

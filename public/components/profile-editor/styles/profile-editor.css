@@ -1,4 +1,4 @@
-.profile-editor-background {
+.profile-editor-container {
     position: absolute;
     top: 0;
     left: 0;
@@ -12,7 +12,7 @@
     z-index: 1;
 }
 
-.profile-editor-container {
+.profile-editor {
     background-color: var(--primary-color);
     /* border: 1px solid #FFF; */
 
@@ -79,7 +79,7 @@
 }
 
 @media (max-width: 1280px) {
-    .profile-editor-container {
+    .profile-editor {
         width: 450px;
     }
 

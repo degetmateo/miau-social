@@ -1,4 +1,5 @@
 import { importCSS } from "../../helpers.js";
+import Alert from "../alert/alert.js";
 import ImageCropper from "../image-cropper/ImageCropper.js";
 
 importCSS('/public/components/icon-input/styles/icon-input.css');
@@ -35,15 +36,21 @@ export default class IconInput {
             const file = this.input.files[0];
             if (!file) return;
 
+            if (file.type === 'image/gif') {
+                return new Alert("Los GIFs solo pueden ser agregados desde configuración.");
+            }
+
             this.cropper = new ImageCropper({
                 aspectRatio: 1,
                 file: file,
                 onSubmit: (blob) => {
                     if (!blob) return;
                     const reader = new FileReader();
+                    
                     reader.onload = (e) => {
                         this.set(e.target.result);
                     }
+
                     reader.readAsDataURL(blob);
 
                     this.changed = true;

@@ -14,22 +14,23 @@ import {memberService} from '../../services/memberService.js';
 
 importCSS('/public/components/profile-editor/styles/profile-editor.css');
 
-class ProfileEditor extends Component {
-    constructor () {
+export default class ProfileEditor extends Component {
+    constructor (member) {
         super();
+        this.member = member;
         this.observerId = 'profile-editor';
-        this.app = document.getElementById('app');
-
-        this.background = document.createElement('div');
-        this.background.classList.add('profile-editor-background');
 
         this.container = document.createElement('div');
         this.container.classList.add('profile-editor-container');
-        this.background.appendChild(this.container);
+        document.getElementById('app').appendChild(this.container);
+
+        this.editor = document.createElement('div');
+        this.editor.classList.add('profile-editor');
+        this.container.appendChild(this.editor);
 
         this.header = document.createElement('div');
         this.header.classList.add('profile-editor-header');
-        this.container.appendChild(this.header);
+        this.editor.appendChild(this.header);
 
         this.closeButton = new CloseButton({
             onClick: this.close
@@ -53,7 +54,7 @@ class ProfileEditor extends Component {
 
         this.body = document.createElement('div');
         this.body.classList.add('profile-editor-body');
-        this.container.appendChild(this.body);
+        this.editor.appendChild(this.body);
 
         this.imagesContainer = document.createElement('div');
         this.imagesContainer.classList.add('profile-editor-images-container');
@@ -113,9 +114,18 @@ class ProfileEditor extends Component {
 
         this.infoContainer.appendChild(this.inputLink.render());
 
-        this.background.onclick = (e) => {
+        this.container.onclick = (e) => {
             if (e.target === this.background) this.close();
         }
+
+        this.inputName.set(this.member.name);
+        this.inputBio.set(this.member.bio);
+        this.inputLocation.set(this.member.location || '');
+        this.inputLink.set(this.member.link || '');
+        this.icon.set(this.member.icon_url || '');
+        this.banner.set(this.member.banner_url || '');
+
+        EventsHandler.addObserver(this);
     }
 
     onEscape = () => {
@@ -194,21 +204,7 @@ class ProfileEditor extends Component {
     close = () => {
         this.icon.setChanged(false);
         this.banner.setChanged(false);
+        this.container.remove();
         EventsHandler.removeObserver(this);
-        this.background.remove();
-    }
-
-    render = (member) => {
-        this.inputName.set(member.name);
-        this.inputBio.set(member.bio);
-        this.inputLocation.set(member.location || '');
-        this.inputLink.set(member.link || '');
-        this.icon.set(member.icon_url || '');
-        this.banner.set(member.banner_url || '');
-
-        EventsHandler.addObserver(this);
-        this.app.appendChild(this.background);        
     }
 }
-
-export default new ProfileEditor();

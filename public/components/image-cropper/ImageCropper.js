@@ -1,7 +1,9 @@
-import {importCSS} from "../../helpers.js";
+import {dataURLToBlob, importCSS} from "../../helpers.js";
 import EventsHandler from "../../modules/EventsHandler.js";
 import Button from "../button/Button.js";
 import Component from "../Component.js";
+
+import * as GIFUCT from 'https://cdn.jsdelivr.net/npm/gifuct-js@2.1.2/+esm';
 
 importCSS('/public/components/image-cropper/styles/image-cropper.css');
 
@@ -12,6 +14,7 @@ export default class ImageCropper extends Component {
         onSubmit: () => {}
     }) {
         super();
+        this.options = options;
         this.observerId = 'image-cropper';
         EventsHandler.addObserver(this);
 
@@ -39,11 +42,13 @@ export default class ImageCropper extends Component {
         this.submitButton = new Button({
             text: 'Guardar',
             appearance: 'default',
-            onClick: () => {
+            onClick: async () => {
                 const canvas = this.cropper.getCroppedCanvas();
+                
                 canvas.toBlob((blob) => {
                     options.onSubmit(blob);
                 });
+
                 this.close();
             }
         });
@@ -59,7 +64,9 @@ export default class ImageCropper extends Component {
             this.reader = new FileReader();
 
             this.reader.onload = (e) => {
-                this.image.src = e.target.result; 
+                this.image.src = e.target.result;
+                this.blob = dataURLToBlob(e.target.result);
+
                 if (this.cropper) {
                     this.cropper.destroy();
                     this.cropper = null;
