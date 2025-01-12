@@ -36,9 +36,9 @@ export default class IconInput {
             const file = this.input.files[0];
             if (!file) return;
 
-            if (file.type === 'image/gif') {
-                return new Alert("Los GIFs solo pueden ser agregados desde configuración.");
-            }
+            // if (file.type === 'image/gif') {
+            //     return new Alert("Los GIFs solo pueden ser agregados desde configuración.");
+            // }
 
             this.cropper = new ImageCropper({
                 aspectRatio: 1,
