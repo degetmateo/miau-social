@@ -1,7 +1,7 @@
 .form-update-banner-url-container {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    /* gap: 20px; */
     padding: 20px;
     border-bottom: 1px solid var(--border-color);
 }

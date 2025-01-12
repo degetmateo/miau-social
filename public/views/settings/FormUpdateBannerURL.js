@@ -19,7 +19,9 @@ class FormUpdateBannerURL {
 
         this.message = document.createElement('span');
         this.message.classList.add('form-update-banner-url-message');
-        this.message.innerText = 'Puede ser una imagen o un GIF. Se recomienda una relación de aspecto de 3 : 1.';
+        this.message.innerHTML = `
+            <p class="JetBrainsMono-Light">En caso de que los servicios de terceros que utilizamos para la subida de imágenes no esten disponibles, puedes usar esta opción para cambiar tu banner con un enlace directo hacia la imagen. De lo contrario, te recomendamos que vayas a tu perfil y pulses en <span class="JetBrainsMono-Bold">Editar Perfil</span>.</p>
+        `;
 
         this.inputContainer = document.createElement('div');
         this.inputContainer.classList.add('form-update-banner-url-input-container');

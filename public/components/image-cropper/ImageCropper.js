@@ -97,13 +97,15 @@ export default class ImageCropper extends Component {
         this.image.classList.add('image-cropper-image');
         this.editor.appendChild(this.image);
 
-        if (options.file) {
-            this.reader = new FileReader();
+        if (!options.file) return this.close();
 
+        try {
+            this.reader = new FileReader();
+    
             this.reader.onload = (e) => {
                 this.image.src = e.target.result;
                 this.blob = dataURLToBlob(e.target.result);
-
+    
                 if (this.cropper) {
                     this.cropper.destroy();
                     this.cropper = null;
@@ -116,6 +118,9 @@ export default class ImageCropper extends Component {
             };
     
             this.reader.readAsDataURL(options.file);
+        } catch (error) {
+            new Alert("Ha ocurrido un error.", { error: true });
+            this.close();   
         }
     }
 

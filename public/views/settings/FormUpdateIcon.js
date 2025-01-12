@@ -15,8 +15,7 @@ class FormUpdateIcon {
         this.formUpdateIconURLMessage.classList.add('form_update_icon_url-message');
         this.formUpdateIconURLMessage.innerHTML = `
             <h3>Actualiza tu icon con un enlace.</h3>
-            <p>1) Ingresa un enlace a una imagen o GIF. La URL debe ser directa a la imagen. Se recomienda que la imagen sea cuadrada.</p>
-            <p>2) Presiona el botón para cargar la imagen. Si el enlace no es valido, te lo haremos saber.</p>
+            <p class="JetBrainsMono-Light">En caso de que los servicios de terceros que utilizamos para la subida de imágenes no esten disponibles, puedes usar esta opción para cambiar tu imagen de perfil con un enlace directo hacia la imagen. De lo contrario, te recomendamos que vayas a tu perfil y pulses en <span class="JetBrainsMono-Bold">Editar Perfil</span>.</p>
         `;
         
         this.formUpdateIconURLInputContainer = document.createElement('div');

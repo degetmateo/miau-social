@@ -15,6 +15,12 @@ class FormUpdateUsername extends Form {
         this.title.textContent = 'Actualiza tu nombre de usuario.';
         this.container.appendChild(this.title);
 
+        this.message = document.createElement('span');
+        this.message.innerHTML = `
+            <p>Puede contener letras mayúsculas y minúsculas, guiones bajos y números. Debe ser único, te haremos saber si el nuevo ya está utilizado.</p>
+        `;
+        this.container.appendChild(this.message);
+
         this.inputContainer = document.createElement('div');
         this.inputContainer.classList.add('form_update_name-input_container');
         this.container.appendChild(this.inputContainer);
