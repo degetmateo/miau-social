@@ -3,12 +3,12 @@ import EventsHandler from "../../modules/EventsHandler.js";
 import Button from "../button/Button.js";
 import Component from "../Component.js";
 
-// import GIF from 'https://cdn.jsdelivr.net/npm/gif.js@0.2.0/+esm'
-// import GIFUCT from '../../lib/gifuct.js';
-import * as GIFUCT from 'https://cdn.jsdelivr.net/npm/gifuct-js@2.1.2/+esm';
-import GIF from '../../lib/gif.js';
 import ScreenSpinner from "../screen-spinner/ScreenSpinner.js";
 import Alert from "../alert/alert.js";
+
+// import * as GIFCropper from '../../lib/cropperjs-gif-all.js';
+
+// import gifCropper from 'https://cdn.skypack.dev/gif-cropper';
 
 importCSS('/public/components/image-cropper/styles/image-cropper.css');
 
@@ -51,58 +51,26 @@ export default class ImageCropper extends Component {
                 const spinner = new ScreenSpinner();
                 try {
                     if (options.file.type === 'image/gif') {
-                        const buffer = await this.blob.arrayBuffer();
-                        const gif = GIFUCT.parseGIF(buffer);
-                        const frames = GIFUCT.decompressFrames(gif, true);
-        
-                        const cropData = this.cropper.getData();
-        
-                        const croppedGIF = new GIF({
-                            workers: 2,
-                            quality: 1,
-                            workerScript: '/public/lib/gif.worker.js',
-                            repeat: 0,
-                            width: cropData.width,
-                            height: cropData.height,
-                            dither: 'Stucki-serpentine',
-                            background: '#FFF',
-                            transparent: null
-                        });
-        
-                        for (const frame of frames) {
-                            if (frame.patch.length !== frame.dims.width * frame.dims.height * 4) {
-                                console.error("Los datos del frame no tienen el tamaño esperado.");
-                                continue;
+                        CropperjsGif.crop({
+                            encoder: {
+                                workers: 2,
+                                quality: 10,
+                                workerScript: "/public/lib/gif.worker.js"
+                            },
+                            src: this.image.src,
+                            background: '#fff',
+                            onerror: function(code, error){
+                                console.log(code, error);
+                                spinner.remove();
+                                throw error;
                             }
-        
-                            const canvas = document.createElement('canvas');
-                            const ctx = canvas.getContext('2d');
-        
-                            canvas.width = cropData.width;
-                            canvas.height = cropData.height;
-        
-                            const data = new ImageData(
-                                new Uint8ClampedArray(frame.patch),
-                                frame.dims.width, 
-                                frame.dims.height
-                            );
-        
-                            ctx.putImageData(data, -cropData.x, -cropData.y);
-        
-                            croppedGIF.addFrame(ctx, {
-                                delay: frame.delay,
-                                disposal: frame.disposalType,
-                                copy: true
-                            });
-                        }
-                        
-                        croppedGIF.on('finished', (blob) => {
+                        },
+                        this.cropper,
+                        (blob) => {
                             options.onSubmit(blob);
-                            this.close();
                             spinner.remove();
+                            this.close();
                         });
-                        
-                        croppedGIF.render();
                     } else {
                         const canvas = this.cropper.getCroppedCanvas();
                         
@@ -110,8 +78,10 @@ export default class ImageCropper extends Component {
                             options.onSubmit(blob);
                         });
         
+                        spinner.remove();
                         this.close();
                     }
+                    
                 } catch (error) {
                     new Alert("Ha ocurrido un error.", { error: true });
                     spinner.remove();

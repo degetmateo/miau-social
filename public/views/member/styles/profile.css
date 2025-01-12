@@ -12,6 +12,7 @@
     background-color: var(--border-color);
     border-bottom: 1px solid var(--border-color);
     cursor: pointer;
+    background-repeat: no-repeat;
 }
 
 .profile-bottom-container {
