@@ -54,7 +54,7 @@ export default class CommentsView extends AbstractView {
                                 <div id="comments-main-form-post-create-button-image" class="home-main-form-post-create-button-media">IMG</div>
                                 <div id="comments-main-form-post-create-button-tenor" class="home-main-form-post-create-button-media">GIF</div>
                             </div>
-                            <button id="comments-main-form-post-create-button" class="button comments-main-form-post-create-button">Publicar</button>
+                            <button id="comments-main-form-post-create-button" class="comments-main-form-post-create-button">Publicar</button>
                         </div>
                     </div>
                 </div>
@@ -117,7 +117,7 @@ export default class CommentsView extends AbstractView {
             try {
                 const content = textarea.value;     
                 if ((!content || content.length <= 0) && (!this.images || this.images.length <= 0)) {
-                    throw new Error("Debes escribir algo o ingresar una imagen.");
+                    return new Alert("Debes escribir algo o ingresar una imagen.");
                 }
                 if (content && content.length <= 0) return new Alert("Debes escribir algo.");
                 if (content && content.length > 400) return new Alert("La cantidad máxima de carácteres es 400.");

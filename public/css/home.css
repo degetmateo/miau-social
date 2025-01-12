@@ -180,8 +180,8 @@
     color: #FFF;
     border: none;
     outline: none;
-    border: 1px solid #FFF;
     cursor: pointer;
+    border: 1px solid #FFF;
 }
 
 .home-main-form-post-create-button:hover {

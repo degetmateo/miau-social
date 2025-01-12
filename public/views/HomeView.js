@@ -331,7 +331,7 @@ const VIEW_CONTENT = `
                                 <div id="home-main-form-post-create-button-media--image" class="home-main-form-post-create-button-media">IMG</div>
                                 <div id="home-main-form-post-create-button-media--tenor" class="home-main-form-post-create-button-media">GIF</div>
                             </div>
-                            <button id="home-main-form-post-create-button" class="button home-main-form-post-create-button">Publicar</button>
+                            <button id="home-main-form-post-create-button" class="home-main-form-post-create-button">Publicar</button>
                         </div>
                     </div>
                 </div>
