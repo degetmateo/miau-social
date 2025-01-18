@@ -147,7 +147,7 @@ class Profile extends Component {
         this.urlContainer.style.display = 'none';
         this.followedNumber.textContent = 0;
         this.followersNumber.textContent = 0;
-        this.topContainer.style.backgroundImage = 'none';
+        this.banner.style.backgroundImage = 'none';
         this.button.remove();
     }
 
