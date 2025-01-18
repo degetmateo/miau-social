@@ -25,6 +25,11 @@ class Profile extends Component {
         this.topContainer = document.createElement('div');
         this.topContainer.classList.add('profile-top-container');
 
+        this.banner = document.createElement('div');
+        this.banner.classList.add('profile-banner');
+
+        this.topContainer.appendChild(this.banner);
+
         this.topContainer.onclick = () => {
             this.member.banner_url ?
                 new ImageViewer({ url: this.member.banner_url }) :
@@ -169,7 +174,7 @@ class Profile extends Component {
 
         this.followedNumber.textContent = member.followed_count;
         this.followersNumber.textContent = member.followers_count;
-        this.topContainer.style.backgroundImage = member.banner_url ? `url(${member.banner_url})` : 'none';
+        this.banner.style.backgroundImage = member.banner_url ? `url(${member.banner_url})` : 'none';
 
         if (window.app.member.id === member.id) {
             this.button.textContent = 'Editar perfil';
@@ -242,7 +247,7 @@ class Profile extends Component {
     }
 
     setBanner = (url) => {
-        this.topContainer.style.backgroundImage = url ? `url(${url})` : 'none';
+        this.banner.style.backgroundImage = url ? `url(${url})` : 'none';
         this.member.banner_url = url;
     }
 

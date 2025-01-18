@@ -65,8 +65,8 @@ export default class extends AbstractView {
                 postsContainer.renderPosts(posts);
             }
 
-            Profile.topContainer.style.backgroundPosition = `center ${scrollTop * 0.5}px`;
-            Profile.topContainer.style.backgroundPosition = `center calc(50% + ${scrollTop * 0.5}px)`;
+            // Profile.banner.style.backgroundPosition = `center ${scrollTop * 0.5}px`;
+            Profile.banner.style.backgroundPosition = `center calc(50% + ${scrollTop * 1}px)`;
         }
     }
 }
