@@ -1,5 +1,5 @@
 import {URL_NO_IMAGE} from "../../consts.js";
-import {navigateTo} from "../../router.js";
+import router from "../../router.js";
 
 export default class Notification {
     notification = {
@@ -38,7 +38,7 @@ export default class Notification {
         this.container.onmouseup = (e) => {
             if (e.target.closest('.container-notification-comment-pic')) return;
             if (e.target.closest('.notification-comment-signature-name')) return;
-            if (!this.isSelectingText) return navigateTo(this.container.getAttribute('href'));
+            if (!this.isSelectingText) return router.navigateTo(this.container.getAttribute('href'));
         }
     }
 

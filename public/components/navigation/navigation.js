@@ -1,5 +1,4 @@
-import Observer from "../../interfaces/Observer.js";
-import {navigateTo} from "../../router.js";
+import router from "../../router.js";
 
 const HOME_IMAGE_OFF = new Image();
 HOME_IMAGE_OFF.src = "/public/components/navigation/svg/home-off.svg";
@@ -86,7 +85,7 @@ export default class Navigation {
         
         button.onclick = e => {
             e.preventDefault();
-            navigateTo(href);
+            router.navigateTo(href);
         }
 
         button.update = () => {
@@ -146,7 +145,7 @@ export default class Navigation {
         
         button.onclick = e => {
             e.preventDefault();
-            navigateTo(button.href);
+            router.navigateTo(button.href);
             button.setCount(0);
         }
 

@@ -4,7 +4,7 @@ import ImageViewer from "../../components/image-viewer/ImageViewer.js";
 import ProfileEditor from "../../components/profile-editor/ProfileEditor.js";
 import {URL_NO_IMAGE} from "../../consts.js";
 import {shortenLink} from "../../helpers.js";
-import { navigateTo } from '../../router.js';
+import router from "../../router.js";
 import {followService} from "../../services/followService.js";
 
 const IMAGE_LOCATION = new Image();
@@ -199,11 +199,11 @@ class Profile extends Component {
         this.bottomContainer.appendChild(this.button);
 
         this.followedContainer.onclick = () => {
-            navigateTo(`/member/${member.username}/followed`);
+            router.navigateTo(`/member/${member.username}/followed`);
         }
 
         this.followersContainer.onclick = () => {
-            navigateTo(`/member/${member.username}/followers`);
+            router.navigateTo(`/member/${member.username}/followers`);
         }
     }
 

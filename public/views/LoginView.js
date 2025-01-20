@@ -1,7 +1,7 @@
 import Alert from "../components/alert/alert.js";
 import ScreenSpinner from "../components/screen-spinner/ScreenSpinner.js";
 import {init} from "../index.js";
-import { navigateTo } from "../router.js";
+import router from "../router.js";
 import AbstractView from "./AbstractView.js";
 
 export default class LoginView extends AbstractView {
@@ -60,7 +60,7 @@ export default class LoginView extends AbstractView {
         window.app.member = response.data;
 
         init();
-        navigateTo('/home');
+        router.navigateTo('/home');
     }
 
     async eventLogin (event) {
@@ -89,7 +89,7 @@ export default class LoginView extends AbstractView {
         window.app.member = response.data;
 
         init();
-        navigateTo('/home');
+        router.navigateTo('/home');
     }
 }
 

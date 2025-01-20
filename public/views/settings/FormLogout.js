@@ -1,4 +1,4 @@
-import {navigateTo} from "../../router.js";
+import router from "../../router.js";
 
 class FormLogout {
     constructor () {
@@ -20,7 +20,7 @@ class FormLogout {
     EventLogout = async () => {
         this.buttonLogout.onclick = () => {
             localStorage.removeItem('token');
-            navigateTo('/login');
+            router.navigateTo('/login');
             return;
         }
     }

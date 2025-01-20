@@ -1,6 +1,5 @@
 import Alert from "../../components/alert/alert.js";
 import {URL_NO_IMAGE} from "../../consts.js";
-import {navigateTo} from "../../router.js";
 import {followService} from "../../services/followService.js";
 import AbstractView from "../AbstractView.js";
 

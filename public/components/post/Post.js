@@ -1,6 +1,6 @@
 import { URL_NO_IMAGE } from "../../consts.js";
 import { cleanContent } from "../../helpers.js";
-import {navigateTo} from "../../router.js";
+import router from "../../router.js";
 import Alert from "../alert/alert.js";
 import ImageViewer from "../image-viewer/ImageViewer.js";
 import Popup from "../popup/Popup.js";
@@ -40,7 +40,7 @@ export default class Post {
             if (e.target.closest('.container-post-footer-interactions-upvote')) return;
             if (e.target.closest('.container-post-header-button-delete')) return;
             if (e.target.closest('.container-post-header-picture')) return;
-            if (!this.isSelectingText) return navigateTo('/post/'+this.post.id+'/comments');
+            if (!this.isSelectingText) return router.navigateTo('/post/'+this.post.id+'/comments');
         }
     }
 
@@ -123,7 +123,7 @@ export default class Post {
 
         headerPicture.onclick = (e) => {
             e.stopPropagation();
-            navigateTo('/member/'+this.post.creator.username);
+            router.navigateTo('/member/'+this.post.creator.username);
         }
 
         containerHeaderPicture.appendChild(headerPicture);
@@ -260,18 +260,30 @@ export default class Post {
     CreatePostFooterDate () {
         const containerFooterDate = document.createElement('div');
         containerFooterDate.classList.add('container-post-footer-date');
-        const footerDate = document.createElement('span');
-        footerDate.classList.add('post-footer-date');
 
-        if (this.options.date) {
-            this.options.date === 'date' ?
-                footerDate.textContent = new Date(this.post.date).toLocaleString('es-ES') : 
-                footerDate.textContent = this.getTimeElapsedSince(new Date(this.post.date));
-        } else {
-            footerDate.textContent = new Date(this.post.date).toLocaleString('es-ES');
-        }
+        const exactDate = document.createElement('span');
+        exactDate.classList.add('post-footer-date-exact');
+        exactDate.textContent = new Date(this.post.date).toLocaleString('es-ES');
 
-        containerFooterDate.appendChild(footerDate);
+        const relativeDate = document.createElement('span');
+        relativeDate.classList.add('post-footer-date-relative');
+        relativeDate.textContent = `(${this.getTimeElapsedSince(new Date(this.post.date))})`;
+
+        // const footerDate = document.createElement('span');
+        // footerDate.classList.add('post-footer-date');
+
+        // footerDate.textContent = `${new Date(this.post.date).toLocaleString('es-ES')} (${this.getTimeElapsedSince(new Date(this.post.date))})`;
+
+        // if (this.options.date) {
+        //     this.options.date === 'date' ?
+        //         footerDate.textContent = new Date(this.post.date).toLocaleString('es-ES') : 
+        //         footerDate.textContent = this.getTimeElapsedSince(new Date(this.post.date));
+        // } else {
+        //     footerDate.textContent = new Date(this.post.date).toLocaleString('es-ES');
+        // }
+
+        containerFooterDate.appendChild(exactDate);
+        containerFooterDate.appendChild(relativeDate);
         return containerFooterDate;
     }
 

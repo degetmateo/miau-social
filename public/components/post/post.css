@@ -157,8 +157,19 @@ body {
 
 .container-post-footer-date {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
     align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.post-footer-date-exact {
+    font-size: 12px;
+}
+
+.post-footer-date-relative {
+    font-size: 12px;
 }
 
 .post-footer-date {

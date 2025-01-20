@@ -1,8 +1,8 @@
 import Alert from "./components/alert/alert.js";
 import Navigation from "./components/navigation/navigation.js";
 import Notifier from "./modules/Notifier.js";
-import { navigateTo, router } from "./router.js";
 import EventsHandler from "./modules/EventsHandler.js";
+import router from "./router.js";
 
 window.addEventListener("popstate", () => router.resolve());
 
@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (linkElement) {
             e.preventDefault();
-            navigateTo(linkElement.href || linkElement.getAttribute('href'));
+            router.navigateTo(linkElement.href || linkElement.getAttribute('href'));
         }
     });
 
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (!token) {
         localStorage.removeItem('token');
-        navigateTo('/login');
+        router.navigateTo('/login');
         return;
     }
 
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!request.ok) {
         localStorage.removeItem('token');
         new Alert('La sesión expiró.', { error: true });
-        navigateTo('/login');
+        router.navigateTo('/login');
         return;
     }
 

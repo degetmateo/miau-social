@@ -1,11 +1,11 @@
 import { loadImage } from "../helpers.js";
-import { navigateTo } from "../router.js";
 import AbstractView from "./AbstractView.js";
 import Alert from "../components/alert/alert.js";
 import Popup from "../components/popup/Popup.js";
 import Post from "../components/post/Post.js";
 import {URL_NO_IMAGE} from "../consts.js";
 import EventsHandler from "../modules/EventsHandler.js";
+import router from "../router.js";
 
 export default class extends AbstractView {
     constructor () {
@@ -41,7 +41,7 @@ export default class extends AbstractView {
         EventsHandler.removeObserver(this);
         EventsHandler.addObserver(this);
 
-        if (window.location.pathname === '/') return navigateTo('/home');
+        if (window.location.pathname === '/') return router.navigateTo('/home');
         const appContainer = document.getElementById('app');
         appContainer.innerHTML = VIEW_CONTENT;
 
