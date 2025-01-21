@@ -148,11 +148,16 @@ body {
 }
 
 .container-post-footer {
-    display: grid;
+    /* display: grid;
     grid-template-columns: auto auto;
     grid-template-rows: auto;
     gap: 5px;
-    padding-top: 10px;
+    padding-top: 10px; */
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
 }
 
 .container-post-footer-date {

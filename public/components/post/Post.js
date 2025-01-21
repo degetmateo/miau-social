@@ -290,7 +290,7 @@ export default class Post {
     getTimeElapsedSince = (date) => {
         const now = new Date();
         const dif = now - date;
-        let seconds = Math.floor(dif / 1000);
+        const seconds = Math.floor(dif / 1000);
         const minutes = Math.floor(seconds / 60);
         const hours = Math.floor(minutes / 60);
         const days = Math.floor(hours / 24);
