@@ -95,6 +95,8 @@ export default class Notification {
 
     CreateNotificationUpvote () {
         this.container.setAttribute('href', '/post/'+this.notification.target_post.id+'/comments');
+        if (!this.notification.target_post.content) this.notification.target_post.content = '';
+        if (!this.notification.target_post.images) this.notification.target_post.images = [];
         this.container.innerHTML = `
             <div class="container-notification-comment-signature">
                 <div class="container-notification-comment-pic">
@@ -109,6 +111,8 @@ export default class Notification {
 
     CreateNotificationFollow () {
         this.container.setAttribute('href', '/member/'+this.notification.target_member.username);
+        if (!this.notification.target_post.content) this.notification.target_post.content = '';
+        if (!this.notification.target_post.images) this.notification.target_post.images = [];
         this.container.innerHTML = `
             <div class="container-notification-comment-signature">
                 <div class="container-notification-comment-pic">
