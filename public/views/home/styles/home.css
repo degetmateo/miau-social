@@ -3,7 +3,7 @@
     height: 100%;
 
     display: grid;
-    grid-template-columns: 1fr 600px 1fr;
+    grid-template-columns: 1fr 700px 1fr;
     grid-template-rows: 1fr 1fr 1fr;
     grid-template-areas: 
         "nav main aside"
@@ -54,7 +54,7 @@
 
 @media (max-width: 900px) {
     .home-view {
-        grid-template-columns: auto;
+        grid-template-columns: 1fr;
         grid-template-rows: 1fr 1fr 50px;
         grid-template-areas: 
             "main main main"

@@ -1,6 +1,6 @@
 .settings-view {
     display: grid;
-    grid-template-columns: min-content 1fr 250px;
+    grid-template-columns: 1fr 700px 1fr;
     grid-template-rows: auto;
     grid-template-areas: 
         "nav main aside"
@@ -91,6 +91,7 @@
 
 @media (max-width: 900px) {
     .settings-view {
+        grid-template-columns: 1fr;
         grid-template-rows: auto auto 50px;
         grid-template-areas: 
             "main main main"

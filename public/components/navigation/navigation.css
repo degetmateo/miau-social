@@ -8,6 +8,8 @@
     display: flex;
     flex-direction: column;
     z-index: 1;
+
+    align-items: flex-end;
 }
 
 .nav-button {
@@ -16,6 +18,10 @@
     align-items: center;
     gap: 10px;
     color: var(--font-color);
+
+    /* margin-left: 200px; */
+
+    /* border: 1px solid red; */
 }
 
 .nav-button:hover {

@@ -1,7 +1,13 @@
-.container-view {
-    grid-template-columns: min-content 1fr 250px;
+.container-view-notifications {
+    display: grid;
+    grid-template-columns: 1fr 700px 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-areas: 
+        "nav main aside"
+        "nav main aside"
+        "nav main aside";
+    height: 100%;
 }
-
 
 .notifications-view-main {
     grid-area: main;
@@ -20,7 +26,12 @@
 
 @media (max-width: 900px) {
     .container-view-notifications {
-        display: flex;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr 50px;
+        grid-template-areas: 
+            "main main main"
+            "main main main"
+            "nav nav nav";
     }
 
     .notifications-view-main {

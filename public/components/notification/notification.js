@@ -62,6 +62,8 @@ export default class Notification {
 
     CreateNotificationComment () {
         this.container.setAttribute('href', '/post/'+this.notification.target_post.id+'/comments');
+        if (!this.notification.target_post.content) this.notification.target_post.content = '';
+        if (!this.notification.target_post.images) this.notification.target_post.images = [];
         this.container.innerHTML = `
             <div class="container-notification-comment-signature">
                 <div class="container-notification-comment-pic">

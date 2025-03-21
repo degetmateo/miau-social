@@ -1,6 +1,6 @@
 .view-followed {
     display: grid;
-    grid-template-columns: min-content 1fr 250px;
+    grid-template-columns: 1fr 700px 1fr;
     grid-template-rows: 1fr 1fr 1fr;
     grid-template-areas: 
         "nav main aside"
@@ -21,6 +21,7 @@
 
 @media (max-width: 900px) {
     .view-followed {    
+        grid-template-columns: 1fr;
         grid-template-rows: 1fr 1fr 50px;
         grid-template-areas: 
             "main main main"

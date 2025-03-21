@@ -70,6 +70,7 @@ export default class extends AbstractView {
         localStorage.setItem('timelime-mode', this.timelineMode);
         this.offset = 0;
         this.setScroll(0);
+        this.posts = [];
         this.updateTimelineButtons();
         this.clearTimeline();
         this.loadTimeline();
@@ -120,6 +121,7 @@ export default class extends AbstractView {
             await postService.get({ offset: this.offset }) :
             await postService.getFollowing({ offset: this.offset });
         
+        this.setScroll(0);
         this.drawPosts(posts);
         this.eventTimelineScroll();
         this.firstTime = false;
@@ -186,8 +188,8 @@ export default class extends AbstractView {
                         router.navigateTo('/home');
                     }
 
-                    this.clearTimeline();
                     this.setScroll(0);
+                    this.clearTimeline();
                     this.drawPosts(posts);
                 }
             });
