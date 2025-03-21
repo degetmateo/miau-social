@@ -48,6 +48,10 @@ export default class Navigation {
         this.CreateButtons();
     }
 
+    render (element) {
+        element.append(this.nav);
+    }
+
     update = () => {
         this.homeButton.remove();
         this.profileButton.remove();

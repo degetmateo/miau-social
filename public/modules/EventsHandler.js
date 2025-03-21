@@ -6,6 +6,7 @@ class EventsHandler {
     }
 
     addObserver (observer) {
+        this.removeObserver(observer);
         this.observers.push(observer);
     }
 

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import Authorization from "../middlewares/Authorization";
 import { postController } from "../controllers/postController";
+import Multer from "../middlewares/Multer";
 
 const router: Router = Router();
 
@@ -14,7 +15,7 @@ router.get('/:id_post(\\d+)/thread', Authorization.Everyone, postController.getT
 
 router.get('/:id_post(\\d+)', Authorization.Everyone, postController.getById);
 
-router.post('/', Authorization.Everyone, postController.post);
+router.post('/', Authorization.Everyone, Multer.MultipleUploads(['image-0', 'image-1', 'image-2', 'image-3']), postController.post);
 
 router.delete('/:id_post(\\d+)', Authorization.Everyone, postController.remove);
 

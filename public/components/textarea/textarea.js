@@ -7,12 +7,14 @@ export default class Textarea extends Component {
     constructor (options = {
         title: 'input',
         max: 16,
-        min: 0
+        min: 0,
+        expand: false
     }) {
         super();
         this.max = options.max;
         this.min = options.min;
         this.value = '';
+        this.expand = options.expand;
 
         this.container = document.createElement('div');
         this.container.classList.add('textarea-container');
@@ -24,6 +26,9 @@ export default class Textarea extends Component {
 
         this.textarea = document.createElement('textarea');
         this.textarea.classList.add('textarea');
+        if (this.expand) {
+            this.textarea.classList.add('textarea--expand');
+        }
         this.textarea.minLength = options.min;
         this.textarea.maxLength = options.max;
         this.container.appendChild(this.textarea);
@@ -58,6 +63,11 @@ export default class Textarea extends Component {
         this.length.innerText = `${this.value.length}/${this.max}`;
         if (this.value.length > this.max || this.value.length < this.min) this.container.classList.add('textarea-container--invalid');
         else this.container.classList.remove('textarea-container--invalid');
+
+        if (this.expand) {
+            this.textarea.style.height = 'auto';
+            this.textarea.style.height = `${this.textarea.scrollHeight}px`;
+        }
     }
 
     render = () => {

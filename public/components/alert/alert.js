@@ -1,7 +1,10 @@
 export default class Alert {
     constructor (message, options = {
-        error: false
+        error: false,
+        timeout: 4000,
+        onClick: () => {}
     }) {
+        this.options = options;
         this.message = message;
         this.container = document.createElement('div');
         this.container.classList.add('container-alert');
@@ -32,12 +35,16 @@ export default class Alert {
 
     events () {
         this.container.onclick = () => {
-            this.delete();            
+            this.delete();
+            if (this.options.onClick) this.options.onClick();  
         }
 
+        if (this.options.timeout === null) return;
+        if (this.options.timeout === undefined) this.options.timeout = 4000;
+        
         setTimeout(() => {
             this.delete();
-        }, 4000);
+        }, this.options.timeout);
     }
 
     body () {

@@ -1,5 +1,5 @@
 import SettingsView from "./views/settings/SettingsView.js";
-import HomeView from "./views/HomeView.js";
+// import HomeView from "./views/HomeView.js";
 import LoginView from "./views/LoginView.js";
 import MemberView from "./views/member/MemberView.js";
 import AdminView from "./views/AdminView.js";
@@ -9,6 +9,7 @@ import NotificationsView from "./views/notifications/NotificationsView.js";
 import FollowedView from "./views/followed/FollowedView.js";
 import FollowersView from "./views/followers/FollowersView.js";
 import ErrorView from "./views/error/ErrorView.js";
+import HomeView from "./views/home/HomeView.js";
 
 class Router {
     constructor () {
@@ -58,6 +59,10 @@ class Router {
 
     goForward = () => {
         window.history.forward();
+    }
+
+    getPathname = () => {
+        return window.location.pathname;
     }
 }
 

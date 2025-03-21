@@ -61,3 +61,14 @@ export function dataURLToBlob (dataURL) {
 
     return new Blob([arrayBuffer], { type: mimeType });
 }
+
+export function ScrollBottom (element, func) {
+    element.addEventListener('scroll', () => {
+        const SCROLL_HEIGHT = element.scrollHeight;
+        const CLIENT_HEIGHT = element.clientHeight;
+        const SCROLL = element.scrollTop;
+        const LIMIT = 1;
+
+        if (SCROLL + CLIENT_HEIGHT >= SCROLL_HEIGHT - LIMIT) func();
+    });
+}

@@ -8,12 +8,16 @@ export default class Input extends Component {
         title: 'input',
         type: 'text',
         max: 16,
-        min: 1
+        min: 0,
+        onStop: () => {}
     }) {
         super();
+        this.options = options;
         this.max = options.max;
         this.min = options.min;
         this.value = '';
+        this.timer;
+        this.timerInterval = 700;
 
         this.container = document.createElement('div');
         this.container.classList.add('input-container');
@@ -62,6 +66,11 @@ export default class Input extends Component {
         this.length.innerText = `${this.value.length}/${this.max}`;
         if (this.value.length > this.max || this.value.length < this.min) this.container.classList.add('input-container--invalid');
         else this.container.classList.remove('input-container--invalid');
+
+        clearTimeout(this.timer);
+        this.timer = setTimeout(() => {
+            this.options.onStop();
+        }, this.timerInterval);
     }
 
     destroy = () => {

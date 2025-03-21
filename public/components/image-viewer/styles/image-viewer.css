@@ -15,6 +15,6 @@
 .viewer {
     border: 1px solid var(--border-color--yellow);
     transition: transform 0.2s ease;
-    max-width: 100%;
-    max-height: 100%;
+    max-width: 99%;
+    max-height: 99%;
 }

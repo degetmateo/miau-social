@@ -9,6 +9,7 @@
         "input length";
     gap: 10px;
     padding: 8px;
+    cursor: text;
 }
 
 .input-container--active {

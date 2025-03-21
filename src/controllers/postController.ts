@@ -78,10 +78,23 @@ const getThread = async (req: Request, res: Response) => {
 
 const post = async (req: Request, res: Response) => {
     try {
+        const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+
         const response = await postService.post({
             id_member: Number(req.member.id),
-            content: req.body.content,
-            images: req.body.images,
+            content: req.body.content ? req.body.content as string : null,
+            tenor: [
+                req.body['tenor-0'] ?? null, 
+                req.body['tenor-1'] ?? null, 
+                req.body['tenor-2'] ?? null, 
+                req.body['tenor-3'] ?? null
+            ].filter(tenor => tenor !== null),
+            images: [
+                files['image-0'] ? files['image-0'][0]['buffer'] : null, 
+                files['image-1'] ? files['image-1'][0]['buffer'] : null, 
+                files['image-2'] ? files['image-2'][0]['buffer'] : null, 
+                files['image-3'] ? files['image-3'][0]['buffer'] : null
+            ].filter(image => image !== null),
             id_replied_post: req.body.id_replied_post ? Number(req.body.id_replied_post) : null
         });
 

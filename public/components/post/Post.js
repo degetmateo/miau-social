@@ -3,6 +3,7 @@ import { cleanContent } from "../../helpers.js";
 import router from "../../router.js";
 import Alert from "../alert/alert.js";
 import ImageViewer from "../image-viewer/ImageViewer.js";
+import ImagesContainer from "../images-container/ImagesContainer.js";
 import Popup from "../popup/Popup.js";
 
 const IMAGE_POST_UPVOTE_ON = new Image();
@@ -40,6 +41,8 @@ export default class Post {
             if (e.target.closest('.container-post-footer-interactions-upvote')) return;
             if (e.target.closest('.container-post-header-button-delete')) return;
             if (e.target.closest('.container-post-header-picture')) return;
+            if (e.target.closest('.link')) return;
+            if (e.target.closest('.images-container')) return;
             if (!this.isSelectingText) return router.navigateTo('/post/'+this.post.id+'/comments');
         }
     }
@@ -84,6 +87,16 @@ export default class Post {
             }
             containerBody.appendChild(imagesContainer);
         }
+
+        if (this.post.media && this.post.media.length > 0) {
+            const imagesContainer = new ImagesContainer({ editable: false, maxHeight: 500 });
+            for (const media of this.post.media) {
+                imagesContainer.addImage({ src: media, type: 'user' });
+            }
+            containerBody.append(imagesContainer.render());
+        }
+
+
         return containerBody;
     }
 

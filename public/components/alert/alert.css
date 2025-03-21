@@ -11,6 +11,7 @@
     word-wrap: break-word;
     overflow-wrap: break-word;
     z-index: 1000;
+    cursor: pointer;
 }
 
 .container-alert--success {

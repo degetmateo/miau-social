@@ -3,6 +3,7 @@ import { postRepository } from "../database/repository/postRepository";
 import InvalidArgumentError from "../errors/InvalidArgumentError";
 import NotFoundError from "../errors/NotFoundError";
 import UnauthorizedError from "../errors/UnauthorizedError";
+import ImgBB from "../helpers/ImgBB";
 import { PARAMETERS } from "../static/parameters";
 
 const get = async (data: {
@@ -91,23 +92,42 @@ const getThread = async (data: {
 const post = async (data: {
     id_member: number;
     content: string;
-    images: string[];
+    tenor: string[];
+    images: Express.Multer.File['buffer'][];
     id_replied_post: number;
 }) => {
-    if (!data.content && !data.images) throw new InvalidArgumentError("Debes escribir algo o insertar una imagen.");
+    const isEmpty = (!data.content || data.content.length <= 0) && [...data.tenor, ...data.images].length <= 0;
+    if (isEmpty) throw new InvalidArgumentError("No puedes enviar una publicación vacia.");
 
-    if (data.content) {
-        if (data.content.length <= 0) throw new InvalidArgumentError("Debes escribir algo.");
+    if (data.content && data.content.length > 0) {
         if (data.content.length > PARAMETERS.POST_CONTENT_MAX_LENGTH) throw new InvalidArgumentError(`Has superado el límite de ${PARAMETERS.POST_CONTENT_MAX_LENGTH} carácteres.`);
     }
 
-    if (data.images) {
-        if (!Array.isArray(data.images)) throw new InvalidArgumentError("Ha ocurrido un error.");
-        if (!data.content && data.images.length <= 0) throw new InvalidArgumentError("Debes escribir algo o insertar una imagen.");
-        if (data.images.length > PARAMETERS.POST_IMAGES_MAX_LENGTH) throw new InvalidArgumentError(`Has superado el límite de ${PARAMETERS.POST_IMAGES_MAX_LENGTH} imágenes.`);
+    if (data.images || data.tenor || data.images.length > 0 || data.tenor.length > 0) {
+        // if (!Array.isArray(data.images)) throw new InvalidArgumentError("Ha ocurrido un error.");
+        // if (!data.content && data.images.length <= 0) throw new InvalidArgumentError("Debes escribir algo o insertar una imagen.");
+        if ([...data.tenor, ...data.images].length > PARAMETERS.POST_IMAGES_MAX_LENGTH) throw new InvalidArgumentError(`Has superado el límite de ${PARAMETERS.POST_IMAGES_MAX_LENGTH} imágenes.`);
     }
 
-    const response = await postRepository.post(data);
+    let apiResponses = [];
+    for (const image of data.images) {
+        const apiResponse = await ImgBB.upload({ buffer: image });
+        apiResponses.push({
+            url: apiResponse.data.url,
+            imgbb_id: apiResponse.data.id,
+            delete_url: apiResponse.data.delete_url,
+            source: 'imgbb'
+        });
+    }
+
+    const response = await postRepository.post({
+        id_member: data.id_member,
+        content: data.content,
+        tenor: data.tenor,
+        images: apiResponses,
+        id_replied_post: data.id_replied_post
+    });
+
     return response;
 }
 
