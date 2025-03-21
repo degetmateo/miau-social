@@ -64,12 +64,13 @@ export default class extends AbstractView {
     }
 
     changeTimeline (timelineMode) {
+        this.setScroll(0);
+        
         if (this.timelineMode === timelineMode && this.cooldown) return;
         this.activateCooldown();
         this.timelineMode = timelineMode;
         localStorage.setItem('timelime-mode', this.timelineMode);
         this.offset = 0;
-        this.setScroll(0);
         this.posts = [];
         this.updateTimelineButtons();
         this.clearTimeline();
