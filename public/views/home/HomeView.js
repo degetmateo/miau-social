@@ -61,11 +61,13 @@ export default class extends AbstractView {
         this.aside = document.createElement('aside');
         this.aside.classList.add('home-aside');
         this.view.append(this.aside);
+
+        this.eventTimelineScroll();
     }
 
     changeTimeline (timelineMode) {
         this.setScroll(0);
-        
+
         if (this.timelineMode === timelineMode && this.cooldown) return;
         this.activateCooldown();
         this.timelineMode = timelineMode;
@@ -124,7 +126,6 @@ export default class extends AbstractView {
         
         this.setScroll(0);
         this.drawPosts(posts);
-        this.eventTimelineScroll();
         this.firstTime = false;
 
         this.posts = posts;
@@ -137,23 +138,24 @@ export default class extends AbstractView {
     }
 
     eventTimelineScroll () {
-        this.main.addEventListener('scroll', async () => {
+        this.main.onscroll = async () => {
             const scrollHeight = this.main.scrollHeight;
             const clientHeight = this.main.clientHeight;
             this.scroll = this.main.scrollTop;
             const umbral = 1;
-
+    
             if (this.scroll + clientHeight >= scrollHeight - umbral) {
+                console.log('SCROLL LIMIT')
                 this.offset += this.limit;
-
+    
                 const posts = this.timelineMode === 'global' ? 
                     await postService.get({ offset: this.offset }) :
                     await postService.getFollowing({ offset: this.offset });
-
+    
                 this.drawPosts(posts);
                 this.posts = [...this.posts, ...posts];
             }
-        });
+        }
     }
 
     onVisibilityChange () {
