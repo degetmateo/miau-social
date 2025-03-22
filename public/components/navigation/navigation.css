@@ -9,17 +9,19 @@
     flex-direction: column;
     z-index: 1;
 
-    align-items: flex-start;
+    align-items: center;
 }
 
 .nav-button {
     padding: 25px;
     display: flex;
     align-items: center;
+    justify-items: center;
     gap: 10px;
     color: var(--font-color);
-    width: 100%;
-    box-sizing: border-box;
+    width: 180px;
+    min-width: min-content;
+    /* box-sizing: border-box; */
 }
 
 .nav-button:hover {
