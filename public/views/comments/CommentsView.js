@@ -48,6 +48,14 @@ export default class CommentsView extends AbstractView {
         creator.render(postCreatorContainer);
         creator.updateIcon(window.app.member.icon_url);
         creator.updateName(window.app.member.name);
+        creator.onSuccess(() => {
+            const p = this.posts.find(e => e.post.id === this.params.id_post);
+            if (p) {
+                p.increaseComments();
+                p.drawCommentsCount();
+            }
+            this.CreateMainComments();
+        });
 
         // this.CreateMainPost();
         this.CreateMainComments();

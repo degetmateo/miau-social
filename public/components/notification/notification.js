@@ -1,5 +1,6 @@
 import {URL_NO_IMAGE} from "../../consts.js";
 import router from "../../router.js";
+import ImagesContainer from "../images-container/ImagesContainer.js";
 
 export default class Notification {
     notification = {
@@ -72,25 +73,31 @@ export default class Notification {
                 <span class="notification-comment-signature-title"><span class="notification-comment-signature-name" href="/member/${this.notification.target_member.username}" data-link>${this.notification.target_member.name}</span> te ha respondido:</span>
             </div>
             ${this.notification.target_post.content.length > 0 ? `<span class="notification-comment-post-content">${this.notification.target_post.content}</span>` : ''}
-            ${this.notification.target_post.images.length > 0 ? `<div class="container-post-body-images">${this.images()}</div>` : ''}
+            ${this.notification.target_post.media.length > 0 ? `${this.images()}` : ''}
         `;
     }
 
     images () {
-        const imagesContainer = document.createElement('div');
-        imagesContainer.classList.add('container-post-body-images');
-        for (const image of this.notification.target_post.images) {
-            try {
-                const img = new Image();
-                img.src = image;
-                img.addEventListener('error', () => imagesContainer.remove());
-                img.classList.add('post-body-image');
-                imagesContainer.appendChild(img);
-            } catch (error) {
-                continue;
-            }
+        // const imagesContainer = document.createElement('div');
+        // imagesContainer.classList.add('container-post-body-images');
+        // for (const image of this.notification.target_post.images) {
+        //     try {
+        //         const img = new Image();
+        //         img.src = image;
+        //         img.addEventListener('error', () => imagesContainer.remove());
+        //         img.classList.add('post-body-image');
+        //         imagesContainer.appendChild(img);
+        //     } catch (error) {
+        //         continue;
+        //     }
+        // }
+
+        const images = new ImagesContainer({ editable: false });
+        for (const url of this.notification.target_post.media) {
+            images.addImage({ src: url, type: 'user' });
         }
-        return imagesContainer.innerHTML;
+
+        return images.container.outerHTML;
     }
 
     CreateNotificationUpvote () {
@@ -105,7 +112,7 @@ export default class Notification {
                 <span class="notification-comment-signature-title"><span class="notification-comment-signature-name" href="/member/${this.notification.target_member.username}" data-link>${this.notification.target_member.name}</span> ha indicado que le gusta tu publicación.</span>
             </div>
             ${this.notification.target_post.content.length > 0 ? `<span class="notification-comment-post-content">${this.notification.target_post.content}</span>` : ''}
-            ${this.notification.target_post.images.length > 0 ? `<div class="container-post-body-images">${this.images()}</div>` : ''}
+            ${this.notification.target_post.media.length > 0 ? `${this.images()}` : ''}
         `;
     }
 

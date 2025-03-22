@@ -10,63 +10,80 @@ export default class extends AbstractView {
         super();
         this.css('/public/views/member/styles/member.css');
         this.offset = 0;
-    }
-    
-    async init (params) {
-        this.params = params;
-        this.offset = 0;
-        this.setTitle(this.params.username);
-        this.clear();
+        this.scroll = 0;
+        this.member = null;
+
         this.view = document.createElement('div');
         this.view.classList.add('member-view');
         
         this.main = document.createElement('div');
         this.main.classList.add('member-main');
 
-        this.view.appendChild(window.app.nav.getNode());
         this.view.appendChild(this.main);
-
-        this.view.style.gridTemplateColumns = `min-content 1fr ${window.app.nav.getNode().innerWidth};`;
+        this.main.appendChild(Profile.node());
 
         this.appContainer.appendChild(this.view);
-        this.main.appendChild(Profile.node());
-        const postsContainer = new PostsContainer();
-        this.main.appendChild(postsContainer.render());
-        Profile.clear();
-        let member;
-        try {
-            member = await memberService.getByUsername({ username: this.params.username });
-        } catch (error) {
-            return new Alert(error.message);
-        }
-        Profile.render(member);
+        this.postsContainer = new PostsContainer();
+        this.main.appendChild(this.postsContainer.render());
+    }
+    
+    async init (params) {
+        this.params = params;
+        this.setTitle(this.params.username);
 
-        let posts;
-        try {
-            posts = await postService.get({ username: this.params.username, offset: this.offset });
-        } catch (error) {
-            return new Alert(error.message);
+        this.view.appendChild(window.app.nav.getNode());
+        this.clear();
+        this.appContainer.append(this.view);
+
+        if (this.member && this.member.username === this.params.username) {
+            Profile.render(this.member);
+            this.setScroll(this.scroll);
+        } else {
+            Profile.clear();
+            this.postsContainer.clear(0);
+            this.setScroll(0);
+            this.offset = 0;
+
+            try {
+                this.member = await memberService.getByUsername({ username: this.params.username });
+            } catch (error) {
+                return new Alert(error.message);
+            }
+            Profile.render(this.member);
+
+            let posts;
+            try {
+                posts = await postService.get({ username: this.params.username, offset: this.offset });
+            } catch (error) {
+                return new Alert(error.message);
+            }
+            this.postsContainer.renderPosts(posts);
+            Profile.banner.style.backgroundPosition = `center calc(50% + 0px)`;
         }
-        postsContainer.renderPosts(posts);
 
         this.main.onscroll = async () => {
             const scrollHeight = this.main.scrollHeight;
             const clientHeight = this.main.clientHeight;
-            const scrollTop = this.main.scrollTop;
+            this.scroll = this.main.scrollTop;
             const umbral = 1;
 
-            if (scrollTop + clientHeight >= scrollHeight - umbral) {
+            if (this.scroll + clientHeight >= scrollHeight - umbral) {
                 this.offset += 20;
+                let posts;
                 try {
                     posts = await postService.get({ username: this.params.username, offset: this.offset });
                 } catch (error) {
                     return new Alert(error.message);
                 }
-                postsContainer.renderPosts(posts);
+                this.postsContainer.renderPosts(posts);
             }
 
-            // Profile.banner.style.backgroundPosition = `center ${scrollTop * 0.5}px`;
-            Profile.banner.style.backgroundPosition = `center calc(50% + ${scrollTop * 1}px)`;
+            Profile.banner.style.backgroundPosition = `center calc(50% + ${this.scroll}px)`;
         }
+    }
+
+    setScroll (scroll) {
+        this.scroll = scroll;
+        this.main.scrollTop = scroll;
     }
 }

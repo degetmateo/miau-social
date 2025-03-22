@@ -25,7 +25,8 @@ const get = async (data: {
                     'id_post_replied', p.id_post_replied,
                     'content', p.content_post,
                     'date', p.date_post,
-                    'images', p.images_post
+                    'images', p.images_post,
+                    'media', COALESCE(ARRAY_AGG(media.url) FILTER (WHERE media.url IS NOT NULL), '{}')
                 ) AS target_post
             FROM 
                 notification n
@@ -35,8 +36,20 @@ const get = async (data: {
                 image icon ON icon.member_id = m.id_member AND icon.type = 'icon'
             LEFT JOIN 
                 post p ON (n.type_notification IN ('comment', 'upvote') AND n.id_post_target_notification = p.id_post)
+            LEFT JOIN
+                image media ON media.post_id = p.id_post AND media.type = 'media'
             WHERE 
                 n.id_member = ${data.id_member}
+            GROUP BY
+                n.id_notification,
+                m.id_member,
+                icon.url,
+                p.id_post,
+                media.url,
+                p.id_post_replied,
+                p.content_post,
+                p.date_post,
+                p.images_post
             ORDER BY 
                 date_notification DESC
             LIMIT 20

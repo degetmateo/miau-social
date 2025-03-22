@@ -5,6 +5,25 @@ import AbstractView from "../AbstractView.js";
 export default class NotificationsView extends AbstractView {
     constructor () {
         super();
+
+        this.offset = 0;
+        this.scroll = 0;
+        this.limit = 20;
+        this.firstLoad = true;
+
+        this.viewContainer = document.createElement('div');
+        this.viewContainer.classList.add('container-view', 'container-view-notifications');
+
+        this.main = document.createElement('main');
+        this.main.classList.add('notifications-view-main');
+        this.container_notifications = document.createElement('div');
+        this.container_notifications.classList.add('container-notifications');
+        this.main.appendChild(this.container_notifications);
+        this.viewContainer.appendChild(this.main);
+
+        this.observerId = 'notificationsView';
+
+        this.eventScroll();
     }
 
     onVisibilityChange = () => {
@@ -20,15 +39,7 @@ export default class NotificationsView extends AbstractView {
         this.params = params;
         this.clear();
         this.setTitle("Notificaciones");
-        this.viewContainer = document.createElement('div');
-        this.viewContainer.classList.add('container-view', 'container-view-notifications');
-        this.viewContainer.style.gridTemplateColumns = `min-content 1fr ${window.app.nav.getNode().innerWidth};`;
-        this.appContainer.appendChild(this.viewContainer);
-        
-        this.offset = 0;
-        this.limit = 20;
 
-        this.observerId = 'notificationsView';
         EventsHandler.removeObserver(this);
         EventsHandler.addObserver(this);
 
@@ -36,20 +47,24 @@ export default class NotificationsView extends AbstractView {
         window.app.notifier.addObserver(this);
 
         this.viewContainer.appendChild(window.app.nav.getNode());
-        this.CreateMain();
+        this.appContainer.appendChild(this.viewContainer);
+
+        if (this.firstLoad) {
+            this.firstLoad = false;
+            this.CreateMain();
+        } else {
+            this.setScroll(this.scroll);
+        }
     }
 
+    setScroll (scroll) {
+        this.scroll = scroll;
+        this.main.scrollTop = scroll;
+    }
+ 
     async CreateMain () {
-        this.main = document.createElement('main');
-        this.main.classList.add('notifications-view-main');
-        this.container_notifications = document.createElement('div');
-        this.container_notifications.classList.add('container-notifications');
-        this.main.appendChild(this.container_notifications);
-        this.viewContainer.appendChild(this.main);
-
         this.drawNotifications(await window.app.notifier.fetch(0));
         window.app.notifier.read();
-        this.eventScroll();
     }
 
     async drawNotifications (_entries) {
@@ -65,10 +80,10 @@ export default class NotificationsView extends AbstractView {
         this.main.addEventListener('scroll', async () => {
             const scrollHeight = this.main.scrollHeight;
             const clientHeight = this.main.clientHeight;
-            const scrollTop = this.main.scrollTop;
+            this.scroll = this.main.scrollTop;
             const umbral = 1;
 
-            if (scrollTop + clientHeight >= scrollHeight - umbral) {
+            if (this.scroll + clientHeight >= scrollHeight - umbral) {
                 this.offset += this.limit;
                 const notifications = await window.app.notifier.fetch(this.offset);
                 window.app.notifier.insertAfter(notifications);

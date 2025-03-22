@@ -147,12 +147,17 @@ class PostCreator {
         }
 
         loader.remove();
+        if (this.onsuccess) this.onsuccess();
         return new Alert('¡Publicación enviada!', { 
             error: false,
             onClick: () => {
                 router.navigateTo(`/post/${response}/comments`);
             }
         });
+    }
+
+    onSuccess (func) {
+        this.onsuccess = func;
     }
 }
 

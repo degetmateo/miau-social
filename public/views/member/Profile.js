@@ -63,9 +63,14 @@ class Profile extends Component {
         this.name = document.createElement('span');
         this.name.classList.add('profile-name');
         this.signatureContainer.appendChild(this.name);
+
+        this.signatureBottomContainer = document.createElement('div');
+        this.signatureBottomContainer.classList.add('profile-signature-bottom-container');
+        this.signatureContainer.appendChild(this.signatureBottomContainer);
+
         this.username = document.createElement('span');
         this.username.classList.add('profile-username');
-        this.signatureContainer.appendChild(this.username);
+        this.signatureBottomContainer.appendChild(this.username);
 
         this.button = document.createElement('button');
         this.button.classList.add('profile-button');
@@ -149,12 +154,21 @@ class Profile extends Component {
         this.followersNumber.textContent = 0;
         this.banner.style.backgroundImage = 'none';
         this.button.remove();
+        if (this.signatureFollowerLabel) this.signatureFollowerLabel.remove();
     }
 
     render = (member) => {
         this.member = member;
         this.name.textContent = member.name;
         this.username.textContent = '@' + member.username;
+
+        if (this.member.is_follower) {
+            this.signatureFollowerLabel = document.createElement('span');
+            this.signatureFollowerLabel.classList.add('profile-signature-follower-label');
+            this.signatureFollowerLabel.textContent = 'Te sigue';
+            this.signatureBottomContainer.append(this.signatureFollowerLabel);
+        }
+
         this.icon.src = this.member.icon_url ?
             this.member.icon_url : 
             URL_NO_IMAGE;

@@ -116,7 +116,14 @@ const getByUsername = async (data: {
                     WHERE 
                         f.id_member_follower = ${data.id_logged_member} AND 
                         f.id_member_followed = m.id_member
-                ) as is_followed
+                ) as is_followed,
+                EXISTS (
+                    SELECT 1 FROM
+                        follow f
+                    WHERE
+                        f.id_member_follower = m.id_member AND
+                        f.id_member_followed = ${data.id_logged_member}    
+                ) as is_follower
             FROM
                 member m
             LEFT JOIN

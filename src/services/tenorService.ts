@@ -17,7 +17,7 @@ const get = async (data: {
     const LIMIT = 20;
     const TENOR_URL = 'https://tenor.googleapis.com/v2/search?';
     const TENOR_KEY = process.env.TENOR_KEY;
-    const SEARCH_URL = `${TENOR_URL}q=${data.args}&key=${TENOR_KEY}&limit=${LIMIT}&contentfilter=high&media_filter=minimal${ data.pos ? `&pos=${data.pos}` : '' }`;
+    const SEARCH_URL = `${TENOR_URL}q=${data.args}&key=${TENOR_KEY}&limit=${LIMIT}&contentfilter=off&media_filter=minimal${ data.pos ? `&pos=${data.pos}` : '' }`;
 
     const request = await fetch(SEARCH_URL, { method: "GET" });
     const response = await request.json();
