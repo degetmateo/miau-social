@@ -39,7 +39,11 @@ class PostCreator {
             min: 0,
             max: 500,
             title: '¿Qué pensás?',
-            expand: true
+            expand: true,
+            onPaste: (file) => {
+                this.imagesContainer.show();
+                this.imagesContainer.addImage({ src: URL.createObjectURL(file), type: 'user' });
+            }
         });
 
         this.editor.append(this.textarea.render());

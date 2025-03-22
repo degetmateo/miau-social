@@ -8,9 +8,11 @@ export default class Textarea extends Component {
         title: 'input',
         max: 16,
         min: 0,
-        expand: false
+        expand: false,
+        onPaste: () => {}
     }) {
         super();
+        this.options = options;
         this.max = options.max;
         this.min = options.min;
         this.value = '';
@@ -52,6 +54,7 @@ export default class Textarea extends Component {
         }
 
         this.textarea.oninput = this.onInput;
+        this.textarea.onpaste = this.onPaste;
     }
 
     isValid = () => {
@@ -77,5 +80,13 @@ export default class Textarea extends Component {
     set = (value) => {
         this.textarea.value = value;
         this.onInput();
+    }
+
+    onPaste = (e) => {
+        // si se pega una imagen pasarla como blob a la funcion de parametro
+        if (e.clipboardData.files.length) {
+            e.preventDefault();
+            if (this.options.onPaste) this.options.onPaste(e.clipboardData.files[0]);
+        }
     }
 }
