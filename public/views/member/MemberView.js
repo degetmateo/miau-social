@@ -22,7 +22,6 @@ export default class extends AbstractView {
         this.view.appendChild(this.main);
         this.main.appendChild(Profile.node());
 
-        this.appContainer.appendChild(this.view);
         this.postsContainer = new PostsContainer();
         this.main.appendChild(this.postsContainer.render());
     }
@@ -31,8 +30,8 @@ export default class extends AbstractView {
         this.params = params;
         this.setTitle(this.params.username);
 
-        this.view.appendChild(window.app.nav.getNode());
         this.clear();
+        this.view.appendChild(window.app.nav.getNode());
         this.appContainer.append(this.view);
 
         if (this.member && this.member.username === this.params.username) {

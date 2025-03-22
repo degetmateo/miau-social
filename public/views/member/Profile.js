@@ -154,7 +154,10 @@ class Profile extends Component {
         this.followersNumber.textContent = 0;
         this.banner.style.backgroundImage = 'none';
         this.button.remove();
-        if (this.signatureFollowerLabel) this.signatureFollowerLabel.remove();
+        if (this.signatureFollowerLabel) {
+            this.signatureFollowerLabel.remove();
+            this.signatureFollowerLabel = null;
+        }
     }
 
     render = (member) => {
@@ -162,7 +165,7 @@ class Profile extends Component {
         this.name.textContent = member.name;
         this.username.textContent = '@' + member.username;
 
-        if (this.member.is_follower) {
+        if (this.member.is_follower && !this.signatureFollowerLabel) {
             this.signatureFollowerLabel = document.createElement('span');
             this.signatureFollowerLabel.classList.add('profile-signature-follower-label');
             this.signatureFollowerLabel.textContent = 'Te sigue';
