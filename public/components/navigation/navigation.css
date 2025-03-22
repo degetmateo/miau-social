@@ -9,7 +9,7 @@
     flex-direction: column;
     z-index: 1;
 
-    align-items: flex-end;
+    align-items: flex-start;
 }
 
 .nav-button {
@@ -18,10 +18,8 @@
     align-items: center;
     gap: 10px;
     color: var(--font-color);
-
-    /* margin-left: 200px; */
-
-    /* border: 1px solid red; */
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .nav-button:hover {
