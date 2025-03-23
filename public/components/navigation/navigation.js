@@ -1,3 +1,5 @@
+import Observer from "../../interfaces/Observer.js";
+import Notifier from "../../modules/Notifier.js";
 import router from "../../router.js";
 
 const HOME_IMAGE_OFF = new Image();
@@ -40,11 +42,14 @@ const IMAGE_NOTIFICATIONS_ON = new Image();
 IMAGE_NOTIFICATIONS_ON.src = '/public/components/navigation/svg/notifications-on.svg'; 
 IMAGE_NOTIFICATIONS_ON.classList.add('nav-button-icon');
 
-export default class Navigation {
+export default class Navigation extends Observer {
     constructor () {
+        super();
         this.nav = document.createElement('nav');
         this.nav.classList.add('nav');
         this.buttons = new Array();
+        this.observerId = 'navigation';
+
         this.CreateButtons();
     }
 
@@ -52,13 +57,13 @@ export default class Navigation {
         element.append(this.nav);
     }
 
-    update = () => {
-        this.homeButton.remove();
-        this.profileButton.remove();
-        this.notificationsButton.remove();
-        this.settingsButton.remove();
-        this.CreateButtons();
-    }
+    // update = () => {
+    //     this.homeButton.remove();
+    //     this.profileButton.remove();
+    //     this.notificationsButton.remove();
+    //     this.settingsButton.remove();
+    //     this.CreateButtons();
+    // }
 
     CreateButtons = () => {
         this.homeButton = this.CreateButton({ text: 'Inicio', icon_on: HOME_IMAGE_ON, icon_off: HOME_IMAGE_OFF, href: '/home' });
@@ -82,6 +87,7 @@ export default class Navigation {
             buttonText.classList.add('nav-button-text--active');
         } else {
             button.appendChild(icon_off);
+            buttonText.classList.remove('nav-button-text--active');
         }
 
         buttonText.innerText = text;
@@ -94,9 +100,13 @@ export default class Navigation {
 
         button.update = () => {
             button.innerHTML = '';
-            window.location.pathname === href ?
-                button.appendChild(icon_on) :
+            if (window.location.pathname === href) {
+                button.appendChild(icon_on);
+                buttonText.classList.add('nav-button-text--active');
+            } else {
                 button.appendChild(icon_off);
+                buttonText.classList.remove('nav-button-text--active');
+            }
             button.appendChild(buttonText);
         }
 
@@ -130,6 +140,7 @@ export default class Navigation {
                 buttonText.classList.add('nav-button-text--active');
             } else {
                 iconImageContainer.appendChild(IMAGE_NOTIFICATIONS_OFF);
+                buttonText.classList.remove('nav-button-text--active');
             }
         }
 
@@ -170,7 +181,6 @@ export default class Navigation {
             return button.href;
         }
 
-
         this.nav.appendChild(button);
         this.buttons.push(button);
         return button;
@@ -185,12 +195,11 @@ export default class Navigation {
         this.buttons.forEach(button => button.update());
     }
 
-    onNotifications () {
-        const notifications = window.app.notifier.getUnread();
+    onNotification (unread) {
         if (window.location.pathname === '/notifications') {
             this.notificationsButton.setCount(0);
         } else {
-            this.notificationsButton.setCount(notifications.length);
+            this.notificationsButton.setCount(unread.length);
         }
     }
 }

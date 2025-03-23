@@ -51,12 +51,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 export const init = () => {
     EventsHandler.clear();
-    
-    window.app.notifier = new Notifier(); 
-    window.app.nav = new Navigation();
-    
-    EventsHandler.addObserver(window.app.notifier);
 
-    window.app.notifier.addObserver(window.app.nav);
-    window.app.notifier.init();
+    window.app.nav = new Navigation();
+    EventsHandler.addObserver(window.app.nav);
+    
+    EventsHandler.addObserver(Notifier);
+    Notifier.initialize();
 }

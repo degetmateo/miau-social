@@ -35,12 +35,17 @@ export default class Notification {
         }
         this.container.onmousemove = () => {
             this.isSelectingText = true;
+            this.setRead();
         }
         this.container.onmouseup = (e) => {
             if (e.target.closest('.container-notification-comment-pic')) return;
             if (e.target.closest('.notification-comment-signature-name')) return;
             if (!this.isSelectingText) return router.navigateTo(this.container.getAttribute('href'));
         }
+    }
+
+    getID () {
+        return this.notification.id;
     }
 
     getElement () {
@@ -53,6 +58,10 @@ export default class Notification {
 
     setUnread () {
         this.container.classList.add('notification-container--unread');
+    }
+
+    setRead () {
+        this.container.classList.remove('notification-container--unread');
     }
 
     Create () {

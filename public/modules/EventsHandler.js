@@ -18,6 +18,12 @@ class EventsHandler {
         this.observers = new Array();
     }
 
+    onNotification (unread) {
+        for (const observer of this.observers) {
+            observer.onNotification(unread);
+        }
+    }
+
     onVisibilityChange () {
         document.onvisibilitychange = () => {
             for (const observer of this.observers) {

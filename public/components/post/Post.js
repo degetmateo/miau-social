@@ -71,23 +71,6 @@ export default class Post {
             containerBody.appendChild(this.CreatePostBodyContent());
         }
 
-        // if (this.post.images && this.post.images.length > 0) {
-        //     const imagesContainer = document.createElement('div');
-        //     imagesContainer.classList.add('container-post-body-images');
-        //     for (const image of this.post.images) {
-        //         try {
-        //             const img = new Image();
-        //             img.src = image;
-        //             img.addEventListener('error', () => imagesContainer.remove());
-        //             img.classList.add('post-body-image');
-        //             imagesContainer.appendChild(img);
-        //         } catch (error) {
-        //             continue;
-        //         }
-        //     }
-        //     containerBody.appendChild(imagesContainer);
-        // }
-
         if (this.post.media && this.post.media.length > 0) {
             const imagesContainer = new ImagesContainer({ editable: false, maxHeight: 500 });
             for (const media of this.post.media) {

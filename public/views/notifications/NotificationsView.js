@@ -1,5 +1,7 @@
 import Notification from "../../components/notification/notification.js";
 import EventsHandler from "../../modules/EventsHandler.js";
+import Notifier from "../../modules/Notifier.js";
+import {notificationService} from "../../services/notificationService.js";
 import AbstractView from "../AbstractView.js";
 
 export default class NotificationsView extends AbstractView {
@@ -10,6 +12,11 @@ export default class NotificationsView extends AbstractView {
         this.scroll = 0;
         this.limit = 20;
         this.firstLoad = true;
+
+        this.notifications = [];
+
+        this.unread = [];
+        this.flag = false;
 
         this.viewContainer = document.createElement('div');
         this.viewContainer.classList.add('container-view', 'container-view-notifications');
@@ -26,15 +33,6 @@ export default class NotificationsView extends AbstractView {
         this.eventScroll();
     }
 
-    onVisibilityChange = () => {
-        if (document.visibilityState != 'visible') return;
-        this.drawNotifications(window.app.notifier.get());
-    }
-
-    onNotifications = () => {
-        this.drawNotifications(window.app.notifier.get());
-    }
-
     async init (params) {
         this.params = params;
         this.clear();
@@ -42,9 +40,6 @@ export default class NotificationsView extends AbstractView {
 
         EventsHandler.removeObserver(this);
         EventsHandler.addObserver(this);
-
-        window.app.notifier.removeObserver(this.observerId);
-        window.app.notifier.addObserver(this);
 
         this.viewContainer.appendChild(window.app.nav.getNode());
         this.appContainer.appendChild(this.viewContainer);
@@ -54,6 +49,7 @@ export default class NotificationsView extends AbstractView {
             this.CreateMain();
         } else {
             this.setScroll(this.scroll);
+            this.read();
         }
     }
 
@@ -63,17 +59,26 @@ export default class NotificationsView extends AbstractView {
     }
  
     async CreateMain () {
-        this.drawNotifications(await window.app.notifier.fetch(0));
-        window.app.notifier.read();
-    }
-
-    async drawNotifications (_entries) {
+        this.setScroll(0);
         this.container_notifications.innerHTML = '';
-        for (const n of _entries) {
+        
+        const data = await notificationService.get({ offset: this.offset });
+
+        for (const n of data) {
             const notification = new Notification(n);
-            if (n.status === 'pending') notification.setUnread();
+            this.notifications.push(notification);
+            if (n.status === 'pending') {
+                notification.setUnread();
+            }
             this.container_notifications.appendChild(notification.getElement());
         }
+
+        this.read();
+    }
+
+    async read () {
+        Notifier.setRead();
+        await notificationService.read();
     }
 
     eventScroll () {
@@ -85,10 +90,27 @@ export default class NotificationsView extends AbstractView {
 
             if (this.scroll + clientHeight >= scrollHeight - umbral) {
                 this.offset += this.limit;
-                const notifications = await window.app.notifier.fetch(this.offset);
-                window.app.notifier.insertAfter(notifications);
-                this.drawNotifications(window.app.notifier.get());
+                const data = await notificationService.get({ offset: this.offset });
+                
+                for (const n of data) {
+                    const notification = new Notification(n);
+                    this.notifications.push(notification);
+                    if (n.status === 'pending') {
+                        notification.setUnread();
+                    }
+                    this.container_notifications.appendChild(notification.getElement());
+                }
             }
         });
+    }
+
+    onNotification = (unread) => {
+        for (const n of unread) {
+            const notification = new Notification(n);
+            notification.setUnread();
+            if (this.notifications.find(n => n.getID() === notification.getID())) return;
+            this.notifications.push(notification);
+            this.container_notifications.prepend(notification.getElement());
+        }
     }
 }

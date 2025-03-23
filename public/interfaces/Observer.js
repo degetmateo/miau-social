@@ -8,4 +8,5 @@ export default class Observer {
     async onVisibilityChange () {}
     async onEscape () {}
     async onEnter () {}
+    async onNotification () {}
 }

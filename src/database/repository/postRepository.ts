@@ -39,7 +39,13 @@ const get = async (data: {
                     'role', m.role_member,
                     'icon_url', icon.url
                 ) AS creator,
-                COALESCE(ARRAY_AGG(media.url) FILTER (WHERE media.url IS NOT NULL), '{}') AS media
+                COALESCE(
+                    (
+                        SELECT jsonb_agg(media.url ORDER BY media.id ASC)
+                        FROM image media 
+                        WHERE media.post_id = p.id_post AND media.type = 'media'
+                    ), '[]'::jsonb
+                ) AS media
             FROM
                 post p
             LEFT JOIN
@@ -109,7 +115,13 @@ const getFollowing = async (data: {
                     'role', m.role_member,
                     'icon_url', icon.url
                 ) AS creator,
-                COALESCE(ARRAY_AGG(media.url) FILTER (WHERE media.url IS NOT NULL), '{}') AS media
+                COALESCE(
+                    (
+                        SELECT jsonb_agg(media.url ORDER BY media.id ASC)
+                        FROM image media 
+                        WHERE media.post_id = p.id_post AND media.type = 'media'
+                    ), '[]'::jsonb
+                ) AS media
             FROM
                 post p
             LEFT JOIN
@@ -174,7 +186,13 @@ const getById = async (data: {
                     'role', m.role_member,
                     'icon_url', icon.url
                 ) AS creator,
-                COALESCE(ARRAY_AGG(media.url) FILTER (WHERE media.url IS NOT NULL), '{}') AS media
+                COALESCE(
+                    (
+                        SELECT jsonb_agg(media.url ORDER BY media.id ASC)
+                        FROM image media 
+                        WHERE media.post_id = p.id_post AND media.type = 'media'
+                    ), '[]'::jsonb
+                ) AS media
             FROM
                 post p
             LEFT JOIN
@@ -234,7 +252,13 @@ const getComments = async (data: {
                     'role', m.role_member,
                     'icon_url', icon.url
                 ) AS creator,
-                COALESCE(ARRAY_AGG(media.url) FILTER (WHERE media.url IS NOT NULL), '{}') AS media
+                COALESCE(
+                    (
+                        SELECT jsonb_agg(media.url ORDER BY media.id ASC)
+                        FROM image media 
+                        WHERE media.post_id = p.id_post AND media.type = 'media'
+                    ), '[]'::jsonb
+                ) AS media
             FROM
                 post p
             LEFT JOIN
@@ -338,7 +362,13 @@ const getThread = async (data: {
 
             SELECT 
                 th.*,
-                COALESCE(ARRAY_AGG(media.url) FILTER (WHERE media.url IS NOT NULL), '{}') AS media
+                COALESCE(
+                    (
+                        SELECT jsonb_agg(media.url ORDER BY media.id ASC)
+                        FROM image media 
+                        WHERE media.post_id = th.id AND media.type = 'media'
+                    ), '[]'::jsonb
+                ) AS media
             FROM 
                 thread th
             LEFT JOIN 
