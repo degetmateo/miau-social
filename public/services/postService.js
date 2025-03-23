@@ -48,28 +48,17 @@ const post = async (data = {
         const form = new FormData();
 
         form.append('content', data.content);
-        
-        data.images = data.images.map((image, i) => {
-            return {
-                src: image.src,
-                type: image.type,
-                index: i
-            }
-        });
 
-        const userImages = data.images.filter(i => i.type === 'user');
-        const tenorImages = data.images.filter(i => i.type === 'tenor');
+        for (let i = 0; i < data.images.length; i++) {
+            const image = data.images[i];
 
-        for (let i = 0; i < userImages.length; i++) {
-            const image = userImages[i];
-            const blob = await fetch(image.src).then(r => r.blob());
-            form.append('image-'+image.index, blob, `image-${image.index}.png`);
-        }
-
-        for (let i = 0; i < tenorImages.length; i++) {
-            const image = tenorImages[i];
-            form.append('tenor-'+image.index, image.src);
-        }
+            if (image.type === 'user') {
+                const blob = await fetch(image.src).then(r => r.blob());
+                form.append('image-'+i, blob, `image-${i}.png`);
+            } else {
+                form.append('tenor-'+i, image.src);
+            };
+        };
 
         if (data.id_replied_post) form.append('id_replied_post', data.id_replied_post);
 

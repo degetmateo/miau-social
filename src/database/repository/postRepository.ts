@@ -362,7 +362,6 @@ const getThread = async (data: {
 const post = async (data: {
     id_member: number;
     content: string;
-    tenor: string[];
     images: any[];
     id_replied_post: number;
 }) => {
@@ -416,27 +415,6 @@ const post = async (data: {
                         ${IDPost}
                     );
                 `;
-            }
-
-            for (const image of data.tenor) {
-                await transaction`
-                    INSERT INTO image (
-                        source,
-                        imgbb_id,
-                        url,
-                        delete_url,
-                        type,
-                        member_id,
-                        post_id
-                    ) VALUES (
-                        'tenor',
-                        null,
-                        ${image},
-                        null,
-                        'media',
-                        ${data.id_member},
-                        ${IDPost}
-                    );`;
             }
         });
 

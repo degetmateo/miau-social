@@ -92,8 +92,8 @@ const getThread = async (data: {
 const post = async (data: {
     id_member: number;
     content: string;
-    tenor: string[];
-    images: Express.Multer.File['buffer'][];
+    tenor: { src: string; index: number }[];
+    images: { buffer: Express.Multer.File['buffer'], index: number }[];
     id_replied_post: number;
 }) => {
     const isEmpty = (!data.content || data.content.length <= 0) && [...data.tenor, ...data.images].length <= 0;
@@ -109,22 +109,40 @@ const post = async (data: {
         if ([...data.tenor, ...data.images].length > PARAMETERS.POST_IMAGES_MAX_LENGTH) throw new InvalidArgumentError(`Has superado el límite de ${PARAMETERS.POST_IMAGES_MAX_LENGTH} imágenes.`);
     }
 
-    let apiResponses = [];
+    let checkedImages: {
+        url: string;
+        imgbb_id?: string;
+        delete_url?: string;
+        source: 'imgbb' | 'tenor' | 'other';
+        index: number;
+    }[] = [];
+
     for (const image of data.images) {
-        const apiResponse = await ImgBB.upload({ buffer: image });
-        apiResponses.push({
+        const apiResponse = await ImgBB.upload({ buffer: image.buffer });
+
+        checkedImages.push({
             url: apiResponse.data.url,
             imgbb_id: apiResponse.data.id,
             delete_url: apiResponse.data.delete_url,
-            source: 'imgbb'
+            source: 'imgbb',
+            index: image.index
         });
     }
+
+    for (const gif of data.tenor) {
+        checkedImages.push({
+            url: gif.src,
+            source: 'tenor',
+            index: gif.index
+        });
+    }
+
+    checkedImages = checkedImages.sort((a, b) => a.index - b.index);
 
     const response = await postRepository.post({
         id_member: data.id_member,
         content: data.content,
-        tenor: data.tenor,
-        images: apiResponses,
+        images: checkedImages,
         id_replied_post: data.id_replied_post
     });
 
