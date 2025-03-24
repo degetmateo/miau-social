@@ -4,6 +4,7 @@ import router from "../../router.js";
 import Alert from "../alert/alert.js";
 import ImageViewer from "../image-viewer/ImageViewer.js";
 import ImagesContainer from "../images-container/ImagesContainer.js";
+import MediaContainer from "../media-container/MediaContainer.js";
 import Popup from "../popup/Popup.js";
 
 const IMAGE_POST_UPVOTE_ON = new Image();
@@ -42,7 +43,7 @@ export default class Post {
             if (e.target.closest('.container-post-header-button-delete')) return;
             if (e.target.closest('.container-post-header-picture')) return;
             if (e.target.closest('.link')) return;
-            if (e.target.closest('.images-container')) return;
+            if (e.target.closest('.media-container')) return;
             if (!this.isSelectingText) return router.navigateTo('/post/'+this.post.id+'/comments');
         }
     }
@@ -72,11 +73,13 @@ export default class Post {
         }
 
         if (this.post.media && this.post.media.length > 0) {
-            const imagesContainer = new ImagesContainer({ editable: false, maxHeight: 500 });
-            for (const media of this.post.media) {
-                imagesContainer.addImage({ src: media, type: 'user' });
-            }
-            containerBody.append(imagesContainer.render());
+            // const imagesContainer = new ImagesContainer({ editable: false, maxHeight: 500 });
+            // for (const media of this.post.media) {
+            //     imagesContainer.addImage({ src: media, type: 'user' });
+            // }
+            // containerBody.append(imagesContainer.render());
+
+            new MediaContainer({ media: this.post.media }).render(containerBody);
         }
 
 
