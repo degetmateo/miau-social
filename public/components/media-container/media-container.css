@@ -52,4 +52,21 @@
 
 .media-container-image {
     max-width: 100%;
+
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+}
+
+.media-container-image-delete-button {
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 10px;
+    font-size: 20px;
+
+    background-color: #000000d6;
+    color: #FFF;
+    border-radius: 5px;
+    margin: 10px;
 }

@@ -1,6 +1,7 @@
 import {URL_NO_IMAGE} from "../../consts.js";
 import router from "../../router.js";
 import ImagesContainer from "../images-container/ImagesContainer.js";
+import MediaContainer from "../media-container/MediaContainer.js";
 
 export default class Notification {
     notification = {
@@ -90,26 +91,8 @@ export default class Notification {
     }
 
     images () {
-        // const imagesContainer = document.createElement('div');
-        // imagesContainer.classList.add('container-post-body-images');
-        // for (const image of this.notification.target_post.images) {
-        //     try {
-        //         const img = new Image();
-        //         img.src = image;
-        //         img.addEventListener('error', () => imagesContainer.remove());
-        //         img.classList.add('post-body-image');
-        //         imagesContainer.appendChild(img);
-        //     } catch (error) {
-        //         continue;
-        //     }
-        // }
-
-        const images = new ImagesContainer({ editable: false });
-        for (const url of this.notification.target_post.media) {
-            images.addImage({ src: url, type: 'user' });
-        }
-
-        return images.container.outerHTML;
+        const mediaContainer = new MediaContainer({ media: this.notification.target_post.media, editable: false });
+        return mediaContainer.container.outerHTML;
     }
 
     CreateNotificationUpvote () {
