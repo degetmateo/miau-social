@@ -54,6 +54,11 @@ export default class extends AbstractView {
         this.creator = new PostCreator();
         this.creator.render(this.main);
 
+        this.creator.onSuccess((post) => {
+            if (this.timelineMode === 'global') this.timeline.prepend(Post.Create(post, { date: 'informal' }));
+            this.posts.unshift(post);
+        });
+
         this.timeline = document.createElement('div');
         this.timeline.classList.add('home-main-timeline');
         this.main.append(this.timeline);
@@ -196,6 +201,13 @@ export default class extends AbstractView {
                     this.drawPosts(posts);
                 }
             });
+
+            for (const post of posts) {
+                if (this.posts.find(p => p.id === post.id)) continue;
+                else this.posts.unshift(post);
+            }
+
+            this.posts.sort((a, b) => b.id - a.id);
         }
     }
 }

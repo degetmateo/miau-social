@@ -12,8 +12,6 @@ class Notifier extends Observer {
     }
 
     initialize () {
-        this.get();
-
         this.interval = setInterval(() => {
             if (this.cooldown) return;
             this.get();
@@ -49,12 +47,16 @@ class Notifier extends Observer {
         this.notifications = [];
     }
 
-    onVisibilityChange () {
-        this.get();
+    activateCooldown () {
         this.cooldown = true;
         setTimeout(() => {
             this.cooldown = false;
         }, 60000);
+    }
+
+    onVisibilityChange () {
+        this.get();
+        this.activateCooldown();
     }
 }
 

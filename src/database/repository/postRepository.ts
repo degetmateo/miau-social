@@ -396,7 +396,7 @@ const post = async (data: {
     id_replied_post: number;
 }) => {
     try {
-        let IDPost = -1;
+        let response = null;
         await Postgres.query().begin(async transaction => {
             await transaction`SET TRANSACTION ISOLATION LEVEL READ COMMITTED;`;
 
@@ -423,7 +423,7 @@ const post = async (data: {
                 )
                 RETURNING id_post;
             `;
-            IDPost = qInsert[0].id_post;
+            const IDPost = qInsert[0].id_post;
 
             for (const image of data.images) {
                 await transaction`
@@ -446,9 +446,58 @@ const post = async (data: {
                     );
                 `;
             }
+
+            response = await transaction`
+                SELECT 
+                    p.id_post AS id,
+                    p.content_post AS content,
+                    p.date_post AS date,
+                    p.images_post AS images,
+                    (SELECT COUNT(*) FROM upvote WHERE id_post = p.id_post) as upvotes_count,
+                    (SELECT COUNT(*) FROM post WHERE id_post_replied = p.id_post) as comments_count,
+                    EXISTS (
+                        SELECT 1 FROM
+                            upvote
+                        WHERE 
+                            id_post = p.id_post AND 
+                            id_member_upvote = ${data.id_member}               
+                    ) as is_upvoted,
+                    jsonb_build_object (
+                        'id', m.id_member,
+                        'name', m.name_member,
+                        'username', m.username_member,
+                        'role', m.role_member,
+                        'icon_url', icon.url
+                    ) AS creator,
+                    COALESCE(
+                        (
+                            SELECT jsonb_agg(media.url ORDER BY media.id ASC)
+                            FROM image media 
+                            WHERE media.post_id = p.id_post AND media.type = 'media'
+                        ), '[]'::jsonb
+                    ) AS media
+                FROM
+                    post p
+                LEFT JOIN
+                    member m ON p.id_member = m.id_member
+                LEFT JOIN
+                    image icon ON icon.member_id = m.id_member AND icon.type = 'icon'
+                LEFT JOIN
+                    image media ON media.post_id = p.id_post AND media.type = 'media'
+                WHERE
+                    p.id_post = ${IDPost}
+                GROUP BY
+                    p.id_post,
+                    p.content_post,
+                    p.date_post,
+                    p.images_post,
+                    p.id_post_replied,
+                    m.id_member,
+                    icon.url;
+            `;
         });
 
-        return IDPost;
+        return response[0];
     } catch (error) {
         if (error instanceof GenericError) throw error;
         else {

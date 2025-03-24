@@ -16,6 +16,7 @@ class PostCreator {
         id_replied_post: null
     }) {
         this.data = data;
+        this.onSubmit = () => {};
         this.container = document.createElement('div');
         this.container.classList.add('post-creator-container');
 
@@ -145,6 +146,7 @@ class PostCreator {
         let response;
         try {
             response = await postService.post({ content, images: imagesData, id_replied_post: this.data.id_replied_post });
+            this.response = response;
         } catch (error) {
             loader.remove();
             return new Alert(error.message, { error: true });
@@ -155,13 +157,15 @@ class PostCreator {
         return new Alert('¡Publicación enviada!', { 
             error: false,
             onClick: () => {
-                router.navigateTo(`/post/${response}/comments`);
+                router.navigateTo(`/post/${response.id}/comments`);
             }
         });
     }
 
     onSuccess (func) {
-        this.onsuccess = func;
+        this.onsuccess = () => {
+            func(this.response);
+        };
     }
 }
 

@@ -42,6 +42,9 @@ export default class Notification {
             if (e.target.closest('.notification-comment-signature-name')) return;
             if (!this.isSelectingText) return router.navigateTo(this.container.getAttribute('href'));
         }
+
+        if (this.notification.status === 'pending') this.setUnread();
+        else this.setRead();
     }
 
     getID () {

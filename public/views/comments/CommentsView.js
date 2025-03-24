@@ -48,102 +48,19 @@ export default class CommentsView extends AbstractView {
         creator.render(postCreatorContainer);
         creator.updateIcon(window.app.member.icon_url);
         creator.updateName(window.app.member.name);
-        creator.onSuccess(() => {
+        creator.onSuccess((post) => {
             const p = this.posts.find(e => e.post.id === this.params.id_post);
             if (p) {
                 p.increaseComments();
                 p.drawCommentsCount();
             }
-            this.CreateMainComments();
+
+            const container = document.getElementById('container-comments-main-comments');
+            container.prepend(new Post(post).getElement());
         });
-
-        // this.CreateMainPost();
         this.CreateMainComments();
-        // this.CreateEventPostCreate();
-        // this.CreateEventInsertImage();
         this.CreateThread();
-
-        // CreateButtonTenor(document.getElementById('comments-main-form-post-create-button-tenor'), (image) => {
-        //     this.images = [];
-        //     this.images.push(image);
-        // });
     }
-
-    // CreateEventInsertImage () {
-    //     const button = document.getElementById('comments-main-form-post-create-button-image');
-    //     button.onclick = () => {
-    //         const popup = new Popup();
-    //         const input = popup.CreateInput('text', 'URL de la Imagen');
-    //         popup.CreateButton('Enviar', async () => {
-    //             try {
-    //                 const value = input.value.trim();
-    //                 if (!value || value.length <= 0) {
-    //                     return new Alert('Debes ingresar un enlace.');
-    //                 }
-    //                 const popEspere = new Popup();
-    //                 popEspere.CreateTitle('Espere...');
-    //                 try {
-    //                     await loadImage(value);
-    //                     this.images = new Array();
-    //                     this.images.push(value);
-    //                     new Alert('Imagen guardada con éxito.');
-    //                     popEspere.delete();
-    //                     popup.delete();
-    //                 } catch (error) {
-    //                     console.error(error);
-    //                     popEspere.delete();
-    //                     return new Alert('Esa imagen no está disponible.');
-    //                 }
-    //             } catch (error) {
-    //                 console.error(error);
-    //                 return new Alert('Esa imagen no está disponible.');
-    //             }
-    //         });
-    //     }
-    // }
-
-    // async CreateEventPostCreate () {
-    //     const button = document.getElementById('comments-main-form-post-create-button');
-    //     const textarea = document.getElementById('comments-main-form-post-create-textarea');
-        
-    //     button.onclick = async () => {
-    //         try {
-    //             const content = textarea.value;     
-    //             if ((!content || content.length <= 0) && (!this.images || this.images.length <= 0)) {
-    //                 return new Alert("Debes escribir algo o ingresar una imagen.");
-    //             }
-    //             if (content && content.length <= 0) return new Alert("Debes escribir algo.");
-    //             if (content && content.length > 400) return new Alert("La cantidad máxima de carácteres es 400.");
-    //             textarea.value = '';
-    //             const request = await fetch('/api/post/', {
-    //                 method: "POST",
-    //                 headers: {
-    //                     "Authorization": "Bearer "+localStorage.getItem('token'),
-    //                     "Content-Type": "Application/JSON"
-    //                 },
-    //                 body: JSON.stringify({
-    //                     content: content,
-    //                     images: this.images,
-    //                     id_replied_post: this.params.id_post
-    //                 })
-    //             });
-    //             this.images = new Array();
-    //             const response = await request.json();
-    //             if (!request.ok) throw new Error(response.error.message);
-    //             new Alert("Respuesta enviada.");
-    //             this.commentsContainer.innerHTML = '';
-    //             this.CreateMainComments();
-    //             const p = this.posts.find(e => e.post.id === this.params.id_post);
-    //             if (p) {
-    //                 p.increaseComments();
-    //                 p.drawCommentsCount();
-    //             }
-    //         } catch (error) {
-    //             console.error(error);
-    //             return new Alert("Ha ocurrido un error.");
-    //         }
-    //     }
-    // }
 
     async CreateMainPost () {
         try {

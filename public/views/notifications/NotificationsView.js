@@ -67,9 +67,6 @@ export default class NotificationsView extends AbstractView {
         for (const n of data) {
             const notification = new Notification(n);
             this.notifications.push(notification);
-            if (n.status === 'pending') {
-                notification.setUnread();
-            }
             this.container_notifications.appendChild(notification.getElement());
         }
 
@@ -95,9 +92,6 @@ export default class NotificationsView extends AbstractView {
                 for (const n of data) {
                     const notification = new Notification(n);
                     this.notifications.push(notification);
-                    if (n.status === 'pending') {
-                        notification.setUnread();
-                    }
                     this.container_notifications.appendChild(notification.getElement());
                 }
             }
@@ -107,7 +101,6 @@ export default class NotificationsView extends AbstractView {
     onNotification = (unread) => {
         for (const n of unread) {
             const notification = new Notification(n);
-            notification.setUnread();
             if (this.notifications.find(n => n.getID() === notification.getID())) return;
             this.notifications.push(notification);
             this.container_notifications.prepend(notification.getElement());
