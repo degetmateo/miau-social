@@ -24,6 +24,7 @@
 
 .media-container--2 .media-container-image {
     height: 100%;
+    width: 100%;
     object-fit: cover;
 }
 
@@ -34,16 +35,18 @@
 
 .media-container--3 .media-container-image {
     height: 100%;
+    width: 100%;
     object-fit: cover;
 }
 
 .media-container--4 {
     grid-template-columns: auto auto;
-    grid-template-rows: min-content min-content;
+    grid-template-rows: auto auto;
 }
 
 .media-container--4 .media-container-image {
     height: 100%;
+    width: 100%;
     object-fit: cover;
 }
 
