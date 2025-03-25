@@ -1,5 +1,6 @@
 import {importCSS} from "../../helpers.js";
 import ImageViewer from "../image-viewer/ImageViewer.js";
+import SpinnerLoader from "../spinner-loader/SpinnerLoader.js";
 
 importCSS('/public/components/media-container/media-container.css');
 
@@ -22,6 +23,13 @@ export default class MediaContainer {
             image.classList.add('media-container-image');
             image.src = m;
             image.onclick = () => new ImageViewer({ url: image.src });
+            image.onerror = () => {
+                this.container.classList.remove('media-container--'+this.data.media.length);
+                this.data.media = this.data.media.filter(m => m != image);
+                image.remove();
+                this.container.classList.add('media-container--'+this.data.media.length);
+                if (this.data.media.length <= 0) this.container.remove();
+            }
             if (this.data.editable) this.addDeleteButton(image);
             return image;
         });

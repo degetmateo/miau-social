@@ -12,14 +12,30 @@
 .notifications-view-main {
     grid-area: main;
     overflow-y: scroll;
+
+    border-right: 1px solid var(--border-color);
+    border-left: 1px solid var(--border-color);
+}
+
+.notifications-main-header {
+    display: flex;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    cursor: pointer;
+    min-height: 50px;
+    background-color: var(--primary-color--transparent);
+    color: #FFF;
+    border-bottom: 1px solid var(--border-color);
+    z-index: 1;
+
+    justify-content: center;
+    align-items: center;
 }
 
 .container-notifications {
     display: flex;
     flex-direction: column;
-
-    border-right: 1px solid var(--border-color);
-    border-left: 1px solid var(--border-color);
 
     min-height: 100%;
 }

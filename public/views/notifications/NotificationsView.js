@@ -25,6 +25,19 @@ export default class NotificationsView extends AbstractView {
         this.main.classList.add('notifications-view-main');
         this.container_notifications = document.createElement('div');
         this.container_notifications.classList.add('container-notifications');
+
+        this.header = document.createElement('header');
+        this.header.classList.add('notifications-main-header');
+        this.header.onclick = () => {
+            this.setScroll(0);
+        }
+        this.main.append(this.header);
+
+        this.title = document.createElement('span');
+        this.title.classList.add('notifications-main-header-title');
+        this.title.textContent = 'Notificaciones';
+        this.header.append(this.title);
+
         this.main.appendChild(this.container_notifications);
         this.viewContainer.appendChild(this.main);
 

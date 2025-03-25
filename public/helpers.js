@@ -63,12 +63,29 @@ export function dataURLToBlob (dataURL) {
 }
 
 export function ScrollBottom (element, func) {
-    element.addEventListener('scroll', () => {
+    element.onscroll = () => {
         const SCROLL_HEIGHT = element.scrollHeight;
         const CLIENT_HEIGHT = element.clientHeight;
         const SCROLL = element.scrollTop;
         const LIMIT = 1;
 
-        if (SCROLL + CLIENT_HEIGHT >= SCROLL_HEIGHT - LIMIT) func();
-    });
+        if (Math.ceil(SCROLL + CLIENT_HEIGHT) >= Math.ceil(SCROLL_HEIGHT - LIMIT)) func();
+    }
+}
+
+export function Scroll (data = {
+    element: null,
+    top: () => {},
+    scroll: () => {},
+    bottom: () => {}
+}) {
+    data.element.onscroll = () => {
+        const SCROLL_HEIGHT = data.element.scrollHeight;
+        const CLIENT_HEIGHT = data.element.clientHeight;
+        const SCROLL = data.element.scrollTop;
+        const LIMIT = 1;
+    
+        data.scroll(SCROLL);
+        if (Math.ceil(SCROLL + CLIENT_HEIGHT) >= Math.ceil(SCROLL_HEIGHT - LIMIT)) data.bottom();
+    }
 }
