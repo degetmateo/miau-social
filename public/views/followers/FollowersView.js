@@ -1,80 +1,136 @@
 import Alert from "../../components/alert/alert.js";
 import {URL_NO_IMAGE} from "../../consts.js";
+import {importCSS, Scroll} from "../../helpers.js";
 import {followService} from "../../services/followService.js";
 import AbstractView from "../AbstractView.js";
+
+importCSS('/public/views/followers/followers.css');
 
 export default class extends AbstractView {
     constructor () {
         super();
+
+        this.view = document.createElement('div');
+        this.view.classList.add('view', 'view-followed');
+        
+        this.main = document.createElement('main');
+        this.main.classList.add('followers-main');
+        this.view.append(this.main);
+    
+        this.header = document.createElement('header');
+        this.header.classList.add('followers-main-header');
+        this.header.onclick = () => {
+            this.setScroll(0);
+        }
+        this.main.append(this.header);
+
+        this.title = document.createElement('span');
+        this.title.classList.add('followers-main-header-title');
+        this.header.append(this.title);
+
+        this.content = document.createElement('div');
+        this.content.classList.add('followers-main-content');
+        this.main.append(this.content);
+
+        this.members = [];
     }
 
     async init (params) {
         this.params = params;
-        this.continue = true;
+
         this.setTitle('Seguidores - ' + this.params.username);
+        this.title.textContent = this.params.username;
+        this.content.innerHTML = '';
         this.clear();
-
-        this.view = document.createElement('div');
-        this.view.classList.add('view', 'view-followed');
-
-        this.view.appendChild(window.app.nav.getNode());
-        this.view.style.gridTemplateColumns = `min-content 1fr ${window.app.nav.getNode().innerWidth};`;
         
-        this.followedContainer = document.createElement('div');
-        this.followedContainer.classList.add('container-followed');
+        this.view.append(window.app.nav.getNode());
+        this.appContainer.append(this.view);
 
-        this.view.appendChild(this.followedContainer);
-        this.appContainer.appendChild(this.view);
-
-        this.offset = 0;
-
-        const followed = await this.getFollowed();
-        this.drawFollowed(followed);
-        if (followed.length < 20) {
-            this.followedContainer.innerHTML += `
-                <div style="padding: 20px; text-align: center;">No hay nada más que ver acá.</div>
-            `;
-            this.continue = false;
-            return;
+        this.i = 0;
+        let found = false;
+        for (this.i = 0; this.i < this.members.length; this.i++) {
+            if (this.members[this.i].username === this.params.username) {
+                found = true;
+                break;
+            }
         }
 
-        this.followedContainer.addEventListener('scroll', async (e) => {
-            const scrollHeight = this.followedContainer.scrollHeight;
-            const clientHeight = this.followedContainer.clientHeight;
-            const scrollTop = this.followedContainer.scrollTop;
-            const umbral = 1;
+        if (found) {
+            this.content.append(this.members[this.i].followsContainer.render());
+            this.setScroll(this.members[this.i].scroll);
+        } else {
+            this.setScroll(0);
 
-            if (scrollTop + clientHeight >= scrollHeight - umbral) {
-                if (!this.continue) return;
-                this.offset += 20;
-                const followed = await this.getFollowed();
-                if (!this.continue) return;
-                if (followed.length <= 0) {
-                    this.continue = false;
-                    this.followedContainer.innerHTML += `
-                        <div style="padding: 20px; text-align: center;">No hay nada más que ver acá.</div>
-                    `;
-                    return;
+            let followers = [];
+            try {
+                followers = await followService.get({ username: this.params.username, offset: this.offset, type: 'followers' });
+            } catch (error) {
+                new Alert(error.message, { error: true });
+                return;
+            }
+
+            let member = {
+                username: this.params.username,
+                followsContainer: new FollowsContainer(),
+                offset: 0,
+                scroll: 0
+            };
+
+            member.followsContainer.draw(followers);
+            this.members.push(member);
+            this.i = this.members.length - 1;
+            this.content.append(member.followsContainer.render());
+        }
+
+        Scroll({
+            element: this.main,
+            scroll: (s) => {
+                this.members[this.i].scroll = s;
+            },
+            bottom: async () => {
+                this.members[this.i].offset += 20;
+                
+                let followers = [];
+                try {
+                    followers = await followService.get({
+                        username: this.members[this.i].username, 
+                        offset: this.members[this.i].offset, 
+                        type: 'followers' 
+                    });
+                } catch (error) {
+                    new Alert(error.message, { error: true });
+                    followers = [];
                 }
-                this.drawFollowed(followed);
+
+                this.members[this.i].followsContainer.draw(followers);
             }
         });
     }
 
-    getFollowed = async () => {
-        try {
-            const followed = await followService.get({ username: this.params.username, offset: this.offset, type: 'followers' });
-            return followed;
-        } catch (error) {
-            new Alert(error.message);
-            return [];
+    setScroll (scroll) {
+        if (this.members[this.i]) this.members[this.i].scroll = scroll;
+        this.main.scrollTop = scroll;
+    }
+}
+
+class FollowsContainer {
+    constructor () {
+        this.container = document.createElement('div');
+        this.container.classList.add('follows-container');
+    }
+
+    draw (follows) {
+        for (const follow of follows) {
+            this.container.append(new Follower(follow).render());
         }
     }
 
-    drawFollowed = (members) => {
-        for (const member of members) {
-            this.followedContainer.appendChild(new Follower(member).getElement());
-        }
+    clear () {
+        this.container.innerHTML = '';
+    }
+
+    render () {
+        return this.container;
     }
 }
 
@@ -96,7 +152,7 @@ class Follower {
         `;
     }
 
-    getElement = () => {
+    render () {
         return this.container;
     }
 }

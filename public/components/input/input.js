@@ -69,7 +69,7 @@ export default class Input extends Component {
 
         clearTimeout(this.timer);
         this.timer = setTimeout(() => {
-            this.options.onStop();
+            if (this.options.onStop) this.options.onStop();
         }, this.timerInterval);
     }
 

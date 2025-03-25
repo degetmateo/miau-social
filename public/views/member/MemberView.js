@@ -33,8 +33,10 @@ export default class extends AbstractView {
         this.header.append(this.title);
 
         this.main.append(Profile.node());
-        this.postsContainer = new PostsContainer();
-        this.main.append(this.postsContainer.render());
+
+        this.postsContainer = document.createElement('div');
+        this.postsContainer.classList.add('member-main-posts-container');
+        this.main.appendChild(this.postsContainer);
     }
     
     async init (params) {
@@ -42,10 +44,11 @@ export default class extends AbstractView {
         this.setTitle(this.params.username);
 
         this.clear();
+        Profile.clear();
         this.view.appendChild(window.app.nav.getNode());
         this.appContainer.append(this.view);
         this.title.textContent = '';
-        Profile.clear();
+        this.postsContainer.innerHTML = '';
 
         this.i = 0;
         let found = false;
@@ -59,11 +62,12 @@ export default class extends AbstractView {
         if (found) {
             Profile.render(this.members[this.i]);
             this.title.textContent = this.members[this.i].username;
-            this.postsContainer.clear();
-            this.postsContainer.renderPosts(this.members[this.i].posts);
+            // this.postsContainer.clear();
+            // this.postsContainer.renderPosts(this.members[this.i].posts);
+            this.postsContainer.appendChild(this.members[this.i].postsContainer.render());
             this.setScroll(this.members[this.i].scroll);
         } else {
-            this.postsContainer.clear();
+            // this.postsContainer.clear();
             this.setScroll(0);
 
             let member;
@@ -75,7 +79,7 @@ export default class extends AbstractView {
             Profile.render(member);
 
             member.scroll = 0;
-            member.posts = [];
+            member.postsContainer = new PostsContainer();
             member.offset = 0;
             this.members.push(member);
             this.i = this.members.length - 1;
@@ -87,41 +91,18 @@ export default class extends AbstractView {
             } catch (error) {
                 return new Alert(error.message);
             }
-            this.members[this.i].posts = posts;
-            this.postsContainer.renderPosts(this.members[this.i].posts);
-            Profile.banner.style.backgroundPosition = `center calc(50% + 0px)`;
+            this.members[this.i].postsContainer.renderPosts(posts);
+            this.postsContainer.append(this.members[this.i].postsContainer.render());
+            // this.members[this.i].posts = posts;
+            // this.postsContainer.renderPosts(this.members[this.i].posts);
+            // Profile.banner.style.backgroundPosition = `center calc(50% + 0px)`;
         }
-
-        // if (this.member && this.member.username === this.params.username) {
-        //     Profile.render(this.member);
-        //     this.setScroll(this.scroll);
-        // } else {
-        //     this.postsContainer.clear(0);
-        //     this.setScroll(0);
-        //     this.offset = 0;
-
-        //     try {
-        //         this.member = await memberService.getByUsername({ username: this.params.username });
-        //     } catch (error) {
-        //         return new Alert(error.message);
-        //     }
-        //     Profile.render(this.member);
-
-        //     let posts;
-        //     try {
-        //         posts = await postService.get({ username: this.params.username, offset: this.offset });
-        //     } catch (error) {
-        //         return new Alert(error.message);
-        //     }
-        //     this.postsContainer.renderPosts(posts);
-        //     Profile.banner.style.backgroundPosition = `center calc(50% + 0px)`;
-        // }
 
         Scroll({
             element: this.main,
             scroll: (scroll) => {
                 this.members[this.i].scroll = scroll;
-                Profile.banner.style.backgroundPosition = `center calc(50% + ${scroll}px)`;
+                // Profile.banner.style.backgroundPosition = `center calc(50% + ${scroll}px)`;
             },
             bottom: async () => {
                 this.members[this.i].offset += 20;
@@ -131,8 +112,8 @@ export default class extends AbstractView {
                 } catch (error) {
                     return new Alert(error.message);
                 }
-                this.members[this.i].posts = this.members[this.i].posts.concat(posts);
-                this.postsContainer.renderPosts(posts);
+                // this.members[this.i].posts = this.members[this.i].posts.concat(posts);
+                this.members[this.i].postsContainer.renderPosts(posts);
             }
         });
     }

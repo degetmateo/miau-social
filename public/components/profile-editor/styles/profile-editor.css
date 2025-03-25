@@ -110,3 +110,13 @@
         border: none;
     }
 }
+
+@media (max-width: 444px) {
+    .banner-input-container {
+        justify-content: flex-end;
+    }
+
+    .banner-input-buttons-container {
+        margin-right: 30px;
+    }
+}
