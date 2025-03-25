@@ -51,7 +51,7 @@
     }
 
     .notifications-view-main {
-        padding-bottom: 50px;
+        border: none;
     }
 
     .container-notifications {
