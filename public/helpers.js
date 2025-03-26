@@ -85,7 +85,8 @@ export function Scroll (data = {
         const SCROLL = data.element.scrollTop;
         const LIMIT = 1;
     
+        if (data.top && SCROLL <= LIMIT) data.top();
         if (data.scroll) data.scroll(SCROLL);
-        if (Math.ceil(SCROLL + CLIENT_HEIGHT) >= Math.ceil(SCROLL_HEIGHT - LIMIT)) data.bottom();
+        if (data.bottom && Math.ceil(SCROLL + CLIENT_HEIGHT) >= Math.ceil(SCROLL_HEIGHT - LIMIT)) data.bottom();
     }
 }

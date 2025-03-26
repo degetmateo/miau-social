@@ -1,7 +1,6 @@
 import express from "express";
 import path from 'path';
 import cors from 'cors';
-import fs from 'fs';
 import Postgres from "./database/Postgres";
 import memberRouter from "./routes/memberRouter";
 import authenticationRouter from "./routes/authenticationRouter";

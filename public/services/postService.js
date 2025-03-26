@@ -79,8 +79,68 @@ const post = async (data = {
     }
 }
 
+const getById = async (data = {
+    id
+}) => {
+    try {
+        const request = await fetch(`/api/post/`+data.id, {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem('token')
+            }
+        });
+
+        const response = await request.json();
+        if (!request.ok) throw new Error(response.error.message);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
+const getReplies = async (data = {
+    id,
+    offset: 0
+}) => {
+    try {
+        const request = await fetch(`/api/post/${data.id}/replies?offset=${data.offset}`, {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem('token')
+            }
+        });
+
+        const response = await request.json();
+        if (!request.ok) throw new Error(response.error.message);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
+const getThread = async (data = {
+    id,
+    offset: 0
+}) => {
+    const request = await fetch(`/api/post/${data.id}/thread?offset=${data.offset}`, {
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer " + localStorage.getItem('token')
+        }
+    });
+
+    const response = await request.json();
+    if (!request.ok) throw new Error(response.error.message);
+    return response.data;
+}
+
 export const postService = {
     get,
     getFollowing,
-    post
+    post,
+    getById,
+    getReplies,
+    getThread
 }

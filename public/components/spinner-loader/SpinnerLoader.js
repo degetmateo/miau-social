@@ -6,15 +6,19 @@ export default class SpinnerLoader {
     constructor (options = {
         size: 'medium'
     }) {
+        this.container = document.createElement('div');
+        this.container.classList.add('loader-container');
+
         this.loader = document.createElement('div');
         this.loader.classList.add('loader', `loader--${options.size}`);
+        this.container.append(this.loader);
     }
 
     render = () => {
-        return this.loader;
+        return this.container;
     }
 
     remove = () => {
-        this.loader.remove();
+        this.container.remove();
     }
 }

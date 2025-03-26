@@ -52,7 +52,8 @@ const getComments = async (req: Request, res: Response) => {
     try {
         const response = await postService.getComments({
             id_member: Number(req.member.id),
-            id_post: Number(req.params.id_post)
+            id_post: Number(req.params.id_post),
+            offset: req.query.offset ? Number(req.query.offset) : 0
         });
         
         ResponseOk(res, RESPONSES.OK, response);
@@ -66,7 +67,8 @@ const getThread = async (req: Request, res: Response) => {
     try {
         const response = await postService.getThread({
             id_member: Number(req.member.id),
-            id_post: Number(req.params.id_post)
+            id_post: Number(req.params.id_post),
+            offset: req.query.offset ? Number(req.query.offset) : 0
         });
 
         ResponseOk(res, RESPONSES.OK, response);

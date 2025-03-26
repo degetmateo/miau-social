@@ -62,12 +62,9 @@ export default class extends AbstractView {
         if (found) {
             Profile.render(this.members[this.i]);
             this.title.textContent = this.members[this.i].username;
-            // this.postsContainer.clear();
-            // this.postsContainer.renderPosts(this.members[this.i].posts);
             this.postsContainer.appendChild(this.members[this.i].postsContainer.render());
             this.setScroll(this.members[this.i].scroll);
         } else {
-            // this.postsContainer.clear();
             this.setScroll(0);
 
             let member;
@@ -93,16 +90,12 @@ export default class extends AbstractView {
             }
             this.members[this.i].postsContainer.renderPosts(posts);
             this.postsContainer.append(this.members[this.i].postsContainer.render());
-            // this.members[this.i].posts = posts;
-            // this.postsContainer.renderPosts(this.members[this.i].posts);
-            // Profile.banner.style.backgroundPosition = `center calc(50% + 0px)`;
         }
 
         Scroll({
             element: this.main,
             scroll: (scroll) => {
                 this.members[this.i].scroll = scroll;
-                // Profile.banner.style.backgroundPosition = `center calc(50% + ${scroll}px)`;
             },
             bottom: async () => {
                 this.members[this.i].offset += 20;
@@ -112,7 +105,6 @@ export default class extends AbstractView {
                 } catch (error) {
                     return new Alert(error.message);
                 }
-                // this.members[this.i].posts = this.members[this.i].posts.concat(posts);
                 this.members[this.i].postsContainer.renderPosts(posts);
             }
         });

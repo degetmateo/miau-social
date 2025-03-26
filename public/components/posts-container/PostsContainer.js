@@ -24,6 +24,14 @@ class PostsContainer extends Component {
             this.container.appendChild(new Post(p, { date: 'informal' }).getElement());
         }
     }
+
+    append (post) {
+        this.container.append(new Post(post).getElement());
+    }
+
+    prepend (post) {
+        this.container.prepend(new Post(post).getElement());
+    }
 }
 
 export default PostsContainer;

@@ -1,7 +1,6 @@
 import {importCSS} from "../../helpers.js";
 import router from "../../router.js";
 import {postService} from "../../services/postService.js";
-import {tenorService} from "../../services/tenorService.js";
 import Alert from "../alert/alert.js";
 import Button from "../button/Button.js";
 import ImagesContainer from "../images-container/ImagesContainer.js";

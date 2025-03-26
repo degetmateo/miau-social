@@ -60,6 +60,7 @@ const getById = async (data: {
 const getComments = async (data: {
     id_member: number;
     id_post: number;
+    offset: number;
 }) => {
     if (!data.id_member) throw new UnauthorizedError("Authorization failed.");
     if (isNaN(data.id_member)) throw new UnauthorizedError("Authorization failed.");
@@ -68,6 +69,8 @@ const getComments = async (data: {
     if (!data.id_post) throw new NotFoundError("No se ha encontrado la publicacion.");
     if (isNaN(data.id_post)) throw new InvalidArgumentError("La ID de la publicacion debe ser un numero.");
     if (data.id_post <= 0) throw new InvalidArgumentError("La ID de la publicacion no puede ser negativa.");
+
+    if (data.offset && data.offset < 0) throw new InvalidArgumentError('OFFSET no puede ser negativo.');
 
     const response = await postRepository.getComments(data);
     return response;
@@ -76,6 +79,7 @@ const getComments = async (data: {
 const getThread = async (data: {
     id_member: number;
     id_post: number;
+    offset: number;
 }) => {
     if (!data.id_member) throw new UnauthorizedError("Authorization failed.");
     if (isNaN(data.id_member)) throw new UnauthorizedError("Authorization failed.");
@@ -84,6 +88,8 @@ const getThread = async (data: {
     if (!data.id_post) throw new NotFoundError("No se ha encontrado la publicacion.");
     if (isNaN(data.id_post)) throw new InvalidArgumentError("La ID de la publicacion debe ser un numero.");
     if (data.id_post <= 0) throw new InvalidArgumentError("La ID de la publicacion no puede ser negativa.");
+
+    if (data.offset && data.offset < 0) throw new InvalidArgumentError('OFFSET no puede ser negativo.');
 
     const response = await postRepository.getThread(data);
     return response;

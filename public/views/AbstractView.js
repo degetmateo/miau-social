@@ -4,6 +4,7 @@ export default class extends Observer {
     constructor () {
         super();
         this.appContainer = document.getElementById('app');
+        this.app = document.getElementById('app');
     }
 
     clear () {

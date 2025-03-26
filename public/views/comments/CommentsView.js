@@ -1,15 +1,45 @@
-import Alert from "../../components/alert/alert.js";
-import Navigation from "../../components/navigation/navigation.js";
-import Popup from "../../components/popup/Popup.js";
-import PostCreator from "../../components/post-creator/PostCreator.js";
 import Post from "../../components/post/Post.js";
-import {loadImage} from "../../helpers.js";
+import SpinnerLoader from "../../components/spinner-loader/SpinnerLoader.js";
+import {importCSS, Scroll} from "../../helpers.js";
+import {postService} from "../../services/postService.js";
 import AbstractView from "../AbstractView.js";
-import {CreateButtonTenor} from "../HomeView.js";
+import PostsContainer from "../../components/posts-container/PostsContainer.js";
+import PostCreator from "../../components/post-creator/PostCreator.js";
+
+importCSS('/public/views/comments/styles/comments.css');
 
 export default class CommentsView extends AbstractView {
     constructor () {
         super();
+
+        this.view = document.createElement('div');
+        this.view.classList.add('comments-view');
+
+        this.main = document.createElement('main');
+        this.main.classList.add('comments-main');
+        this.view.append(this.main);
+
+        this.repliedPosts = document.createElement('div');
+        this.repliedPosts.classList.add('comments-replied-posts');
+        this.main.append(this.repliedPosts);
+
+        this.mainPost = document.createElement('div');
+        this.mainPost.classList.add('comments-main-post');
+        this.main.append(this.mainPost);
+
+        this.mainPostContainer = document.createElement('div');
+        this.mainPostContainer.classList.add('comments-main-post-container');
+        this.mainPost.append(this.mainPostContainer);
+
+        this.replyCreatorContainer = document.createElement('div');
+        this.replyCreatorContainer.classList.add('comments-main-reply-creator-container');
+        this.mainPost.append(this.replyCreatorContainer);
+
+        this.repliesPosts = document.createElement('div');
+        this.repliesPosts.classList.add('comments-replies-posts');
+        this.main.append(this.repliesPosts);
+
+        this.posts = [];
     }
 
     async init (params) {
@@ -17,127 +47,121 @@ export default class CommentsView extends AbstractView {
         this.setTitle("Respuestas");
         this.clear();
 
-        this.viewContainer = document.createElement('div');
-        this.viewContainer.classList.add('container-view-comments');
-        this.viewContainer.style.gridTemplateColumns = `min-content 1fr ${window.app.nav.getNode().innerWidth};`;
-        this.appContainer.appendChild(this.viewContainer);
-        this.images = new Array();
+        this.view.append(window.app.nav.getNode());
+        this.app.append(this.view);
 
-        this.viewContainer.appendChild(window.app.nav.getNode());
-        this.CreateMain();
-        this.commentsContainer = document.getElementById('container-comments-main-comments');
-    }
+        this.i = 0;
+        let found = false;
+        for (this.i = 0; this.i < this.posts.length; this.i++) {
+            if (this.posts[this.i].id === this.params.id_post) {
+                found = true;
+                break;
+            }
+        }
 
-    CreateMain () {
-        this.main = document.createElement('main');
-        this.main.classList.add('comments-view-main');
-        this.main.innerHTML = `
-            <div class="container-thread" id="container-thread"></div>
-            <div class="container-comments-main-post" id="container-comments-main-post"></div>
+        this.repliedPosts.innerHTML = '';
+        this.mainPostContainer.innerHTML = '';
+        this.replyCreatorContainer.innerHTML = '';
+        this.repliesPosts.innerHTML = '';
 
-            <div class="container-comments-main-form-post-create" id="comments-post-creator-container">
+        if (found) {
+            const post = this.posts[this.i];
+            this.repliedPosts.append(post.thread.container.render());
+            this.mainPostContainer.append(post.element);
+            this.repliesPosts.append(post.replies.container.render());
+            this.main.scrollTop = post.scroll;
+        } else {
+            const mainLoader = new SpinnerLoader({ size: 'medium' });
+            this.mainPostContainer.append(mainLoader.render());
+            
+            const repliesLoader = new SpinnerLoader({ size: 'medium' });
+            this.repliesPosts.append(repliesLoader.render());
+    
+            const repliedLoader = new SpinnerLoader({ size: 'medium' });
+            this.repliedPosts.append(repliedLoader.render());
 
-            </div>
+            const post = await postService.getById({ id: this.params.id_post });
+            const mainPostElement = new Post(post).getElement();
+            this.mainPostContainer.append(mainPostElement);
+            
+            mainLoader.remove();
+    
+            const threadContainer = new PostsContainer();
+            const thread = await postService.getThread({ id: this.params.id_post, offset: 0 });
+            for (const post of thread) {
+                threadContainer.prepend(post);
+            }
+    
+            repliedLoader.remove();
+            this.repliedPosts.append(threadContainer.render());
+    
+            const repliesContainer = new PostsContainer();
+            const replies = await postService.getReplies({ id: this.params.id_post, offset: 0 });
+            for (const reply of replies) {
+                repliesContainer.append(reply);
+            }
+    
+            repliesLoader.remove();
+            this.repliesPosts.append(repliesContainer.render());
+    
+            this.mainPostContainer.scrollIntoView({ block: 'start' });
 
-            <div class="container-comments-main-comments" id="container-comments-main-comments"></div>
-        `;
-        this.viewContainer.appendChild(this.main);
+            this.posts.push({
+                id: post.id,
+                element: mainPostElement,
+                data: post,
+                scroll: this.main.scrollTop,
+                thread: {
+                    container: threadContainer,
+                    offset: 0
+                },
+                replies: {
+                    container: repliesContainer,
+                    offset: 0
+                }
+            });
 
-        const postCreatorContainer = document.getElementById('comments-post-creator-container');
-        this.creator = new PostCreator({ target_id: this.params.id_post, type: 'reply', alert: '¡Respuesta enviada!' });
-        this.creator.render(postCreatorContainer);
-        this.creator.updateIcon(window.app.member.icon_url);
+            this.i = this.posts.length - 1;
+        }
+
+        this.creator = new PostCreator({
+            alert: '¡Respuesta enviada!',
+            target_id: this.posts[this.i].data.id,
+            title: `Responder a @${this.posts[this.i].data.creator.username}`,
+            type: 'reply'
+        });
+
         this.creator.updateName(window.app.member.name);
-        this.creator.onSuccess((post) => {
-            const p = this.posts.find(e => e.post.id === this.params.id_post);
-            if (p) {
-                p.increaseComments();
-                p.drawCommentsCount();
-            }
+        this.creator.updateIcon(window.app.member.icon_url);
+        this.creator.render(this.replyCreatorContainer);
 
-            const container = document.getElementById('container-comments-main-comments');
-            container.prepend(new Post(post).getElement());
+        Scroll({
+            element: this.main,
+            top: async () => {
+                this.posts[this.i].thread.offset += 10;
+
+                const thread = await postService.getThread({ id: this.params.id_post, offset: this.posts[this.i].thread.offset });
+                for (const post of thread) {
+                    this.posts[this.i].thread.container.prepend(post);
+                }
+            },
+            scroll: (s) => {
+                if (!this.posts[this.i]) return;
+                if (this.posts[this.i].scroll) this.posts[this.i].scroll = s;
+            },
+            bottom: async () => {
+                this.posts[this.i].replies.offset += 10;
+
+                const replies = await postService.getReplies({ id: this.params.id_post, offset: this.posts[this.i].replies.offset });
+                for (const post of replies) {
+                    this.posts[this.i].replies.container.append(post);
+                }
+            }
         });
-        this.CreateMainComments();
-        this.CreateThread();
     }
 
-    async CreateMainPost () {
-        try {
-            const request = await fetch('/api/post/'+this.params.id_post, {
-                method: "GET",
-                headers: { "Authorization": "Bearer "+localStorage.getItem('token') }
-            });
-
-            const response = await request.json();
-            
-            if (!request.ok) return new Alert(response.error.message);
-
-            this.post = new Post(response.data);
-
-            const container = document.getElementById('container-comments-main-post');
-            container.appendChild(this.post.getElement());
-        } catch (error) {
-            console.error(error);
-            return new Alert('Ha ocurrido un error.');
-        }
-    }
-
-    async CreateMainComments () {
-        try {
-            const request = await fetch('/api/post/'+this.params.id_post+'/comments', {
-                method: "GET",
-                headers: { "Authorization": "Bearer "+localStorage.getItem('token') }
-            });
-
-            const response = await request.json();
-            
-            if (!request.ok) return new Alert(response.error.message);
-            
-            const container = document.getElementById('container-comments-main-comments');
-            container.innerHTML = '';
-            for (const post of response.data) {
-                container.appendChild(Post.Create(post));
-            }
-        } catch (error) {
-            console.error(error);
-            return new Alert('Ha ocurrido un error.');
-        }
-    }
-
-    async CreateThread () {
-        try {
-            const thread = await this.FetchThread();
-            const containerThread = document.getElementById('container-thread');
-            containerThread.innerHTML = '';
-
-            const scrollPos = this.main.scrollTop;
-            const alturaAntes = this.main.scrollHeight;
-
-            this.posts = [];
-            for (const post of thread.reverse()) {
-                const newPost = new Post(post, {date: 'date'});
-                this.posts.push(newPost)
-                containerThread.appendChild(newPost.getElement());
-
-                const alturaDespues = this.main.scrollHeight;
-                this.main.scrollTop = scrollPos + (alturaDespues - alturaAntes);
-            }
-
-            this.creator.textarea.title.innerText = 'Responder a @'+thread[thread.length - 1].creator.username;
-        } catch (error) {
-            console.error(error);
-            new Alert('Ha ocurrido un error.');
-        }
-    }
-
-    async FetchThread () {
-        const request = await fetch(`/api/post/${this.params.id_post}/thread`, {
-            method: "GET",
-            headers: { "Authorization": "Bearer "+localStorage.getItem('token') }
-        });
-        const response = await request.json();
-        if (!request.ok) throw new Alert(response.error.message);
-        return response.data;
+    setScroll (scroll) {
+        this.main.scrollTop(scroll);
+        if (this.posts[this.i].scroll) this.posts[this.i].scroll = scroll;
     }
 }

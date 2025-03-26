@@ -99,9 +99,9 @@ export default class extends AbstractView {
         this.setTitle('Inicio');
 
         this.view.append(window.app.nav.getNode());
-        window.app.nav.onHome(() => {
-            this.changeTimeline(this.timelineMode);
-        });
+        // window.app.nav.onHome(() => {
+        //     // if (window.location.pathname === '/home') this.changeTimeline(this.timelineMode);
+        // });
 
         EventsHandler.removeObserver(this);
         EventsHandler.addObserver(this);
