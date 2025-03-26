@@ -73,6 +73,10 @@ export default class Navigation extends Observer {
         this.settingsButton = this.CreateButton({ text: 'Configuración', icon_on: SETTINGS_IMAGE_ON, icon_off: SETTINGS_IMAGE_OFF, href: '/settings' });
     }
 
+    onHome (func) {
+        this.onhome = func;
+    }
+
     CreateButton ({ text, icon_on, icon_off, href }) {
         const button = document.createElement('a');
         button.classList.add('nav-button');
@@ -96,6 +100,7 @@ export default class Navigation extends Observer {
         button.onclick = e => {
             e.preventDefault();
             router.navigateTo(href);
+            if (this.onhome) this.onhome();
         }
 
         button.update = () => {

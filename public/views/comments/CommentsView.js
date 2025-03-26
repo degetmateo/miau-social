@@ -44,7 +44,7 @@ export default class CommentsView extends AbstractView {
         this.viewContainer.appendChild(this.main);
 
         const postCreatorContainer = document.getElementById('comments-post-creator-container');
-        this.creator = new PostCreator({ target_id: this.params.id_post, type: 'reply' });
+        this.creator = new PostCreator({ target_id: this.params.id_post, type: 'reply', alert: '¡Respuesta enviada!' });
         this.creator.render(postCreatorContainer);
         this.creator.updateIcon(window.app.member.icon_url);
         this.creator.updateName(window.app.member.name);

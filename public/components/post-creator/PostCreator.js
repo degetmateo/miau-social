@@ -15,7 +15,8 @@ class PostCreator {
     constructor (data = {
         target_id: null,
         title: '¿Qué pensás?',
-        type: 'default'
+        type: 'default',
+        alert: '¡Publicación enviada!'
     }) {
         this.data = data;
         this.onSubmit = () => {};
@@ -161,7 +162,7 @@ class PostCreator {
 
         loader.remove();
         if (this.onsuccess) this.onsuccess();
-        return new Alert('¡Publicación enviada!', { 
+        return new Alert(this.data.alert || '¡Publicación enviada!', { 
             error: false,
             onClick: () => {
                 router.navigateTo(`/post/${response.id}/comments`);

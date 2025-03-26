@@ -99,6 +99,9 @@ export default class extends AbstractView {
         this.setTitle('Inicio');
 
         this.view.append(window.app.nav.getNode());
+        window.app.nav.onHome(() => {
+            this.changeTimeline(this.timelineMode);
+        });
 
         EventsHandler.removeObserver(this);
         EventsHandler.addObserver(this);
@@ -187,7 +190,7 @@ export default class extends AbstractView {
             await postService.get({ offset: this.offset }) :
             await postService.getFollowing({ offset: this.offset });
 
-        if (posts.find(post => post.id > this.posts[0].id && !post.id_post_replied)) {
+        if (posts.find(post => post.id > this.posts[0].id && post.type != 'reply')) {
             new Alert('Hay nuevas publicaciones.', {
                 error: false,
                 timeout: null,
