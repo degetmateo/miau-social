@@ -69,13 +69,14 @@ export default class Notification {
     }
 
     Create () {
-       if (this.notification.type === 'comment') this.CreateNotificationComment();
+       if (this.notification.type === 'reply') this.CreateNotificationComment();
        if (this.notification.type === 'upvote') this.CreateNotificationUpvote();
        if (this.notification.type === 'follow') this.CreateNotificationFollow();
     }
 
     CreateNotificationComment () {
         this.container.setAttribute('href', '/post/'+this.notification.target_post.id+'/comments');
+        console.log(this.notification);
         if (!this.notification.target_post.content) this.notification.target_post.content = '';
         if (!this.notification.target_post.images) this.notification.target_post.images = [];
         this.container.innerHTML = `

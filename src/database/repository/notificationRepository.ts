@@ -22,10 +22,9 @@ const get = async (data: {
                 ) AS target_member,
                 jsonb_build_object (
                     'id', n.id_post_target_notification,
-                    'id_post_replied', p.id_post_replied,
+                    'target_post_id', p.target_post_id,
                     'content', p.content_post,
                     'date', p.date_post,
-                    'images', p.images_post,
                     'media', COALESCE(ARRAY_AGG(media.url) FILTER (WHERE media.url IS NOT NULL), '{}')
                 ) AS target_post
             FROM 
@@ -35,7 +34,7 @@ const get = async (data: {
             LEFT JOIN
                 image icon ON icon.member_id = m.id_member AND icon.type = 'icon'
             LEFT JOIN 
-                post p ON (n.type_notification IN ('comment', 'upvote') AND n.id_post_target_notification = p.id_post)
+                post p ON (n.type_notification IN ('reply', 'upvote') AND n.id_post_target_notification = p.id_post)
             LEFT JOIN
                 image media ON media.post_id = p.id_post AND media.type = 'media'
             WHERE 
@@ -49,7 +48,7 @@ const get = async (data: {
                 p.id_post_replied,
                 p.content_post,
                 p.date_post,
-                p.images_post
+                p.target_post_id
             ORDER BY 
                 date_notification DESC
             LIMIT 20
