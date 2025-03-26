@@ -94,7 +94,8 @@ const post = async (data: {
     content: string;
     tenor: { src: string; index: number }[];
     images: { buffer: Express.Multer.File['buffer'], index: number }[];
-    id_replied_post: number;
+    type: 'default' | 'reply' | 'quote';
+    target_id: number;
 }) => {
     const isEmpty = (!data.content || data.content.length <= 0) && [...data.tenor, ...data.images].length <= 0;
     if (isEmpty) throw new InvalidArgumentError("No puedes enviar una publicación vacia.");
@@ -108,6 +109,9 @@ const post = async (data: {
         // if (!data.content && data.images.length <= 0) throw new InvalidArgumentError("Debes escribir algo o insertar una imagen.");
         if ([...data.tenor, ...data.images].length > PARAMETERS.POST_IMAGES_MAX_LENGTH) throw new InvalidArgumentError(`Has superado el límite de ${PARAMETERS.POST_IMAGES_MAX_LENGTH} imágenes.`);
     }
+
+    if (!['default', 'reply', 'quote'].includes(data.type)) throw new InvalidArgumentError('Tipo de publicación inválida.');
+    if (data.target_id && data.target_id < 0) throw new InvalidArgumentError('TARGET_ID no puede ser negativa.');
 
     let checkedImages: {
         url: string;
@@ -143,7 +147,8 @@ const post = async (data: {
         id_member: data.id_member,
         content: data.content,
         images: checkedImages,
-        id_replied_post: data.id_replied_post
+        type: data.type,
+        target_id: data.target_id
     });
 
     return response;

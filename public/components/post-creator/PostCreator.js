@@ -13,7 +13,9 @@ importCSS('/public/components/post-creator/styles/post-creator.css');
 
 class PostCreator {
     constructor (data = {
-        id_replied_post: null
+        target_id: null,
+        title: '¿Qué pensás?',
+        type: 'default'
     }) {
         this.data = data;
         this.onSubmit = () => {};
@@ -39,7 +41,7 @@ class PostCreator {
         this.textarea = new Textarea({
             min: 0,
             max: 500,
-            title: '¿Qué pensás?',
+            title: this.data.title || '¿Qué pensás?',
             expand: true,
             onPaste: (file) => {
                 this.imagesContainer.show();
@@ -145,7 +147,12 @@ class PostCreator {
 
         let response;
         try {
-            response = await postService.post({ content, images: imagesData, id_replied_post: this.data.id_replied_post });
+            response = await postService.post({ 
+                content: content, 
+                images: imagesData, 
+                type: this.data.type,
+                target_id: this.data.target_id
+            });
             this.response = response;
         } catch (error) {
             loader.remove();

@@ -42,12 +42,14 @@ const getFollowing = async (data = {
 const post = async (data = {
     content,
     images,
-    id_replied_post
+    type,
+    target_id
 }) => {
     try {
         const form = new FormData();
 
         form.append('content', data.content);
+        form.append('type', data.type);
 
         for (let i = 0; i < data.images.length; i++) {
             const image = data.images[i];
@@ -60,7 +62,7 @@ const post = async (data = {
             };
         };
 
-        if (data.id_replied_post) form.append('id_replied_post', data.id_replied_post);
+        if (data.target_id) form.append('target_id', data.target_id);
 
         const request = await fetch('/api/post', {
             method: 'POST',

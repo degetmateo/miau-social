@@ -2,7 +2,6 @@ import DatabaseError from "../../errors/DatabaseError";
 import GenericError from "../../errors/GenericError";
 import NotFoundError from "../../errors/NotFoundError";
 import UnauthorizedError from "../../errors/UnauthorizedError";
-import ImgBB from "../../helpers/ImgBB";
 import Postgres from "../Postgres";
 
 const get = async (data: {
@@ -21,10 +20,10 @@ const get = async (data: {
                 p.id_post AS id,
                 p.content_post AS content,
                 p.date_post AS date,
-                p.images_post AS images,
-                p.id_post_replied,
+                p.type,
+                p.target_post_id,
                 (SELECT COUNT(*) FROM upvote WHERE id_post = p.id_post) as upvotes_count,
-                (SELECT COUNT(*) FROM post WHERE id_post_replied = p.id_post) as comments_count,
+                (SELECT COUNT(*) FROM post WHERE target_post_id = p.id_post AND type = 'reply') as comments_count,
                 EXISTS (
                     SELECT 1 FROM
                         upvote
@@ -45,7 +44,39 @@ const get = async (data: {
                         FROM image media 
                         WHERE media.post_id = p.id_post AND media.type = 'media'
                     ), '[]'::jsonb
-                ) AS media
+                ) AS media,
+                COALESCE((
+                    SELECT jsonb_build_object(
+                        'id', tp.id_post,
+                        'content', tp.content_post,
+                        'date', tp.date_post,
+                        'type', tp.type,
+                        'target_post_id', tp.target_post_id,
+                        'upvotes_count', (SELECT COUNT(*) FROM upvote WHERE id_post = tp.id_post),
+                        'comments_count', (SELECT COUNT(*) FROM post WHERE target_post_id = tp.id_post AND type = 'reply'),
+                        'is_upvoted', EXISTS (
+                            SELECT 1 FROM upvote
+                            WHERE id_post = tp.id_post 
+                            AND id_member_upvote = ${data.id_member}               
+                        ),
+                        'creator', jsonb_build_object(
+                            'id', tm.id_member,
+                            'name', tm.name_member,
+                            'username', tm.username_member,
+                            'role', tm.role_member,
+                            'icon_url', ticon.url
+                        ),
+                        'media', COALESCE((
+                            SELECT jsonb_agg(tmedia.url ORDER BY tmedia.id ASC)
+                            FROM image tmedia 
+                            WHERE tmedia.post_id = tp.id_post AND tmedia.type = 'media'
+                        ), '[]'::jsonb)
+                    )
+                    FROM post tp
+                    LEFT JOIN member tm ON tp.id_member = tm.id_member
+                    LEFT JOIN image ticon ON ticon.member_id = tm.id_member AND ticon.type = 'icon'
+                    WHERE tp.id_post = p.target_post_id
+                ), 'null'::jsonb) AS target_post
             FROM
                 post p
             LEFT JOIN
@@ -57,13 +88,14 @@ const get = async (data: {
             WHERE
                 p.id_post_replied IS NULL AND
                 (${data.id_member}::TEXT IS NULL OR p.id_member = ${data.id_member}) AND
-                (${data.username}::TEXT IS NULL OR m.username_member = ${data.username})
+                (${data.username}::TEXT IS NULL OR m.username_member = ${data.username}) AND
+                p.type != 'reply'
             GROUP BY
                 p.id_post,
                 p.content_post,
                 p.date_post,
-                p.images_post,
-                p.id_post_replied,
+                p.type,
+                p.target_post_id,
                 m.id_member,
                 icon.url
             ORDER BY 
@@ -97,10 +129,10 @@ const getFollowing = async (data: {
                 p.id_post AS id,
                 p.content_post AS content,
                 p.date_post AS date,
-                p.images_post AS images,
-                p.id_post_replied,
+                p.type,
+                p.target_post_id,
                 (SELECT COUNT(*) FROM upvote WHERE id_post = p.id_post) as upvotes_count,
-                (SELECT COUNT(*) FROM post WHERE id_post_replied = p.id_post) as comments_count,
+                (SELECT COUNT(*) FROM post WHERE target_post_id = p.id_post AND type = 'reply') as comments_count,
                 EXISTS (
                     SELECT 1 FROM
                         upvote
@@ -121,7 +153,39 @@ const getFollowing = async (data: {
                         FROM image media 
                         WHERE media.post_id = p.id_post AND media.type = 'media'
                     ), '[]'::jsonb
-                ) AS media
+                ) AS media,
+                COALESCE((
+                    SELECT jsonb_build_object(
+                        'id', tp.id_post,
+                        'content', tp.content_post,
+                        'date', tp.date_post,
+                        'type', tp.type,
+                        'target_post_id', tp.target_post_id,
+                        'upvotes_count', (SELECT COUNT(*) FROM upvote WHERE id_post = tp.id_post),
+                        'comments_count', (SELECT COUNT(*) FROM post WHERE target_post_id = tp.id_post AND type = 'reply'),
+                        'is_upvoted', EXISTS (
+                            SELECT 1 FROM upvote
+                            WHERE id_post = tp.id_post 
+                            AND id_member_upvote = ${data.member.id}               
+                        ),
+                        'creator', jsonb_build_object(
+                            'id', tm.id_member,
+                            'name', tm.name_member,
+                            'username', tm.username_member,
+                            'role', tm.role_member,
+                            'icon_url', ticon.url
+                        ),
+                        'media', COALESCE((
+                            SELECT jsonb_agg(tmedia.url ORDER BY tmedia.id ASC)
+                            FROM image tmedia 
+                            WHERE tmedia.post_id = tp.id_post AND tmedia.type = 'media'
+                        ), '[]'::jsonb)
+                    )
+                    FROM post tp
+                    LEFT JOIN member tm ON tp.id_member = tm.id_member
+                    LEFT JOIN image ticon ON ticon.member_id = tm.id_member AND ticon.type = 'icon'
+                    WHERE tp.id_post = p.target_post_id
+                ), 'null'::jsonb) AS target_post
             FROM
                 post p
             LEFT JOIN
@@ -133,14 +197,14 @@ const getFollowing = async (data: {
             LEFT JOIN
                 image media ON media.post_id = p.id_post AND media.type = 'media'
             WHERE
-                p.id_post_replied IS NULL AND
-                f.id_member_follower = ${data.member.id}
+                f.id_member_follower = ${data.member.id} AND
+                p.type != 'reply'
             GROUP BY
                 p.id_post,
                 p.content_post,
                 p.date_post,
-                p.images_post,
-                p.id_post_replied,
+                p.type,
+                p.target_post_id,
                 m.id_member,
                 icon.url
             ORDER BY 
@@ -169,9 +233,10 @@ const getById = async (data: {
                 p.id_post AS id,
                 p.content_post AS content,
                 p.date_post AS date,
-                p.images_post AS images,
+                p.type,
+                p.target_post_id,
                 (SELECT COUNT(*) FROM upvote WHERE id_post = p.id_post) as upvotes_count,
-                (SELECT COUNT(*) FROM post WHERE id_post_replied = p.id_post) as comments_count,
+                (SELECT COUNT(*) FROM post WHERE target_post_id = p.id_post AND type = 'reply') as comments_count,
                 EXISTS (
                     SELECT 1 FROM
                         upvote
@@ -192,7 +257,39 @@ const getById = async (data: {
                         FROM image media 
                         WHERE media.post_id = p.id_post AND media.type = 'media'
                     ), '[]'::jsonb
-                ) AS media
+                ) AS media,
+                COALESCE((
+                    SELECT jsonb_build_object(
+                        'id', tp.id_post,
+                        'content', tp.content_post,
+                        'date', tp.date_post,
+                        'type', tp.type,
+                        'target_post_id', tp.target_post_id,
+                        'upvotes_count', (SELECT COUNT(*) FROM upvote WHERE id_post = tp.id_post),
+                        'comments_count', (SELECT COUNT(*) FROM post WHERE target_post_id = tp.id_post AND type = 'reply'),
+                        'is_upvoted', EXISTS (
+                            SELECT 1 FROM upvote
+                            WHERE id_post = tp.id_post 
+                            AND id_member_upvote = ${data.id_member}               
+                        ),
+                        'creator', jsonb_build_object(
+                            'id', tm.id_member,
+                            'name', tm.name_member,
+                            'username', tm.username_member,
+                            'role', tm.role_member,
+                            'icon_url', ticon.url
+                        ),
+                        'media', COALESCE((
+                            SELECT jsonb_agg(tmedia.url ORDER BY tmedia.id ASC)
+                            FROM image tmedia 
+                            WHERE tmedia.post_id = tp.id_post AND tmedia.type = 'media'
+                        ), '[]'::jsonb)
+                    )
+                    FROM post tp
+                    LEFT JOIN member tm ON tp.id_member = tm.id_member
+                    LEFT JOIN image ticon ON ticon.member_id = tm.id_member AND ticon.type = 'icon'
+                    WHERE tp.id_post = p.target_post_id
+                ), 'null'::jsonb) AS target_post
             FROM
                 post p
             LEFT JOIN
@@ -207,8 +304,8 @@ const getById = async (data: {
                 p.id_post,
                 p.content_post,
                 p.date_post,
-                p.images_post,
-                p.id_post_replied,
+                p.type,
+                p.target_post_id,
                 m.id_member,
                 icon.url;
         `;
@@ -235,9 +332,10 @@ const getComments = async (data: {
                 p.id_post AS id,
                 p.content_post AS content,
                 p.date_post AS date,
-                p.images_post AS images,
+                p.type,
+                p.target_post_id,
                 (SELECT COUNT(*) FROM upvote WHERE id_post = p.id_post) as upvotes_count,
-                (SELECT COUNT(*) FROM post WHERE id_post_replied = p.id_post) as comments_count,
+                (SELECT COUNT(*) FROM post WHERE target_post_id = p.id_post AND type = 'reply') as comments_count,
                 EXISTS (
                     SELECT 1 FROM
                         upvote
@@ -258,7 +356,39 @@ const getComments = async (data: {
                         FROM image media 
                         WHERE media.post_id = p.id_post AND media.type = 'media'
                     ), '[]'::jsonb
-                ) AS media
+                ) AS media,
+                COALESCE((
+                    SELECT jsonb_build_object(
+                        'id', tp.id_post,
+                        'content', tp.content_post,
+                        'date', tp.date_post,
+                        'type', tp.type,
+                        'target_post_id', tp.target_post_id,
+                        'upvotes_count', (SELECT COUNT(*) FROM upvote WHERE id_post = tp.id_post),
+                        'comments_count', (SELECT COUNT(*) FROM post WHERE target_post_id = tp.id_post AND type = 'reply'),
+                        'is_upvoted', EXISTS (
+                            SELECT 1 FROM upvote
+                            WHERE id_post = tp.id_post 
+                            AND id_member_upvote = ${data.id_member}               
+                        ),
+                        'creator', jsonb_build_object(
+                            'id', tm.id_member,
+                            'name', tm.name_member,
+                            'username', tm.username_member,
+                            'role', tm.role_member,
+                            'icon_url', ticon.url
+                        ),
+                        'media', COALESCE((
+                            SELECT jsonb_agg(tmedia.url ORDER BY tmedia.id ASC)
+                            FROM image tmedia 
+                            WHERE tmedia.post_id = tp.id_post AND tmedia.type = 'media'
+                        ), '[]'::jsonb)
+                    )
+                    FROM post tp
+                    LEFT JOIN member tm ON tp.id_member = tm.id_member
+                    LEFT JOIN image ticon ON ticon.member_id = tm.id_member AND ticon.type = 'icon'
+                    WHERE tp.id_post = p.target_post_id
+                ), 'null'::jsonb) AS target_post
             FROM
                 post p
             LEFT JOIN
@@ -268,13 +398,14 @@ const getComments = async (data: {
             LEFT JOIN
                 image media ON media.post_id = p.id_post AND media.type = 'media'
             WHERE
-                p.id_post_replied = ${data.id_post}
+                p.target_post_id = ${data.id_post} AND
+                p.type = 'reply'
             GROUP BY
                 p.id_post,
                 p.content_post,
                 p.date_post,
-                p.images_post,
-                p.id_post_replied,
+                p.type,
+                p.target_post_id,
                 m.id_member,
                 icon.url
             ORDER BY 
@@ -303,10 +434,10 @@ const getThread = async (data: {
                     original.id_post AS id,
                     original.content_post AS content,
                     original.date_post AS date,
-                    original.images_post AS images,
-                    original.id_post_replied,
+                    original.target_post_id,
+                    original.type,
                     (SELECT COUNT(*) FROM upvote up WHERE up.id_post = original.id_post) as upvotes_count,
-                    (SELECT COUNT(*) FROM post pr WHERE pr.id_post_replied = original.id_post) as comments_count,
+                    (SELECT COUNT(*) FROM post pr WHERE pr.target_post_id = original.id_post AND pr.type = 'reply') as comments_count,
                     EXISTS (
                         SELECT 1 FROM upvote up
                         WHERE up.id_post = original.id_post 
@@ -334,10 +465,10 @@ const getThread = async (data: {
                     replied.id_post AS id,
                     replied.content_post AS content,
                     replied.date_post AS date,
-                    replied.images_post AS images,
-                    replied.id_post_replied,
+                    replied.target_post_id,
+                    replied.type,
                     (SELECT COUNT(*) FROM upvote up WHERE up.id_post = replied.id_post) as upvotes_count,
-                    (SELECT COUNT(*) FROM post pr WHERE pr.id_post_replied = replied.id_post) as comments_count,
+                    (SELECT COUNT(*) FROM post pr WHERE pr.target_post_id = replied.id_post AND pr.type = 'reply') as comments_count,
                     EXISTS (
                         SELECT 1 FROM upvote up
                         WHERE up.id_post = replied.id_post 
@@ -357,7 +488,7 @@ const getThread = async (data: {
                 LEFT JOIN
                     image icon_replied ON icon_replied.member_id = member_replied.id_member AND icon_replied.type = 'icon'
                 INNER JOIN 
-                    thread ph ON replied.id_post = ph.id_post_replied
+                    thread ph ON replied.id_post = ph.target_post_id AND ph.type = 'reply'
             )
 
             SELECT 
@@ -368,13 +499,53 @@ const getThread = async (data: {
                         FROM image media 
                         WHERE media.post_id = th.id AND media.type = 'media'
                     ), '[]'::jsonb
-                ) AS media
+                ) AS media,
+                COALESCE((
+                    SELECT jsonb_build_object(
+                        'id', tp.id_post,
+                        'content', tp.content_post,
+                        'date', tp.date_post,
+                        'type', tp.type,
+                        'target_post_id', tp.target_post_id,
+                        'upvotes_count', (SELECT COUNT(*) FROM upvote WHERE id_post = tp.id_post),
+                        'comments_count', (SELECT COUNT(*) FROM post WHERE target_post_id = tp.id_post AND type = 'reply'),
+                        'is_upvoted', EXISTS (
+                            SELECT 1 FROM upvote
+                            WHERE id_post = tp.id_post 
+                            AND id_member_upvote = ${data.id_member}               
+                        ),
+                        'creator', jsonb_build_object(
+                            'id', tm.id_member,
+                            'name', tm.name_member,
+                            'username', tm.username_member,
+                            'role', tm.role_member,
+                            'icon_url', ticon.url
+                        ),
+                        'media', COALESCE((
+                            SELECT jsonb_agg(tmedia.url ORDER BY tmedia.id ASC)
+                            FROM image tmedia 
+                            WHERE tmedia.post_id = tp.id_post AND tmedia.type = 'media'
+                        ), '[]'::jsonb)
+                    )
+                    FROM post tp
+                    LEFT JOIN member tm ON tp.id_member = tm.id_member
+                    LEFT JOIN image ticon ON ticon.member_id = tm.id_member AND ticon.type = 'icon'
+                    WHERE tp.id_post = th.target_post_id
+                ), 'null'::jsonb) AS target_post
             FROM 
                 thread th
             LEFT JOIN 
                 image media ON media.post_id = th.id AND media.type = 'media'
             GROUP BY 
-                th.id, th.content, th.date, th.images, th.id_post_replied, th.upvotes_count, th.comments_count, th.is_upvoted, th.creator
+                th.id, 
+                th.content, 
+                th.date, 
+                th.upvotes_count, 
+                th.comments_count, 
+                th.is_upvoted, 
+                th.creator,
+                th.target_post_id,
+                th.type
             ORDER BY 
                 th.id DESC;
         `;
@@ -393,33 +564,35 @@ const post = async (data: {
     id_member: number;
     content: string;
     images: any[];
-    id_replied_post: number;
+    type: 'default' | 'reply' | 'quote';
+    target_id: number;
 }) => {
     try {
         let response = null;
         await Postgres.query().begin(async transaction => {
             await transaction`SET TRANSACTION ISOLATION LEVEL READ COMMITTED;`;
 
-            if (data.id_replied_post) {
+            if (data.target_id) {
                 const qRepliedPost = await transaction`
                     SELECT 
                         id_post
                     FROM
                         post
                     WHERE
-                        id_post = ${data.id_replied_post};
+                        id_post = ${data.target_id};
                 `;
-                if (!qRepliedPost[0]) throw new NotFoundError("No se ha encontrado el post al que estás respondiendo.");
+                if (!qRepliedPost[0]) throw new NotFoundError("No se ha encontrado el post objetivo.");
             }
 
             const qInsert: Array<{ id_post: number }> = await transaction`
                 INSERT INTO
-                    post (id_member, content_post, date_post, id_post_replied)
+                    post (id_member, content_post, date_post, type, target_post_id)
                 VALUES (
                     ${data.id_member},
                     ${data.content},
                     ${new Date().toISOString()},
-                    ${data.id_replied_post}
+                    ${data.type},
+                    ${data.target_id}
                 )
                 RETURNING id_post;
             `;
@@ -452,7 +625,8 @@ const post = async (data: {
                     p.id_post AS id,
                     p.content_post AS content,
                     p.date_post AS date,
-                    p.images_post AS images,
+                    p.type AS type,
+                    p.target_post_id AS target_post_id,
                     (SELECT COUNT(*) FROM upvote WHERE id_post = p.id_post) as upvotes_count,
                     (SELECT COUNT(*) FROM post WHERE id_post_replied = p.id_post) as comments_count,
                     EXISTS (
@@ -475,7 +649,39 @@ const post = async (data: {
                             FROM image media 
                             WHERE media.post_id = p.id_post AND media.type = 'media'
                         ), '[]'::jsonb
-                    ) AS media
+                    ) AS media,
+                    COALESCE((
+                        SELECT jsonb_build_object(
+                            'id', tp.id_post,
+                            'content', tp.content_post,
+                            'date', tp.date_post,
+                            'type', tp.type,
+                            'target_post_id', tp.target_post_id,
+                            'upvotes_count', (SELECT COUNT(*) FROM upvote WHERE id_post = tp.id_post),
+                            'comments_count', (SELECT COUNT(*) FROM post WHERE id_post_replied = tp.id_post),
+                            'is_upvoted', EXISTS (
+                                SELECT 1 FROM upvote
+                                WHERE id_post = tp.id_post 
+                                AND id_member_upvote = ${data.id_member}               
+                            ),
+                            'creator', jsonb_build_object(
+                                'id', tm.id_member,
+                                'name', tm.name_member,
+                                'username', tm.username_member,
+                                'role', tm.role_member,
+                                'icon_url', ticon.url
+                            ),
+                            'media', COALESCE((
+                                SELECT jsonb_agg(tmedia.url ORDER BY tmedia.id ASC)
+                                FROM image tmedia 
+                                WHERE tmedia.post_id = tp.id_post AND tmedia.type = 'media'
+                            ), '[]'::jsonb)
+                        )
+                        FROM post tp
+                        LEFT JOIN member tm ON tp.id_member = tm.id_member
+                        LEFT JOIN image ticon ON ticon.member_id = tm.id_member AND ticon.type = 'icon'
+                        WHERE tp.id_post = p.target_post_id
+                    ), 'null'::jsonb) AS target_post
                 FROM
                     post p
                 LEFT JOIN
@@ -490,8 +696,8 @@ const post = async (data: {
                     p.id_post,
                     p.content_post,
                     p.date_post,
-                    p.images_post,
-                    p.id_post_replied,
+                    p.type,
+                    p.target_post_id,
                     m.id_member,
                     icon.url;
             `;

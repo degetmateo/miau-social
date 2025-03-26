@@ -95,7 +95,8 @@ const post = async (req: Request, res: Response) => {
                 files['image-2'] ? { buffer: files['image-2'][0]['buffer'], index: 2 } : null,
                 files['image-3'] ? { buffer: files['image-3'][0]['buffer'], index: 3 } : null
             ].filter(image => image !== null),
-            id_replied_post: req.body.id_replied_post ? Number(req.body.id_replied_post) : null
+            type: req.body.type ? req.body.type as 'default' | 'reply' | 'quote' : 'default',
+            target_id: req.body.target_id ? Number(req.body.target_id) : null
         });
 
         ResponseOk(res, RESPONSES.CREATED, response);

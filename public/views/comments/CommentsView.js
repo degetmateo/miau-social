@@ -44,11 +44,11 @@ export default class CommentsView extends AbstractView {
         this.viewContainer.appendChild(this.main);
 
         const postCreatorContainer = document.getElementById('comments-post-creator-container');
-        const creator = new PostCreator({ id_replied_post: this.params.id_post });
-        creator.render(postCreatorContainer);
-        creator.updateIcon(window.app.member.icon_url);
-        creator.updateName(window.app.member.name);
-        creator.onSuccess((post) => {
+        this.creator = new PostCreator({ target_id: this.params.id_post, type: 'reply' });
+        this.creator.render(postCreatorContainer);
+        this.creator.updateIcon(window.app.member.icon_url);
+        this.creator.updateName(window.app.member.name);
+        this.creator.onSuccess((post) => {
             const p = this.posts.find(e => e.post.id === this.params.id_post);
             if (p) {
                 p.increaseComments();
@@ -123,6 +123,8 @@ export default class CommentsView extends AbstractView {
                 const alturaDespues = this.main.scrollHeight;
                 this.main.scrollTop = scrollPos + (alturaDespues - alturaAntes);
             }
+
+            this.creator.textarea.title.innerText = 'Responder a @'+thread[thread.length - 1].creator.username;
         } catch (error) {
             console.error(error);
             new Alert('Ha ocurrido un error.');
