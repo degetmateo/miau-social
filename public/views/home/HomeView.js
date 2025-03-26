@@ -153,7 +153,6 @@ export default class extends AbstractView {
             const umbral = 1;
     
             if (this.scroll + clientHeight >= scrollHeight - umbral) {
-                console.log('SCROLL LIMIT')
                 this.offset += this.limit;
     
                 const posts = this.timelineMode === 'global' ? 

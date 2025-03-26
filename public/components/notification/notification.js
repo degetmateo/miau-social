@@ -69,9 +69,10 @@ export default class Notification {
     }
 
     Create () {
-       if (this.notification.type === 'reply') this.CreateNotificationComment();
-       if (this.notification.type === 'upvote') this.CreateNotificationUpvote();
-       if (this.notification.type === 'follow') this.CreateNotificationFollow();
+        if (this.notification.type === 'quote') return;
+        if (this.notification.type === 'reply') this.CreateNotificationComment();
+        if (this.notification.type === 'upvote') this.CreateNotificationUpvote();
+        if (this.notification.type === 'follow') this.CreateNotificationFollow();
     }
 
     CreateNotificationComment () {
