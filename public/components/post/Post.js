@@ -1,5 +1,5 @@
 import { URL_NO_IMAGE } from "../../consts.js";
-import { cleanContent } from "../../helpers.js";
+import { formatContent } from "../../helpers.js";
 import router from "../../router.js";
 import Alert from "../alert/alert.js";
 import MediaContainer from "../media-container/MediaContainer.js";
@@ -91,7 +91,7 @@ export default class Post {
     CreatePostBodyContent () {
         const bodyContent = document.createElement('span');
         bodyContent.classList.add('post-body-content');
-        bodyContent.innerHTML = cleanContent(this.post.content);
+        bodyContent.innerHTML = formatContent(this.post.content);
         return bodyContent;
     }
 

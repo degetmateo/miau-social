@@ -5,6 +5,7 @@ import {postService} from "../../services/postService.js";
 import AbstractView from "../AbstractView.js";
 import PostsContainer from "../../components/posts-container/PostsContainer.js";
 import PostCreator from "../../components/post-creator/PostCreator.js";
+import PostsHandler from "../../modules/PostsHandler.js";
 
 importCSS('/public/views/comments/styles/comments.css');
 
@@ -52,6 +53,7 @@ export default class CommentsView extends AbstractView {
         this.main.append(this.repliesPosts);
 
         this.posts = [];
+        this.cooldown = false;
     }
 
     async init (params) {
@@ -92,7 +94,13 @@ export default class CommentsView extends AbstractView {
             const repliedLoader = new SpinnerLoader({ size: 'medium' });
             this.repliedPosts.append(repliedLoader.render());
 
-            const post = await postService.getById({ id: this.params.id_post });
+            let post = PostsHandler.find(this.params.id_post);
+
+            if (!post) {
+                post = await postService.getById({ id: this.params.id_post });
+                PostsHandler.add(post);
+            }
+
             const mainPostElement = new Post(post).getElement();
             this.mainPostContainer.append(mainPostElement);
             
@@ -100,10 +108,17 @@ export default class CommentsView extends AbstractView {
     
             const threadContainer = new PostsContainer();
 
-            if (post.target_post_id) {
-                const thread = await postService.getThread({ id: this.params.id_post, offset: 0 });
-                for (const post of thread) {
-                    threadContainer.prepend(post);
+            let thread = [];
+            if (post.target_post_id && post.type === 'reply') {
+                thread = PostsHandler.getThread(post);
+
+                if (thread.length <= 0) {
+                    thread = await postService.getThread({ id: this.params.id_post, offset: 0 });
+                }
+
+                for (const pt of thread) {
+                    PostsHandler.add(pt);
+                    threadContainer.prepend(pt);
                 }
             }
     
@@ -112,8 +127,9 @@ export default class CommentsView extends AbstractView {
     
             const repliesContainer = new PostsContainer();
             const replies = await postService.getReplies({ id: this.params.id_post, offset: 0 });
-            for (const reply of replies) {
-                repliesContainer.append(reply);
+            for (const pr of replies) {
+                PostsHandler.add(pr);
+                repliesContainer.append(pr);
             }
     
             repliesLoader.remove();
@@ -128,11 +144,11 @@ export default class CommentsView extends AbstractView {
                 scroll: this.main.scrollTop,
                 thread: {
                     container: threadContainer,
-                    offset: 0
+                    offset: thread.length
                 },
                 replies: {
                     container: repliesContainer,
-                    offset: 0
+                    offset: replies.length
                 }
             });
 
@@ -148,14 +164,28 @@ export default class CommentsView extends AbstractView {
 
         this.creator.updateName(window.app.member.name);
         this.creator.updateIcon(window.app.member.icon_url);
+        
+        this.creator.onSuccess((response) => {
+            this.posts[this.i].replies.container.prepend(response);
+        });
+
         this.creator.render(this.replyCreatorContainer);
 
         Scroll({
             element: this.main,
             top: async () => {
-                this.posts[this.i].thread.offset += 10;
-
+                if (this.cooldown) return;
+                this.activateCooldown();
+                
                 const thread = await postService.getThread({ id: this.params.id_post, offset: this.posts[this.i].thread.offset });
+
+                if (this.posts[this.i]) this.posts[this.i].thread.offset += 10;
+
+                if (thread.length <= 0) {
+                    this.posts[this.i].thread.offset -= 10;
+                    return;
+                }
+
                 for (const post of thread) {
                     this.posts[this.i].thread.container.prepend(post);
                 }
@@ -165,9 +195,18 @@ export default class CommentsView extends AbstractView {
                 if (this.posts[this.i].scroll) this.posts[this.i].scroll = s;
             },
             bottom: async () => {
-                this.posts[this.i].replies.offset += 10;
+                if (this.cooldown) return;
+                this.activateCooldown();
 
                 const replies = await postService.getReplies({ id: this.params.id_post, offset: this.posts[this.i].replies.offset });
+
+                if (this.posts[this.i]) this.posts[this.i].replies.offset += 10;
+                
+                if (replies.length <= 0) {
+                    this.posts[this.i].replies.offset -= 10;
+                    return;
+                }
+
                 for (const post of replies) {
                     this.posts[this.i].replies.container.append(post);
                 }
@@ -178,5 +217,13 @@ export default class CommentsView extends AbstractView {
     setScroll (scroll) {
         this.main.scrollTop = scroll;
         if (this.posts[this.i].scroll) this.posts[this.i].scroll = scroll;
+    }
+
+    activateCooldown () {
+        this.cooldown = true;
+
+        setTimeout(() => {
+            this.cooldown = false;
+        }, 3000);
     }
 }

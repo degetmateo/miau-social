@@ -3,6 +3,7 @@ import PostCreator from "../../components/post-creator/PostCreator.js";
 import Post from "../../components/post/Post.js";
 import { importCSS } from "../../helpers.js";
 import EventsHandler from "../../modules/EventsHandler.js";
+import PostsHandler from "../../modules/PostsHandler.js";
 import router from "../../router.js";
 import {postService} from "../../services/postService.js";
 import AbstractView from "../AbstractView.js";
@@ -99,9 +100,6 @@ export default class extends AbstractView {
         this.setTitle('Inicio');
 
         this.view.append(window.app.nav.getNode());
-        // window.app.nav.onHome(() => {
-        //     // if (window.location.pathname === '/home') this.changeTimeline(this.timelineMode);
-        // });
 
         EventsHandler.removeObserver(this);
         EventsHandler.addObserver(this);
@@ -132,7 +130,10 @@ export default class extends AbstractView {
             await postService.get({ offset: this.offset }) :
             await postService.getFollowing({ offset: this.offset });
         
-        this.setScroll(0);
+        for (const p of posts) {
+            PostsHandler.add(p);
+        }
+
         this.drawPosts(posts);
         this.firstTime = false;
 
@@ -159,6 +160,10 @@ export default class extends AbstractView {
                     await postService.get({ offset: this.offset }) :
                     await postService.getFollowing({ offset: this.offset });
     
+                for (const p of posts) {
+                    PostsHandler.add(p);
+                }
+
                 this.drawPosts(posts);
                 this.posts = [...this.posts, ...posts];
             }
@@ -188,6 +193,10 @@ export default class extends AbstractView {
         const posts = this.timelineMode === 'global' ? 
             await postService.get({ offset: this.offset }) :
             await postService.getFollowing({ offset: this.offset });
+
+        for (const p of posts) {
+            PostsHandler.add(p);
+        }
 
         if (posts.find(post => post.id > this.posts[0].id && post.type != 'reply')) {
             new Alert('Hay nuevas publicaciones.', {

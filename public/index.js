@@ -10,10 +10,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.body.addEventListener("click", (e) => {
         e.stopPropagation();
         const linkElement = e.target.closest("[data-link]");
-
+        
         if (linkElement) {
             e.preventDefault();
-            router.navigateTo(linkElement.href || linkElement.getAttribute('href'));
+            router.navigateTo(linkElement.getAttribute('data-url') || linkElement.href || linkElement.getAttribute('href'));
         }
     });
 

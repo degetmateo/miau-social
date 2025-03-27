@@ -38,6 +38,28 @@ export function cleanContent (content) {
     return clickableText.replace(/\n/g, '<br>').trim();   
 }
 
+export function formatContent (content) {
+    const escapedText = content
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+    const urlPattern = /(https?:\/\/[^\s]+)/g;
+    const baseDomain = window.location.origin; // Obtiene el dominio actual
+
+    const clickableText = escapedText.replace(urlPattern, function(url) {
+        if (url.startsWith(baseDomain)) {
+            return `<a href="${url.replace(baseDomain, "")}" class="link internal-link" data-url="${url.replace(baseDomain, "")}">${url}</a>`;
+        } else {
+            return `<a href="${url}" class="link" target="_blank">${url}</a>`;
+        }
+    });
+
+    return clickableText.replace(/\n/g, '<br>').trim();
+}
+
 export function shortenLink(url, maxLength = 20) {
     if (!url) return '';
     let cleanedUrl = url.replace(/^https?:\/\//, '');

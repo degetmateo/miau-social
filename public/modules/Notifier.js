@@ -1,4 +1,5 @@
 import Observer from "../interfaces/Observer.js";
+import router from "../router.js";
 import {notificationService} from "../services/notificationService.js";
 import EventsHandler from "./EventsHandler.js";
 
@@ -12,6 +13,8 @@ class Notifier extends Observer {
     }
 
     initialize () {
+        if (router.getPathname() != '/notifications') this.get();
+
         this.interval = setInterval(() => {
             if (this.cooldown) return;
             this.get();
