@@ -91,7 +91,7 @@ export default class Post {
     CreatePostBodyContent () {
         const bodyContent = document.createElement('span');
         bodyContent.classList.add('post-body-content');
-        bodyContent.innerHTML = formatContent(this.post.content);
+        bodyContent.append(formatContent(this.post.content));
         return bodyContent;
     }
 

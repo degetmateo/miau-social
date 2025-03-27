@@ -1,3 +1,5 @@
+import router from "./router.js";
+
 export const importCSS = (href) => {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
@@ -39,25 +41,45 @@ export function cleanContent (content) {
 }
 
 export function formatContent (content) {
-    const escapedText = content
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+    const baseDomain = window.location.origin;
+    
+    const container = document.createElement("span");
 
-    const urlPattern = /(https?:\/\/[^\s]+)/g;
-    const baseDomain = window.location.origin; // Obtiene el dominio actual
+    const parts = content.split(/\s+/); 
 
-    const clickableText = escapedText.replace(urlPattern, function(url) {
-        if (url.startsWith(baseDomain)) {
-            return `<a href="${url.replace(baseDomain, "")}" class="link internal-link" data-url="${url.replace(baseDomain, "")}">${url}</a>`;
+    parts.forEach((part, index) => {
+        let element;
+
+        if (/^(https?:\/\/[^\s]+)$/.test(part)) {
+            if (part.startsWith(baseDomain)) {
+                element = document.createElement("span");
+                element.classList.add("link", "internal-link");
+                element.textContent = part;
+                element.style.cursor = "pointer";
+
+                element.onclick = (e) => {
+                    e.stopPropagation();
+                    router.navigateTo(part.replace(baseDomain, ""));
+                };
+            } else {
+                element = document.createElement("a");
+                element.classList.add("link");
+                element.href = part;
+                element.target = "_blank";
+                element.textContent = part;
+            }
         } else {
-            return `<a href="${url}" class="link" target="_blank">${url}</a>`;
+            element = document.createTextNode(part);
+        }
+
+        container.appendChild(element);
+
+        if (index < parts.length - 1) {
+            container.appendChild(document.createTextNode(" "));
         }
     });
 
-    return clickableText.replace(/\n/g, '<br>').trim();
+    return container;
 }
 
 export function shortenLink(url, maxLength = 20) {
