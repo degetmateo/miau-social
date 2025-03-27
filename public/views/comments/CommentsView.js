@@ -19,6 +19,18 @@ export default class CommentsView extends AbstractView {
         this.main.classList.add('comments-main');
         this.view.append(this.main);
 
+        this.header = document.createElement('header');
+        this.header.classList.add('comments-main-header');
+        this.header.onclick = () => {
+            this.setScroll(0);
+        }
+        this.main.append(this.header);
+
+        this.title = document.createElement('span');
+        this.title.classList.add('comments-main-header-title');
+        this.title.textContent = 'Publicación';
+        this.header.append(this.title);
+
         this.repliedPosts = document.createElement('div');
         this.repliedPosts.classList.add('comments-replied-posts');
         this.main.append(this.repliedPosts);
@@ -87,9 +99,12 @@ export default class CommentsView extends AbstractView {
             mainLoader.remove();
     
             const threadContainer = new PostsContainer();
-            const thread = await postService.getThread({ id: this.params.id_post, offset: 0 });
-            for (const post of thread) {
-                threadContainer.prepend(post);
+
+            if (post.target_post_id) {
+                const thread = await postService.getThread({ id: this.params.id_post, offset: 0 });
+                for (const post of thread) {
+                    threadContainer.prepend(post);
+                }
             }
     
             repliedLoader.remove();
@@ -104,7 +119,7 @@ export default class CommentsView extends AbstractView {
             repliesLoader.remove();
             this.repliesPosts.append(repliesContainer.render());
     
-            this.mainPostContainer.scrollIntoView({ block: 'start' });
+            this.mainPostContainer.scrollIntoView({ block: 'center' });
 
             this.posts.push({
                 id: post.id,
@@ -161,7 +176,7 @@ export default class CommentsView extends AbstractView {
     }
 
     setScroll (scroll) {
-        this.main.scrollTop(scroll);
+        this.main.scrollTop = scroll;
         if (this.posts[this.i].scroll) this.posts[this.i].scroll = scroll;
     }
 }

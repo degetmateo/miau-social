@@ -186,6 +186,7 @@ body {
     align-items: center;
     gap: 25px;
     font-size: 20px;
+
 }
 
 .container-post-footer-interactions-comments {
@@ -201,8 +202,27 @@ body {
     gap: 5px;
 }
 
+.container-post-footer-interactions-comments-icon {
+    display: flex;
+    align-items: center;
+}
+
+.container-post-footer-upvote-icon {
+    display: flex;
+    align-items: center;
+}
+
+.interaction-count {
+    display: flex;
+    align-items: center;
+}
+
 .post-footer-interactions-icon {
     cursor: pointer;
+    width: 18px;
+    height: 18px;
+    /* display: flex;
+    align-items: center; */
 }
 
 @media (max-width: 768px) {

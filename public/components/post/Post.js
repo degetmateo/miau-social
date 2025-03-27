@@ -2,8 +2,6 @@ import { URL_NO_IMAGE } from "../../consts.js";
 import { cleanContent } from "../../helpers.js";
 import router from "../../router.js";
 import Alert from "../alert/alert.js";
-import ImageViewer from "../image-viewer/ImageViewer.js";
-import ImagesContainer from "../images-container/ImagesContainer.js";
 import MediaContainer from "../media-container/MediaContainer.js";
 import Popup from "../popup/Popup.js";
 
@@ -14,6 +12,10 @@ IMAGE_POST_UPVOTE_ON.classList.add('post-footer-interactions-icon');
 const IMAGE_POST_UPVOTE_OFF = new Image();
 IMAGE_POST_UPVOTE_OFF.src = '/public/components/post/svg/upvote-off.svg';
 IMAGE_POST_UPVOTE_OFF.classList.add('post-footer-interactions-icon');
+
+const IMAGE_POST_QUOTE_OFF = new Image();
+IMAGE_POST_QUOTE_OFF.src = '/public/components/post/svg/quote-off.svg';
+IMAGE_POST_QUOTE_OFF.classList.add('post-footer-interactions-icon');
 
 const IMAGE_POST_COMMENTS = new Image();
 IMAGE_POST_COMMENTS.src = '/public/components/post/svg/comments.svg';
@@ -309,6 +311,7 @@ export default class Post {
         const containerFooterInteractions = document.createElement('div');
         containerFooterInteractions.classList.add('container-post-footer-interactions');
         containerFooterInteractions.appendChild(this.CreatePostFooterInteractionUpvote());
+        // containerFooterInteractions.appendChild(this.CreatePostFooterInteractionQuote());
         containerFooterInteractions.appendChild(this.CreatePostFooterInteractionComments());
         return containerFooterInteractions;
     }
@@ -327,7 +330,7 @@ export default class Post {
         this.footerUpvoteNumber = document.createElement('span');
         this.footerUpvoteNumber.textContent = this.post.upvotes_count;
         this.footerUpvoteNumber.style.fontSize = '20px';
-        this.footerUpvoteNumber.classList.add('post-footer-interactions-upvote-number');
+        this.footerUpvoteNumber.classList.add('interaction-count');
     
         containerFooterUpvoteIcon.addEventListener('click', (event) => {
             event.stopPropagation();
@@ -401,10 +404,31 @@ export default class Post {
         containerIcon.appendChild(ICON);
 
         this.number = document.createElement('span');
+        this.number.classList.add('interaction-count');
         this.drawCommentsCount();
 
         container.appendChild(containerIcon);
         container.appendChild(this.number);
+
+        return container;
+    }
+
+    CreatePostFooterInteractionQuote () {
+        const container = document.createElement('div');
+        container.classList.add('container-post-footer-interactions-comments');
+
+        const containerIcon = document.createElement('div');
+        containerIcon.classList.add('container-post-footer-interactions-comments-icon');
+        const ICON = IMAGE_POST_QUOTE_OFF.cloneNode(true);
+        containerIcon.append(ICON);
+
+        this.quoteNumber = document.createElement('span');
+        this.quoteNumber.classList.add('interaction-count');
+        this.quoteNumber.textContent = '0';
+        // this.drawCommentsCount();
+
+        container.append(containerIcon);
+        container.appendChild(this.quoteNumber);
 
         return container;
     }
