@@ -168,6 +168,7 @@ export default class CommentsView extends AbstractView {
         this.creator.updateIcon(window.app.member.icon_url);
         
         this.creator.onSuccess((response) => {
+            this.posts[this.i].replies.offset += 1;
             this.posts[this.i].replies.container.prepend(response);
         });
 
