@@ -134,3 +134,23 @@ export function Scroll (data = {
         if (data.bottom && Math.ceil(SCROLL + CLIENT_HEIGHT) >= Math.ceil(SCROLL_HEIGHT - LIMIT)) data.bottom();
     }
 }
+
+
+export function getTimeElapsedSince (date) {
+    const now = new Date();
+    const dif = now - date;
+    const seconds = Math.floor(dif / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const months = Math.floor(days / 30);
+    const years = Math.floor(days / 365);
+
+    if (years > 0) return `hace ${years} ${years === 1 ? 'año' : 'años'}`;
+    if (months > 0) return `hace ${months} ${months === 1 ? 'mes' : 'meses'}`;
+    if (days > 0) return `hace ${days} ${days === 1 ? 'día' : 'días'}`;
+    if (hours > 0) return `hace ${hours} ${hours === 1 ? 'hora' : 'horas'}`;
+    if (minutes > 0) return `hace ${minutes} ${minutes === 1 ? 'minuto' : 'minutos'}`;
+    if (seconds <= 30) return `ahora`;
+    return `hace ${seconds} ${seconds === 1 ? 'segundo' : 'segundos'}`;
+}

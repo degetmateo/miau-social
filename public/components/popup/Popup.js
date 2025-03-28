@@ -1,5 +1,12 @@
-export default class Popup {
+import Observer from "../../interfaces/Observer.js";
+import EventsHandler from "../../modules/EventsHandler.js";
+
+export default class Popup extends Observer {
     constructor () {
+        super();
+        this.observerId = 'popup';
+        EventsHandler.addObserver(this);
+
         this.container = document.createElement('div');
         this.container.classList.add('container-popup');
         this.containerContent = document.createElement('div');
@@ -15,6 +22,15 @@ export default class Popup {
 
     getElement () {
         return this.container;
+    }
+
+    onEscape () {
+        this.remove();
+    }
+
+    remove () {
+        this.container.remove();
+        EventsHandler.removeObserver(this);
     }
 
     delete () {

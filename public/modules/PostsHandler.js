@@ -47,7 +47,7 @@ class PostsHandler {
     }
 
     getReplies (post) {
-        return this.posts.filter(p => p.target_post_id === post.id);
+        return this.posts.filter(p => p.target_post_id === post.id && p.type === 'reply');
     }
 }
 

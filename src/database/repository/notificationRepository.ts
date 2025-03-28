@@ -25,7 +25,11 @@ const get = async (data: {
                     'target_post_id', p.target_post_id,
                     'content', p.content_post,
                     'date', p.date_post,
-                    'media', COALESCE(ARRAY_AGG(media.url) FILTER (WHERE media.url IS NOT NULL), '{}')
+                    'media', COALESCE((
+                        SELECT jsonb_agg(tmedia.url ORDER BY tmedia.id ASC)
+                        FROM image tmedia 
+                        WHERE tmedia.post_id = p.id_post AND tmedia.type = 'media'
+                    ), '[]'::jsonb)
                 ) AS target_post
             FROM 
                 notification n
@@ -34,23 +38,24 @@ const get = async (data: {
             LEFT JOIN
                 image icon ON icon.member_id = m.id_member AND icon.type = 'icon'
             LEFT JOIN 
-                post p ON (n.type_notification IN ('reply', 'upvote') AND n.id_post_target_notification = p.id_post)
+                post p ON (n.type_notification IN ('reply', 'upvote', 'quote') AND n.id_post_target_notification = p.id_post)
             LEFT JOIN
                 image media ON media.post_id = p.id_post AND media.type = 'media'
             WHERE 
                 n.id_member = ${data.id_member}
             GROUP BY
                 n.id_notification,
+                n.date_notification,
+                n.type_notification,
+                n.status,
                 m.id_member,
                 icon.url,
                 p.id_post,
-                media.url,
-                p.id_post_replied,
+                p.target_post_id,
                 p.content_post,
-                p.date_post,
-                p.target_post_id
+                p.date_post
             ORDER BY 
-                date_notification DESC
+                n.date_notification DESC
             LIMIT 20
             OFFSET ${data.offset};
         `;

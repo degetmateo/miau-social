@@ -52,7 +52,7 @@
 
 .media-container-image {
     max-width: 100%;
-
+    max-height: 300px;
     display: flex;
     justify-content: flex-end;
     align-items: flex-start;

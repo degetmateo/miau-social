@@ -1,7 +1,10 @@
 body {
     background-color: var(--primary-color);
-    font-family: "Roboto", sans-serif;
-    color: #FFF;
+    color: var(--font-color);
+
+    font-family: "JetBrainsMono-Regular", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
 }
 
 input {

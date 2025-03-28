@@ -6,6 +6,7 @@ import AbstractView from "../AbstractView.js";
 import PostsContainer from "../../components/posts-container/PostsContainer.js";
 import PostCreator from "../../components/post-creator/PostCreator.js";
 import PostsHandler from "../../modules/PostsHandler.js";
+import Separator from "../../components/separator/Separator.js";
 
 importCSS('/public/views/comments/styles/comments.css');
 
@@ -101,7 +102,7 @@ export default class CommentsView extends AbstractView {
                 PostsHandler.add(post);
             }
 
-            const mainPostElement = new Post(post).getElement();
+            const mainPostElement = new Post(post, { expanded: false }).render();
             this.mainPostContainer.append(mainPostElement);
             
             mainLoader.remove();
@@ -126,6 +127,7 @@ export default class CommentsView extends AbstractView {
             this.repliedPosts.append(threadContainer.render());
     
             const repliesContainer = new PostsContainer();
+
             const replies = await postService.getReplies({ id: this.params.id_post, offset: 0 });
             for (const pr of replies) {
                 PostsHandler.add(pr);
@@ -169,6 +171,7 @@ export default class CommentsView extends AbstractView {
             this.posts[this.i].replies.container.prepend(response);
         });
 
+        this.replyCreatorContainer.append(new Separator().render());
         this.creator.render(this.replyCreatorContainer);
 
         Scroll({

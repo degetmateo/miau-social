@@ -1,6 +1,7 @@
 import Alert from "../../components/alert/alert.js";
 import PostCreator from "../../components/post-creator/PostCreator.js";
 import Post from "../../components/post/Post.js";
+import Separator from "../../components/separator/Separator.js";
 import { importCSS } from "../../helpers.js";
 import EventsHandler from "../../modules/EventsHandler.js";
 import PostsHandler from "../../modules/PostsHandler.js";
@@ -56,7 +57,7 @@ export default class extends AbstractView {
         this.creator.render(this.main);
 
         this.creator.onSuccess((post) => {
-            if (this.timelineMode === 'global') this.timeline.prepend(Post.Create(post, { date: 'informal' }));
+            if (this.timelineMode === 'global') this.timeline.prepend(new Post(post, { expanded: false }).render());
             this.posts.unshift(post);
         });
 
@@ -142,7 +143,8 @@ export default class extends AbstractView {
 
     drawPosts (posts) {
         for (const post of posts) {
-            this.timeline.append(Post.Create(post, { date: 'informal' }));
+            this.timeline.append(new Post(post, { expanded: false }).render());
+            this.timeline.append(new Separator().render());
         }
     }
 

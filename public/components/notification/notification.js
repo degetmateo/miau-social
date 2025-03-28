@@ -69,10 +69,26 @@ export default class Notification {
     }
 
     Create () {
-        if (this.notification.type === 'quote') return;
+        if (this.notification.type === 'quote') this.CreateNotificationQuote();
         if (this.notification.type === 'reply') this.CreateNotificationComment();
         if (this.notification.type === 'upvote') this.CreateNotificationUpvote();
         if (this.notification.type === 'follow') this.CreateNotificationFollow();
+    }
+
+    CreateNotificationQuote () {
+        this.container.setAttribute('href', '/post/'+this.notification.target_post.id+'/comments');
+        if (!this.notification.target_post.content) this.notification.target_post.content = '';
+        if (!this.notification.target_post.images) this.notification.target_post.images = [];
+        this.container.innerHTML = `
+            <div class="container-notification-comment-signature">
+                <div class="container-notification-comment-pic">
+                    <img class="notification-comment-signature-pic" src="${this.notification.target_member.icon_url || URL_NO_IMAGE}" href="/member/${this.notification.target_member.username}" data-link />
+                </div>
+                <span class="notification-comment-signature-title"><span class="notification-comment-signature-name" href="/member/${this.notification.target_member.username}" data-link>${this.notification.target_member.name}</span> te ha citado:</span>
+            </div>
+            ${this.notification.target_post.content.length > 0 ? `<span class="notification-comment-post-content">${this.notification.target_post.content}</span>` : ''}
+            ${this.notification.target_post.media.length > 0 ? `${this.images()}` : ''}
+        `;
     }
 
     CreateNotificationComment () {

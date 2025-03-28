@@ -1,0 +1,62 @@
+.quote {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    border: 1px solid var(--font-color);
+    /* border-radius: 10px; */
+    padding: 10px;
+    box-sizing: border-box;
+
+    font-size: 14px;
+}
+
+.quote:hover {
+    filter: brightness(50%);
+}
+
+.quote-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+.quote-icon {
+    width: 25px;
+    height: 25px;
+    border: 1px solid var(--font-color);
+}
+
+.quote-username {
+    font-family: "JetBrainsMono-Light", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+
+    font-size: 14px;
+    color: var(--font-color-light);
+}
+
+.quote-body {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.quote-media {
+    max-width: 200px;
+    border: 1px solid var(--font-color);
+}
+
+@media (max-width: 900px) {
+    .quote-media {
+        max-width: 100px;
+    }
+}
+
+.quote-content {
+    font-family: "Inter-Regular", sans-serif;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
