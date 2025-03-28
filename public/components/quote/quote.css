@@ -8,12 +8,14 @@
     padding: 10px;
     box-sizing: border-box;
 
+    background-color: var(--primary-color--bolder);
+
     font-size: 14px;
 }
 
 .quote:hover {
     /* filter: brightness(50%); */
-    background-color: var(--hover-color--bolder);
+    background-color: var(--hover-color);
 }
 
 .quote-header {
