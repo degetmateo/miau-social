@@ -44,6 +44,7 @@ export default class Quote {
             if (this.data.content && this.data.content.length > 100) this.data.content = this.data.content.substring(0, 100) + '...';
             this.media = new MediaContainer({ media: this.data.media, editable: false });
             this.media.container.classList.add('quote-media');
+            if (!this.data.content) this.media.container.classList.add('quote-media--alone');
             this.media.render(this.body);
         }
 

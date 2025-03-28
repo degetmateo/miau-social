@@ -12,7 +12,8 @@
 }
 
 .quote:hover {
-    filter: brightness(50%);
+    /* filter: brightness(50%); */
+    background-color: var(--hover-color--bolder);
 }
 
 .quote-header {
@@ -60,6 +61,11 @@
     .quote-media {
         max-width: 100px;
     }
+}
+
+.quote-media--alone {
+    width: 100%;
+    max-width: 100%;
 }
 
 .quote-content {
