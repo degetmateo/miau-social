@@ -67,6 +67,11 @@
     font-family: "JetBrainsMono-Bold", sans-serif;
     text-wrap: nowrap;
     overflow: hidden;
+
+    display: inline-block; 
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
 }
 
 .post-header-signature-top-name:hover {
