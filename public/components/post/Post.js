@@ -298,7 +298,7 @@ export default class Post {
             type: 'quote',
             onSuccess: (post) => {
                 this.increaseQuotesCount();
-                this.setUpvoteIcon('on');
+                this.setQuoteIcon('on');
                 if (this.options.onQuote) this.options.onQuote(post);
             }
         });

@@ -57,7 +57,11 @@ export default class extends AbstractView {
         this.creator.render(this.main);
 
         this.creator.onSuccess((post) => {
-            if (this.timelineMode === 'global') this.timeline.prepend(new Post(post, { expanded: false }).render());
+            if (this.timelineMode === 'global') {
+                this.timeline.prepend(new Separator().render());
+                this.timeline.prepend(new Post(post, { expanded: false }).render());
+            }
+            
             this.posts.unshift(post);
         });
 
