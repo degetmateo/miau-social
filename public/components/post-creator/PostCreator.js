@@ -137,8 +137,9 @@ class PostCreator {
 
     async submit () {
         const imagesData = this.imagesContainer.getImages();
-        const content = this.textarea.value;
-        if (!content && imagesData.length === 0) return new Alert('No puedes enviar una publicación vacía.', { error: true, timeout: 4000 });
+        let content = this.textarea.value;
+        if (content) content = content.trim();
+        if ((!content || content.length <= 0) && imagesData.length === 0) return new Alert('No puedes enviar una publicación vacía.', { error: true, timeout: 4000 });
 
         const loader = new ScreenSpinner();
         this.imagesContainer.clear();

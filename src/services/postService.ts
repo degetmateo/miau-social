@@ -103,6 +103,7 @@ const post = async (data: {
     type: 'default' | 'reply' | 'quote';
     target_id: number;
 }) => {
+    if (data.content) data.content = data.content.trim();
     const isEmpty = (!data.content || data.content.length <= 0) && [...data.tenor, ...data.images].length <= 0;
     if (isEmpty) throw new InvalidArgumentError("No puedes enviar una publicación vacia.");
 

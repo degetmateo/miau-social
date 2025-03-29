@@ -99,6 +99,7 @@ export default class CommentsView extends AbstractView {
 
             if (!post) {
                 post = await postService.getById({ id: this.params.id_post });
+                console.log(post);
                 PostsHandler.add(post);
             }
 
