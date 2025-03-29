@@ -12,10 +12,16 @@ export default class Quote {
         this.quote = document.createElement('div');
         this.quote.classList.add('quote');
 
+        if (!this.data) {
+            this.quote.textContent = 'Publicación eliminada.';
+            return;
+        }
+
         this.header = document.createElement('div');
         this.header.classList.add('quote-header');
         this.quote.append(this.header);
         
+
         this.icon = document.createElement('img');
         this.icon.src = this.data.creator.icon_url || URL_NO_IMAGE;
         this.icon.classList.add('quote-icon');
