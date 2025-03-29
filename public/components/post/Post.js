@@ -267,12 +267,12 @@ export default class Post {
     }
 
     increaseUpvotesCount () {
-        this.data.upvotes_count = parseInt(this.data.upvotes_count) + 1;
+        this.data.upvotes_count = parseInt(this.data.upvotes_count || 0) + 1;
         this.upvoteCount.textContent = this.data.upvotes_count;
     }
 
     decreaseUpvotesCount () {
-        this.data.upvotes_count = parseInt(this.data.upvotes_count) - 1;
+        this.data.upvotes_count = parseInt(this.data.upvotes_count || 1) - 1;
         this.upvoteCount.textContent = this.data.upvotes_count;
     }
     
@@ -305,7 +305,7 @@ export default class Post {
     }
 
     increaseQuotesCount () {
-        this.data.quotes_count = parseInt(this.data.quotes_count) + 1;
+        this.data.quotes_count = parseInt(this.data.quotes_count || 0) + 1;
         this.quoteCount.textContent = this.data.quotes_count;
     }
 
