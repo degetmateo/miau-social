@@ -118,7 +118,7 @@ export default class Post {
         if (this.data.content) {
             this.content = document.createElement('div');
             this.content.classList.add('post-body-content');
-            this.content.append(formatContent(this.data.content));
+            this.content.append(this.formatContent());
             this.body.append(this.content);
         }
 
@@ -219,6 +219,45 @@ export default class Post {
             if (e.target.closest('.media-container')) return;
             if (!this.isSelectingText) return router.navigateTo('/post/'+this.data.id+'/comments');
         }
+    }
+
+    formatContent () {
+        const domain = window.location.origin;
+        const content = document.createElement("span");
+        const parts = this.data.content.split(/\s+/);
+    
+        parts.forEach((part, index) => {
+            let element;
+    
+            if (/^(https?:\/\/[^\s]+)$/.test(part)) {
+                if (part.startsWith(domain)) {
+                    element = document.createElement("span");
+                    element.classList.add("link", "internal-link");
+                    element.textContent = part;
+    
+                    element.onclick = (e) => {
+                        e.stopPropagation();
+                        router.navigateTo(part.replace(domain, ""));
+                    };
+                } else {
+                    element = document.createElement("a");
+                    element.classList.add("link");
+                    element.href = part;
+                    element.target = "_blank";
+                    element.textContent = part;
+                }
+            } else {
+                element = document.createTextNode(part);
+            }
+    
+            content.appendChild(element);
+    
+            if (index < parts.length - 1) {
+                content.appendChild(document.createTextNode(" "));
+            }
+        });
+    
+        return content;
     }
 
     onIcon (e) {

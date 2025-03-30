@@ -5,19 +5,24 @@
 
 /* FONDO */
 ::-webkit-scrollbar-track {
-    background: gray;    
+    /* background: gray;  */
+    background-color: var(--border-color);
 }
 
 /* ESTILO BARRITA */
 ::-webkit-scrollbar-thumb {
-    background: #bbbbbb;   
+    /* background: #bbbbbb; */
     /* border-radius: 6px; */
-    /* border: 1px solid #f1f1f1; */
+    border: 1px solid var(--border-color);
+    border-left: 2px solid var(--border-color);;
+    background-color: var(--primary-color);
+    /* cursor: pointer; */
 }
 
 /* HOVER SOBRE LA BARRA */
 ::-webkit-scrollbar-thumb:hover {
-    background: #555; 
+    /* background: #555;  */
+    background-color: var(--hover-color);
 }
 
 /* FIREFOX */
@@ -26,7 +31,7 @@
     scrollbar-color: #FFF gray;
 } */
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
     ::-webkit-scrollbar {
         display: none;
     }
