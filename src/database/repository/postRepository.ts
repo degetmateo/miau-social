@@ -882,6 +882,13 @@ const removeAdmin = async (data: {
                     id_post = ${data.id_post};
             `;
 
+            await transaction`
+                DELETE FROM
+                    image
+                WHERE
+                    post_id = ${data.id_post};
+            `;
+
             const qDelete = await transaction`
                 DELETE FROM
                     post

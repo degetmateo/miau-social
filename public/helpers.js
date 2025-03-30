@@ -24,6 +24,71 @@ export async function loadImage (url) {
     });
 }
 
+export function formatContent (content) {
+    if (!content) return document.createElement("span");
+
+    const baseDomain = window.location.origin;
+    const container = document.createElement("span");
+
+    // Función para escapar texto HTML
+    const escapeHTML = (text) =>
+        text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+    // Dividimos el texto respetando saltos de línea
+    const lines = content.split("\n");
+
+    lines.forEach((line, lineIndex) => {
+        const words = line.split(/\s+/); // Separar por espacios
+
+        words.forEach((word, wordIndex) => {
+            let element;
+
+            // Detectar enlaces
+            if (/^(https?:\/\/[^\s]+)$/.test(word)) {
+                if (word.startsWith(baseDomain)) {
+                    element = document.createElement("span");
+                    element.classList.add("link", "internal-link");
+                    element.textContent = word;
+                    element.style.cursor = "pointer";
+
+                    element.onclick = (e) => {
+                        e.stopPropagation();
+                        router.navigateTo(word.replace(baseDomain, ""));
+                    };
+                } else {
+                    element = document.createElement("a");
+                    element.classList.add("link");
+                    element.href = word;
+                    element.target = "_blank";
+                    element.textContent = word;
+                }
+            } else {
+                // Texto normal escapado
+                element = document.createTextNode(escapeHTML(word));
+            }
+
+            container.appendChild(element);
+
+            // Agregar espacio entre palabras
+            if (wordIndex < words.length - 1) {
+                container.appendChild(document.createTextNode(" "));
+            }
+        });
+
+        // Agregar un salto de línea si no es la última línea
+        if (lineIndex < lines.length - 1) {
+            container.appendChild(document.createElement("br"));
+        }
+    });
+
+    return container;
+}
+
 export function cleanContent (content) {
     const escapedText = content
         .replace(/&/g, "&amp;")
@@ -35,7 +100,7 @@ export function cleanContent (content) {
     return escapedText.replace(/\n/g, '<br>').trim();   
 }
 
-export function formatContent (content) {
+export function formatContent2 (content) {
     const baseDomain = window.location.origin;
     const container = document.createElement("span");
     

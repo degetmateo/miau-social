@@ -178,7 +178,7 @@ const removeAdmin = async (data: {
     role_member: Role;
     id_post: number;
 }) => {
-    if (data.role_member != 'admin') throw new UnauthorizedError("No tienes permisos para realizar esta accion.");
+    if (data.role_member != 'admin' && data.role_member != 'mod') throw new UnauthorizedError("No tienes permisos para realizar esta accion.");
     const response = await postRepository.removeAdmin(data);
     return response;
 }

@@ -122,7 +122,7 @@ export default class Post {
         if (this.data.content) {
             this.content = document.createElement('div');
             this.content.classList.add('post-body-content');
-            this.content.append(this.formatContent());
+            this.content.append(formatContent(this.data.content));
             this.body.append(this.content);
         }
 
@@ -223,72 +223,6 @@ export default class Post {
             if (e.target.closest('.media-container')) return;
             if (!this.isSelectingText) return router.navigateTo('/post/'+this.data.id+'/comments');
         }
-    }
-
-    formatContent () {
-        let content = this.data.content;
-        if (!content) return document.createElement("span");
-
-        const baseDomain = window.location.origin;
-        const container = document.createElement("span");
-    
-        // Función para escapar texto HTML
-        const escapeHTML = (text) =>
-            text
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-    
-        // Dividimos el texto respetando saltos de línea
-        const lines = content.split("\n");
-    
-        lines.forEach((line, lineIndex) => {
-            const words = line.split(/\s+/); // Separar por espacios
-    
-            words.forEach((word, wordIndex) => {
-                let element;
-    
-                // Detectar enlaces
-                if (/^(https?:\/\/[^\s]+)$/.test(word)) {
-                    if (word.startsWith(baseDomain)) {
-                        element = document.createElement("span");
-                        element.classList.add("link", "internal-link");
-                        element.textContent = word;
-                        element.style.cursor = "pointer";
-    
-                        element.onclick = (e) => {
-                            e.stopPropagation();
-                            router.navigateTo(word.replace(baseDomain, ""));
-                        };
-                    } else {
-                        element = document.createElement("a");
-                        element.classList.add("link");
-                        element.href = word;
-                        element.target = "_blank";
-                        element.textContent = word;
-                    }
-                } else {
-                    // Texto normal escapado
-                    element = document.createTextNode(escapeHTML(word));
-                }
-    
-                container.appendChild(element);
-    
-                // Agregar espacio entre palabras
-                if (wordIndex < words.length - 1) {
-                    container.appendChild(document.createTextNode(" "));
-                }
-            });
-    
-            // Agregar un salto de línea si no es la última línea
-            if (lineIndex < lines.length - 1) {
-                container.appendChild(document.createElement("br"));
-            }
-        });
-    
-        return container;
     }
 
     onIcon (e) {
@@ -432,7 +366,7 @@ export default class Post {
                 popup.delete();
             });
     
-            if (window.app.member.role === 'admin') {
+            if (window.app.member.role === 'admin' || window.app.member.role === 'mod') {
                 const btn = popup.CreateButton("Eliminar Publicación", async () => {
                     popup.delete();
                     new Alert("Espere...");
@@ -447,7 +381,7 @@ export default class Post {
                 });
     
                 btn.innerHTML = `
-                    <span class="post-header-signature-top-role role--admin">ADMIN</span>
+                    <span class="post-header-signature-top-role role--mod">MOD</span>
                     <span>Eliminar Publicación</span>
                 `;
     

@@ -19,6 +19,6 @@ router.post('/', Authorization.Everyone, Multer.MultipleUploads(['image-0', 'ima
 
 router.delete('/:id_post(\\d+)', Authorization.Everyone, postController.remove);
 
-router.delete('/:id_post(\\d+)/admin', Authorization.Custom(['admin']), postController.removeAdmin);
+router.delete('/:id_post(\\d+)/admin', Authorization.Custom(['admin', 'mod']), postController.removeAdmin);
 
 export default router;
