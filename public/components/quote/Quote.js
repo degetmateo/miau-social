@@ -44,7 +44,8 @@ export default class Quote {
 
         this.body = document.createElement('div');
         this.body.classList.add('quote-body');
-        this.quote.append(this.body);
+
+        if ((this.data.content && this.data.content.trim()) || this.data.media.length > 0) this.quote.append(this.body);
         
         if (this.data.media.length > 0) {
             if (this.data.content && this.data.content.length > 100) this.data.content = this.data.content.substring(0, 100) + '...';

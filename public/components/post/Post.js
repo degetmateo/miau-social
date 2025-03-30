@@ -43,6 +43,10 @@ export default class Post {
         this.post = document.createElement('div');
         this.post.classList.add('post');
 
+        this.post.get = () => {
+            return this;
+        }
+
         // POST HEADER
         this.header = document.createElement('div');
         this.header.classList.add('post-header');
@@ -434,5 +438,9 @@ export default class Post {
 
     render () {
         return this.post;
+    }
+
+    copy () {
+        return this.post.cloneNode(true);
     }
 }

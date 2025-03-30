@@ -43,7 +43,8 @@ export function cleanContent (content) {
 export function formatContent (content) {
     const baseDomain = window.location.origin;
     const container = document.createElement("span");
-    const parts = content.split(/\s+/); 
+    if (!content) return container;
+    const parts = content.trim().split(/\s+/); 
 
     parts.forEach((part, index) => {
         let element;
