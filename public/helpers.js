@@ -32,18 +32,24 @@ export function cleanContent (content) {
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
 
-    const urlPattern = /(https?:\/\/[^\s]+)/g;
-    const clickableText = escapedText.replace(urlPattern, function(url) {
-        return `<a href="${url}" class="link" target="_blank">${url}</a>`;
-    });
-
-    return clickableText.replace(/\n/g, '<br>').trim();   
+    return escapedText.replace(/\n/g, '<br>').trim();   
 }
 
 export function formatContent (content) {
     const baseDomain = window.location.origin;
     const container = document.createElement("span");
+    
     if (!content) return container;
+
+    content = content
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+    content = content.replace(/\n/g, '<br>').trim();   
+
     const parts = content.trim().split(/\s+/); 
 
     parts.forEach((part, index) => {

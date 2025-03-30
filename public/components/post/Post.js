@@ -226,22 +226,37 @@ export default class Post {
     }
 
     formatContent () {
-        const domain = window.location.origin;
-        const content = document.createElement("span");
-        const parts = this.data.content.split(/\s+/);
+        let content = this.data.content;
+        if (!content) return document.createElement("span");
+
+        const baseDomain = window.location.origin;
+        const container = document.createElement("span");
+    
+        // Escapar caracteres HTML y convertir saltos de línea en <br>
+        const escapedText = content
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;")
+            .replace(/\n/g, '<br>');
+    
+        const parts = escapedText.split(/\s+/);
     
         parts.forEach((part, index) => {
             let element;
     
+            // Detectar enlaces
             if (/^(https?:\/\/[^\s]+)$/.test(part)) {
-                if (part.startsWith(domain)) {
+                if (part.startsWith(baseDomain)) {
                     element = document.createElement("span");
                     element.classList.add("link", "internal-link");
                     element.textContent = part;
+                    element.style.cursor = "pointer";
     
                     element.onclick = (e) => {
                         e.stopPropagation();
-                        router.navigateTo(part.replace(domain, ""));
+                        router.navigateTo(part.replace(baseDomain, ""));
                     };
                 } else {
                     element = document.createElement("a");
@@ -251,17 +266,21 @@ export default class Post {
                     element.textContent = part;
                 }
             } else {
-                element = document.createTextNode(part);
+                // Convertir texto con <br> en fragmentos para mantener los saltos de línea
+                const tempDiv = document.createElement("div");
+                tempDiv.innerHTML = part;
+                element = document.createDocumentFragment();
+                Array.from(tempDiv.childNodes).forEach((node) => element.appendChild(node));
             }
     
-            content.appendChild(element);
+            container.appendChild(element);
     
             if (index < parts.length - 1) {
-                content.appendChild(document.createTextNode(" "));
+                container.appendChild(document.createTextNode(" "));
             }
         });
     
-        return content;
+        return container;
     }
 
     onIcon (e) {
