@@ -1,4 +1,4 @@
-import {importCSS, ScrollBottom} from "../../helpers.js";
+import {importCSS, Scroll, ScrollBottom} from "../../helpers.js";
 import Observer from "../../interfaces/Observer.js";
 import EventsHandler from "../../modules/EventsHandler.js";
 import {tenorService} from "../../services/tenorService.js";
@@ -61,16 +61,32 @@ export default class TenorSelector extends Observer {
         this.resultsContainer.classList.add('tenor-selector-results-container', 'tenor-selector-results-container--empty');
         this.selector.append(this.resultsContainer);
 
+        this.resultsContainerRight = document.createElement('div');
+        this.resultsContainerRight.classList.add('tenor-selector-results-container-right');
+        this.resultsContainer.append(this.resultsContainerRight);
+
+        this.resultsContainerLeft = document.createElement('div');
+        this.resultsContainerLeft.classList.add('tenor-selector-results-container-left');
+        this.resultsContainer.append(this.resultsContainerLeft);
+
         this.resultsMessage = document.createElement('span');
         this.resultsMessage.textContent = 'Los resultados aparecerán acá.';
         this.resultsMessage.classList.add('tenor-selector-results-message');
         this.resultsContainer.append(this.resultsMessage);
+
+        this.turn = 'left';
     }
 
     async submit (next) {
         if (!this.input.value) return;
         const response = await tenorService.get({ args: this.input.value, pos: next || null });
-        next ? '' : this.resultsContainer.innerHTML = '';
+
+        if (!next) {
+            this.resultsContainerLeft.innerHTML = '';
+            this.resultsContainerRight.innerHTML = '';
+        }
+        
+        this.resultsMessage.classList.add('tenor-selector-message--hide');
         this.resultsContainer.classList.remove('tenor-selector-results-container--empty');
         this.resultsContainer.classList.add('tenor-selector-results-container--content');
 
@@ -82,11 +98,22 @@ export default class TenorSelector extends Observer {
                 this.options.onSubmit(result['media_formats']['gif']['url']);
                 this.remove();
             }
-            this.resultsContainer.append(image);
+            
+            if (this.turn === 'left') {
+                this.resultsContainerLeft.append(image);
+                this.turn = 'right';
+            } else {
+                this.resultsContainerRight.append(image);
+                this.turn = 'left';
+            }
         }
 
-        ScrollBottom(this.resultsContainer, () => {
-            this.submit(response.next);
+        Scroll({
+            element: this.resultsContainer,
+            bottom_limit: 1000,
+            bottom: () => {
+                this.submit(response.next);
+            }
         });
     }
 

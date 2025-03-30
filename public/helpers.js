@@ -119,17 +119,19 @@ export function Scroll (data = {
     element: null,
     top: () => {},
     scroll: () => {},
-    bottom: () => {}
+    bottom: () => {},
+    bottom_limit: 1
 }) {
     data.element.onscroll = () => {
         const SCROLL_HEIGHT = data.element.scrollHeight;
         const CLIENT_HEIGHT = data.element.clientHeight;
         const SCROLL = data.element.scrollTop;
         const LIMIT = 1;
+        const BOTTOM_LIMIT = data.bottom_limit || 1;
     
         if (data.top && SCROLL <= LIMIT) data.top();
         if (data.scroll) data.scroll(SCROLL);
-        if (data.bottom && Math.ceil(SCROLL + CLIENT_HEIGHT) >= Math.ceil(SCROLL_HEIGHT - LIMIT)) data.bottom();
+        if (data.bottom && Math.ceil(SCROLL + CLIENT_HEIGHT) >= Math.ceil(SCROLL_HEIGHT - BOTTOM_LIMIT)) data.bottom();
     }
 }
 
