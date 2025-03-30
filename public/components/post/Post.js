@@ -232,51 +232,59 @@ export default class Post {
         const baseDomain = window.location.origin;
         const container = document.createElement("span");
     
-        // Escapar caracteres HTML y convertir saltos de línea en <br>
-        const escapedText = content
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;")
-            .replace(/\n/g, '<br>');
+        // Función para escapar texto HTML
+        const escapeHTML = (text) =>
+            text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
     
-        const parts = escapedText.split(/\s+/);
+        // Dividimos el texto respetando saltos de línea
+        const lines = content.split("\n");
     
-        parts.forEach((part, index) => {
-            let element;
+        lines.forEach((line, lineIndex) => {
+            const words = line.split(/\s+/); // Separar por espacios
     
-            // Detectar enlaces
-            if (/^(https?:\/\/[^\s]+)$/.test(part)) {
-                if (part.startsWith(baseDomain)) {
-                    element = document.createElement("span");
-                    element.classList.add("link", "internal-link");
-                    element.textContent = part;
-                    element.style.cursor = "pointer";
+            words.forEach((word, wordIndex) => {
+                let element;
     
-                    element.onclick = (e) => {
-                        e.stopPropagation();
-                        router.navigateTo(part.replace(baseDomain, ""));
-                    };
+                // Detectar enlaces
+                if (/^(https?:\/\/[^\s]+)$/.test(word)) {
+                    if (word.startsWith(baseDomain)) {
+                        element = document.createElement("span");
+                        element.classList.add("link", "internal-link");
+                        element.textContent = word;
+                        element.style.cursor = "pointer";
+    
+                        element.onclick = (e) => {
+                            e.stopPropagation();
+                            router.navigateTo(word.replace(baseDomain, ""));
+                        };
+                    } else {
+                        element = document.createElement("a");
+                        element.classList.add("link");
+                        element.href = word;
+                        element.target = "_blank";
+                        element.textContent = word;
+                    }
                 } else {
-                    element = document.createElement("a");
-                    element.classList.add("link");
-                    element.href = part;
-                    element.target = "_blank";
-                    element.textContent = part;
+                    // Texto normal escapado
+                    element = document.createTextNode(escapeHTML(word));
                 }
-            } else {
-                // Convertir texto con <br> en fragmentos para mantener los saltos de línea
-                const tempDiv = document.createElement("div");
-                tempDiv.innerHTML = part;
-                element = document.createDocumentFragment();
-                Array.from(tempDiv.childNodes).forEach((node) => element.appendChild(node));
-            }
     
-            container.appendChild(element);
+                container.appendChild(element);
     
-            if (index < parts.length - 1) {
-                container.appendChild(document.createTextNode(" "));
+                // Agregar espacio entre palabras
+                if (wordIndex < words.length - 1) {
+                    container.appendChild(document.createTextNode(" "));
+                }
+            });
+    
+            // Agregar un salto de línea si no es la última línea
+            if (lineIndex < lines.length - 1) {
+                container.appendChild(document.createElement("br"));
             }
         });
     
