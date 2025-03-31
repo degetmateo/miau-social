@@ -30,7 +30,6 @@ export function formatContent (content) {
     const baseDomain = window.location.origin;
     const container = document.createElement("span");
 
-    // Función para escapar texto HTML
     const escapeHTML = (text) =>
         text
             .replace(/&/g, "&amp;")
@@ -39,16 +38,14 @@ export function formatContent (content) {
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#039;");
 
-    // Dividimos el texto respetando saltos de línea
     const lines = content.split("\n");
 
     lines.forEach((line, lineIndex) => {
-        const words = line.split(/\s+/); // Separar por espacios
+        const words = line.split(/\s+/);
 
         words.forEach((word, wordIndex) => {
             let element;
 
-            // Detectar enlaces
             if (/^(https?:\/\/[^\s]+)$/.test(word)) {
                 if (word.startsWith(baseDomain)) {
                     element = document.createElement("span");
@@ -68,21 +65,19 @@ export function formatContent (content) {
                     element.textContent = word;
                 }
             } else {
-                // Texto normal escapado
-                element = document.createTextNode(escapeHTML(word));
+                element = document.createElement('span');
+                element.innerHTML = escapeHTML(word);
             }
 
-            container.appendChild(element);
+            container.append(element);
 
-            // Agregar espacio entre palabras
             if (wordIndex < words.length - 1) {
-                container.appendChild(document.createTextNode(" "));
+                container.append(document.createTextNode(" "));
             }
         });
 
-        // Agregar un salto de línea si no es la última línea
         if (lineIndex < lines.length - 1) {
-            container.appendChild(document.createElement("br"));
+            container.append(document.createElement("br"));
         }
     });
 
