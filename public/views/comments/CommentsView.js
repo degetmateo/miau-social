@@ -85,6 +85,7 @@ export default class CommentsView extends AbstractView {
             this.mainPostContainer.append(post.element);
             this.repliesPosts.append(post.replies.container.render());
             this.main.scrollTop = post.scroll;
+            this.loadReplies();
         } else {
             const mainLoader = new SpinnerLoader({ size: 'medium' });
             this.mainPostContainer.append(mainLoader.render());
@@ -177,45 +178,71 @@ export default class CommentsView extends AbstractView {
 
         Scroll({
             element: this.main,
-            top: async () => {
-                if (this.cooldown) return;
-                this.activateCooldown();
-                
-                const thread = await postService.getThread({ id: this.params.id_post, offset: this.posts[this.i].thread.offset });
-
-                if (this.posts[this.i]) this.posts[this.i].thread.offset += 10;
-
-                if (thread.length <= 0) {
-                    this.posts[this.i].thread.offset -= 10;
-                    return;
-                }
-
-                for (const post of thread) {
-                    this.posts[this.i].thread.container.prepend(post);
-                }
+            top: () => {
+                this.loadThread();
             },
             scroll: (s) => {
                 if (!this.posts[this.i]) return;
                 if (this.posts[this.i].scroll) this.posts[this.i].scroll = s;
             },
-            bottom: async () => {
-                if (this.cooldown) return;
-                this.activateCooldown();
-
-                const replies = await postService.getReplies({ id: this.params.id_post, offset: this.posts[this.i].replies.offset });
-
-                if (this.posts[this.i]) this.posts[this.i].replies.offset += 10;
-                
-                if (replies.length <= 0) {
-                    this.posts[this.i].replies.offset -= 10;
-                    return;
-                }
-
-                for (const post of replies) {
-                    this.posts[this.i].replies.container.append(post);
-                }
+            bottom: () => {
+                this.loadReplies();
             }
         });
+    }
+
+    async loadThread () {
+        if (this.cooldown) return;
+        this.activateCooldown();
+        
+        const threadLoader = new SpinnerLoader({ size: 'medium' });
+        this.repliedPosts.append(threadLoader.render());
+
+        const thread = await postService.getThread({ id: this.params.id_post, offset: this.posts[this.i].thread.offset });
+
+        threadLoader.remove();
+s
+        if (this.posts[this.i]) this.posts[this.i].thread.offset += 10;
+
+        if (thread.length <= 0) {
+            this.posts[this.i].thread.offset -= 10;
+            return;
+        }
+
+        if (thread.length < 10) {
+            this.posts[this.i].thread.offset -= (10 - thread.length);
+        }
+
+        for (const post of thread) {
+            this.posts[this.i].thread.container.prepend(post);
+        }
+    }
+
+    async loadReplies () {
+        if (this.cooldown) return;
+        this.activateCooldown();
+
+        const repliesLoader = new SpinnerLoader({ size: 'medium' });
+        this.repliesPosts.append(repliesLoader.render());
+
+        const replies = await postService.getReplies({ id: this.params.id_post, offset: this.posts[this.i].replies.offset });
+
+        repliesLoader.remove();
+
+        if (this.posts[this.i]) this.posts[this.i].replies.offset += 10;
+        
+        if (replies.length <= 0) {
+            this.posts[this.i].replies.offset -= 10;
+            return;
+        }
+
+        if (replies.length < 10) {
+            this.posts[this.i].replies.offset -= (10 - replies.length);
+        }
+
+        for (const post of replies) {
+            this.posts[this.i].replies.container.append(post);
+        }
     }
 
     setScroll (scroll) {
