@@ -1,16 +1,18 @@
 import Alert from "../../components/alert/alert.js";
 import PostsContainer from "../../components/posts-container/PostsContainer.js";
+import Profile from "../../components/profile/Profile.js";
 import {Scroll} from "../../helpers.js";
 import {memberService} from "../../services/memberService.js";
 import {postService} from "../../services/postService.js";
 import AbstractView from "../AbstractView.js";
-import Profile from "./Profile.js";
 
 export default class extends AbstractView {
     constructor () {
         super();
         this.css('/public/views/member/styles/member.css');
+        
         this.members = [];
+        this.cooldown = true;
 
         this.view = document.createElement('div');
         this.view.classList.add('member-view');
@@ -32,23 +34,24 @@ export default class extends AbstractView {
         this.title.textContent = '';
         this.header.append(this.title);
 
-        this.main.append(Profile.node());
+        this.profile = document.createElement('div');
+        this.main.append(this.profile);
 
-        this.postsContainer = document.createElement('div');
-        this.postsContainer.classList.add('member-main-posts-container');
-        this.main.appendChild(this.postsContainer);
+        this.posts = document.createElement('div');
+        this.main.appendChild(this.posts);
     }
     
     async init (params) {
         this.params = params;
         this.setTitle(this.params.username);
-
         this.clear();
-        Profile.clear();
+
         this.view.appendChild(window.app.nav.getNode());
         this.appContainer.append(this.view);
+
         this.title.textContent = '';
-        this.postsContainer.innerHTML = '';
+        this.profile.innerHTML = '';
+        this.posts.innerHTML = '';
 
         this.i = 0;
         let found = false;
@@ -60,10 +63,35 @@ export default class extends AbstractView {
         }
 
         if (found) {
-            Profile.render(this.members[this.i]);
             this.title.textContent = this.members[this.i].username;
-            this.postsContainer.appendChild(this.members[this.i].postsContainer.render());
+            this.profile.append(this.members[this.i].profile.render());
+            this.posts.append(this.members[this.i].posts.render());
             this.setScroll(this.members[this.i].scroll);
+
+            if (this.cooldown) return;
+            else {
+                let member;
+                try {
+                    member = await memberService.getByUsername({ username: this.params.username });
+                } catch (error) {
+                    return new Alert(error.message);
+                }
+
+                this.members[this.i] = {
+                    ...member,
+                    offset: this.members[this.i].offset,
+                    scroll: this.members[this.i].scroll,
+                    posts: this.members[this.i].posts,
+                    profile: this.members[this.i].profile
+                }
+
+                this.members[this.i].profile.update(member);
+
+                this.cooldown = true;
+                setTimeout(() => {
+                    this.cooldown = false;
+                }, 10000);
+            }
         } else {
             this.setScroll(0);
 
@@ -73,11 +101,15 @@ export default class extends AbstractView {
             } catch (error) {
                 return new Alert(error.message);
             }
-            Profile.render(member);
 
-            member.scroll = 0;
-            member.postsContainer = new PostsContainer();
+            const profile = new Profile(member);
+            this.profile.append(profile.render());
+
+            member.posts = new PostsContainer();
             member.offset = 0;
+            member.scroll = 0;
+            member.profile = profile;
+
             this.members.push(member);
             this.i = this.members.length - 1;
             this.title.textContent = this.members[this.i].username;
@@ -88,8 +120,8 @@ export default class extends AbstractView {
             } catch (error) {
                 return new Alert(error.message);
             }
-            this.members[this.i].postsContainer.renderPosts(posts);
-            this.postsContainer.append(this.members[this.i].postsContainer.render());
+            this.members[this.i].posts.renderPosts(posts);
+            this.posts.append(this.members[this.i].posts.render());
         }
 
         Scroll({
@@ -105,7 +137,7 @@ export default class extends AbstractView {
                 } catch (error) {
                     return new Alert(error.message);
                 }
-                this.members[this.i].postsContainer.renderPosts(posts);
+                this.members[this.i].posts.renderPosts(posts);
             }
         });
     }
