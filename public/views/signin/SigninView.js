@@ -7,7 +7,7 @@ import {init} from "../../index.js";
 import router from "../../router.js";
 import {authenticationService} from "../../services/authenticationService.js";
 import AbstractView from "../AbstractView.js";
-import { RECAPTCHA_KEY } from "../../config.js";
+import {grecaptchaService} from "../../services/grecaptchaService.js";
 
 importCSS('/public/views/signin/styles/signin.css');
 
@@ -131,44 +131,38 @@ export default class SigninView extends AbstractView {
         if (!this.password.value.trim()) return new Alert('Tenés que escribir tu clave.', { error: true });
         
         const loader = new ScreenSpinner();
-
-        grecaptcha.ready(() => {
-            grecaptcha.execute(RECAPTCHA_KEY, {
-                action: 'submit'
-            }).then(async (token) => {
-                let response;
-                try {
-                    response = await authenticationService.signin({
-                        username: this.username.value,
-                        password: this.password.value,
-                        captcha_token: token
-                    });
-                } catch (error) {
-                    loader.remove();
-                    new Alert(error.message, { error: true });
-                    
-                    if (error.code === 'account-not-activated') {
-                        router.navigateTo('/recovery/activate');
-                    }
-                    
-                    return;
-                }
-
-                localStorage.setItem('token', response.token);
-                delete response.token;
-                window.app = {};
-                window.app.alerts = [];
-                window.app.logged = true;
-                window.app.member = response;
-                init();
-
-                this.username.set('');
-                this.password.set('');
-
-                loader.remove();
-                router.navigateTo('/home');
-                new Alert("Has iniciado sesión.", { error: false, timeout: 2000 });
+        let response;
+        try {
+            const token = await grecaptchaService.execute();
+            response = await authenticationService.signin({
+                username: this.username.value,
+                password: this.password.value,
+                captcha_token: token
             });
-        });
+        } catch (error) {
+            loader.remove();
+            new Alert(error.message, { error: true });
+            
+            if (error.code === 'account-not-activated') {
+                router.navigateTo('/recovery/activate');
+            }
+            
+            return;
+        }
+
+        localStorage.setItem('token', response.token);
+        delete response.token;
+        window.app = {};
+        window.app.alerts = [];
+        window.app.logged = true;
+        window.app.member = response;
+        init();
+
+        this.username.set('');
+        this.password.set('');
+
+        loader.remove();
+        router.navigateTo('/home');
+        new Alert("Has iniciado sesión.", { error: false, timeout: 2000 });
     }
 }
