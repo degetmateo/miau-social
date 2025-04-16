@@ -1,10 +1,6 @@
 import DatabaseError from "../../../errors/DatabaseError";
 import GenericError from "../../../errors/GenericError";
-import InvalidArgumentError from "../../../errors/InvalidArgumentError";
-import UnauthorizedError from "../../../errors/UnauthorizedError";
-import JWT from "../../../helpers/JWT";
 import Mailer from "../../../helpers/Mailer";
-import { FRONTEND_URL } from "../../../static/config";
 import Postgres from "../../Postgres";
 
 export default async function RecoverUsername (data: {

@@ -6,7 +6,6 @@ import UnauthorizedError from "../../../errors/UnauthorizedError";
 import JWT from "../../../helpers/JWT";
 import Mailer from "../../../helpers/Mailer";
 import Password from "../../../helpers/Password";
-import { FRONTEND_URL } from "../../../static/config";
 import Postgres from "../../Postgres";
 
 export default async function Activate (data: {
@@ -57,7 +56,7 @@ export default async function Activate (data: {
                 role: member.role
             }, '1h');
 
-            const URL = FRONTEND_URL + '/verify?token=' + TOKEN;
+            const URL = process.env.FRONTEND_URL + '/verify?token=' + TOKEN;
 
             try {
                 await Mailer.Send({

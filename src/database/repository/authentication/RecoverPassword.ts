@@ -1,10 +1,8 @@
 import DatabaseError from "../../../errors/DatabaseError";
 import GenericError from "../../../errors/GenericError";
 import InvalidArgumentError from "../../../errors/InvalidArgumentError";
-import UnauthorizedError from "../../../errors/UnauthorizedError";
 import JWT from "../../../helpers/JWT";
 import Mailer from "../../../helpers/Mailer";
-import { FRONTEND_URL } from "../../../static/config";
 import Postgres from "../../Postgres";
 
 export default async function RecoverPassword (data: {
@@ -35,7 +33,7 @@ export default async function RecoverPassword (data: {
                 email: member.email
             }, '1h');
 
-            const URL = FRONTEND_URL + '/recovery/reset-password?token=' + TOKEN;
+            const URL = process.env.FRONTEND_URL + '/recovery/reset-password?token=' + TOKEN;
 
             try {
                 await Mailer.Send({

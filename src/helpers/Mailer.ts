@@ -1,6 +1,5 @@
 import nodemailer from 'nodemailer';
 import { SentMessageInfo, Options } from 'nodemailer/lib/smtp-transport';
-import { MAILER_USER, MAILER_PASSWORD } from '../static/config';
 
 class Mailer {
     public transporter: nodemailer.Transporter<SentMessageInfo, Options>;
@@ -14,15 +13,15 @@ class Mailer {
             this.transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
-                    user: MAILER_USER,
-                    pass: MAILER_PASSWORD
+                    user: process.env.MAILER_USER,
+                    pass: process.env.MAILER_PASSWORD
                 }
             });
         }
 
         return new Promise((resolve, reject) => {
             this.transporter.sendMail({
-                from: MAILER_USER,
+                from: process.env.MAILER_USER,
                 to: data.to,
                 subject: data.subject,
                 html: data.html
