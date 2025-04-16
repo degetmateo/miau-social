@@ -18,9 +18,12 @@ class FormLogout {
     };
 
     EventLogout = async () => {
-        this.buttonLogout.onclick = () => {
+        this.buttonLogout.onclick = (e) => {
+            e.preventDefault();
             localStorage.removeItem('token');
-            router.navigateTo('/login');
+            window.app.logged = false;
+            window.app = {};
+            router.navigateTo('/');
             return;
         }
     }

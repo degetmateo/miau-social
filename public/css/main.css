@@ -10,6 +10,12 @@ body {
 input {
     background-color: var(--primary-color);
 }
+.grecaptcha-badge {
+    visibility: hidden;
+}
+
+/* @media (max-width: 900px) {
+} */
 
 textarea {
     border: 1px solid gray;
@@ -32,6 +38,7 @@ a {
     width: 100vw;
     max-width: 100vw;
     max-height: 100vh;
+    box-sizing: border-box;
 }
 
 .container-view-login {
@@ -108,6 +115,7 @@ a {
 
 .link {
     color: aqua;
+    cursor: pointer;
 }
 
 .link:hover {

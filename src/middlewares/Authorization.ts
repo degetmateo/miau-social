@@ -16,7 +16,7 @@ class Authorization {
                 if (!token) throw new UnauthorizedError("Authorization failed.");
                 
                 const member = await JWT.Validate(token);
-                if (!member || !member.id || !member.username || !member.role) throw new UnauthorizedError("Authorization failed.");
+                if (!member || !member.id || !member.username || !member.role || !member.email) throw new UnauthorizedError("Authorization failed.");
                 if (!await this.hasPermissions(member, perms)) throw new UnauthorizedError("Authorization failed.");
                 
                 req.member = member;
@@ -35,9 +35,9 @@ class Authorization {
             
             const token = authorization[1];
             if (!token) throw new UnauthorizedError("Authorization failed.");
-            
+
             const member = await JWT.Validate(token);
-            if (!member || !member.id || !member.username || !member.role) throw new UnauthorizedError("Authorization failed.");
+            if (!member || !member.id || !member.username || !member.role || !member.email) throw new UnauthorizedError("Authorization failed.");
 
             req.member = member;
             next();

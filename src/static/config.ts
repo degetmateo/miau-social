@@ -9,5 +9,8 @@ export const {
     POSTGRES_PORT,
     POSTGRES_URL,
     POSTGRES_USERNAME,
-    TENOR_KEY
+    TENOR_KEY,
+    RECAPTCHA_KEY,
+    MAILER_PASSWORD,
+    MAILER_USER
 } = process.env;

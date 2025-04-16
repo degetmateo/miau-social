@@ -134,7 +134,7 @@ const getByUsername = async (data: {
                 m.username_member = ${data.username};
         `;
 
-        if (!response[0]) throw new NotFoundError("Member not found.");
+        if (!response[0]) throw new NotFoundError("Este usuario no existe.");
         return response[0];
     } catch (error) {
         if (error instanceof GenericError) throw error;

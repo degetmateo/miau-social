@@ -2,6 +2,7 @@ import Alert from "../../components/alert/alert.js";
 import PostCreator from "../../components/post-creator/PostCreator.js";
 import Post from "../../components/post/Post.js";
 import Separator from "../../components/separator/Separator.js";
+import {URL_NO_IMAGE} from "../../consts.js";
 import { importCSS } from "../../helpers.js";
 import EventsHandler from "../../modules/EventsHandler.js";
 import PostsHandler from "../../modules/PostsHandler.js";
@@ -109,9 +110,7 @@ export default class extends AbstractView {
         EventsHandler.removeObserver(this);
         EventsHandler.addObserver(this);
 
-        if (window.location.pathname === '/') return router.navigateTo('/home');
-
-        this.creator.updateIcon(window.app.member.icon_url);
+        this.creator.updateIcon(window.app.member.icon_url || URL_NO_IMAGE);
         this.creator.updateName(window.app.member.name);
 
         this.clear();

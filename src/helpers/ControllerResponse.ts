@@ -7,6 +7,6 @@ export const ResponseOk = (res: Response, statusCode: number, data: any) => {
 };
 
 export const ResponseError = (res: Response, error: any) => {
-    if (error instanceof GenericError) return res.status(error.statusCode).json({ error: { message: error.message } });
+    if (error instanceof GenericError) return res.status(error.statusCode).json({ error: { message: error.message, code: error.code } });
     else return res.status(RESPONSES.INTERNAL_SERVER_ERROR).json({ error: { message: "Ha ocurrido un error inesperado." } });
 };

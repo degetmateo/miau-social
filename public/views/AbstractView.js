@@ -7,6 +7,11 @@ export default class extends Observer {
         this.app = document.getElementById('app');
     }
 
+    setView (view) {
+        this.clear();
+        this.app.append(view);
+    }
+
     clear () {
         this.appContainer.innerHTML = '';
     }

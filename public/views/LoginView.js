@@ -10,6 +10,8 @@ export default class LoginView extends AbstractView {
     }
 
     async init (params) {
+        return router.navigateTo('/');
+        
         this.params = params;
         this.setTitle('Iniciar Sesion');
         this.clear();

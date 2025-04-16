@@ -222,12 +222,7 @@ s
         if (this.cooldown) return;
         this.activateCooldown();
 
-        const repliesLoader = new SpinnerLoader({ size: 'medium' });
-        this.repliesPosts.append(repliesLoader.render());
-
         const replies = await postService.getReplies({ id: this.params.id_post, offset: this.posts[this.i].replies.offset });
-
-        repliesLoader.remove();
 
         if (this.posts[this.i]) this.posts[this.i].replies.offset += 10;
         

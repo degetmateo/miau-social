@@ -1,8 +1,10 @@
-import Alert from "./components/alert/alert.js";
 import Navigation from "./components/navigation/navigation.js";
 import Notifier from "./modules/Notifier.js";
 import EventsHandler from "./modules/EventsHandler.js";
 import router from "./router.js";
+import ScreenSpinner from "./components/screen-spinner/ScreenSpinner.js";
+import {authenticationService} from "./services/authenticationService.js";
+import Alert from "./components/alert/alert.js";
 
 window.addEventListener("popstate", () => router.resolve());
 
@@ -17,36 +19,48 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
+    if (router.getPathname() === '/verify') {
+        router.resolve();
+        return;
+    }
+
+    if (router.getPathname() === '/recovery/reset-password') {
+        router.resolve();
+        return;
+    }
+
+    const loader = new ScreenSpinner({ opaque: true });
     const token = localStorage.getItem('token');
-
-    if (!token) {
-        localStorage.removeItem('token');
-        router.navigateTo('/login');
-        return;
-    }
-
-    const request = await fetch ('/api/authentication/authenticate', {
-        method: 'POST',
-        headers: { "Authorization": `Bearer ${token}` }
-    });
     
-    const response = await request.json();
+    window.app = {};
+    window.app.logged = false;
 
-    if (!request.ok) {
-        localStorage.removeItem('token');
-        new Alert('La sesión expiró.', { error: true });
-        router.navigateTo('/login');
+    if (token) {
+        let response;
+        try {
+            response = await authenticationService.authenticate({ token });
+        } catch (error) {
+            localStorage.removeItem('token');
+            window.app.logged = false;
+            new Alert("La sesión ha expirado.", { error: true });
+            router.navigateTo('/');
+            return;
+        }
+
+        localStorage.setItem('token', response.token);
+
+        window.app.logged = true;
+        window.app.alerts = [];
+        window.app.member = response;
+        
+        init();
+
+        router.resolve();
+        loader.remove();
         return;
     }
 
-    localStorage.setItem('token', response.data.token);
-
-    window.app = {};
-    window.app.alerts = [];
-    window.app.member = response.data;
-
-    init();
-    router.resolve();
+    router.navigateTo('/');
 });
 
 export const init = () => {

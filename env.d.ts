@@ -6,6 +6,7 @@ declare module 'express' {
       id: number; 
       username: string;
       role: string;
+      email: string;
     };
   }
 }
@@ -22,6 +23,9 @@ declare global {
         FRONTEND_URL: string;
         PORT: number;
         TENOR_KEY: string;
+        RECAPTCHA_KEY: string;
+        MAILER_PASSWORD: string;
+        MAILER_USER: string;
       }
     }
   }

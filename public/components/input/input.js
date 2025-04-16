@@ -7,9 +7,12 @@ export default class Input extends Component {
     constructor (options = {
         title: 'input',
         type: 'text',
+        placeholder: null,
         max: 16,
         min: 0,
-        onStop: () => {}
+        onStop: () => {},
+        autocomplete: null,
+        length: true
     }) {
         super();
         this.options = options;
@@ -27,26 +30,44 @@ export default class Input extends Component {
         this.title.innerText = options.title;
         this.container.appendChild(this.title);
 
+        this.inputContainer = document.createElement('div');
+        this.inputContainer.classList.add('input-input-container');
+        this.container.append(this.inputContainer);
+
         this.input = document.createElement('input');
         this.input.classList.add('input-input');
         this.input.type = options.type;
         this.input.minLength = options.min;
         this.input.maxLength = options.max;
-        this.container.appendChild(this.input);
+        this.input.autocomplete = options.autocomplete;
+        this.input.autocorrect = 'off';
+        if (this.options.placeholder) this.input.placeholder = this.options.placeholder;
+        this.inputContainer.appendChild(this.input);
 
         this.length = document.createElement('span');
         this.length.classList.add('input-length');
-        this.length.innerText = `${this.min}/${this.max}`;
-        this.container.appendChild(this.length);
+        this.length.innerText = `0/${this.max}`;
+        this.inputContainer.append(this.length);
+
+        if (options.length === false) {
+            this.length.remove();
+        }
 
         this.container.onmousedown = (e) => {
-            // evitar comportamiento por defecto excepto seleccionar texto
             if (e.target !== this.input) e.preventDefault();
             this.input.focus();
         }
         this.input.onfocus = this.onFocus;
         this.input.onblur = this.onBlur;
         this.input.oninput = this.onInput;
+    }
+
+    setInvalid () {
+        this.container.classList.add('input-container--invalid');
+    }
+
+    setValid () {
+        this.container.classList.remove('input-container--invalid');
     }
 
     isValid = () => {
