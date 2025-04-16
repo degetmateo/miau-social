@@ -1,4 +1,6 @@
-process.loadEnvFile();
+import { loadEnvFile } from 'node:process';
+
+loadEnvFile();
 
 export const {
     FRONTEND_URL,
