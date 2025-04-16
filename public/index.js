@@ -19,17 +19,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
+    const loader = new ScreenSpinner({ opaque: true });
+
     if (router.getPathname() === '/verify') {
         router.resolve();
+        loader.remove();
         return;
     }
 
     if (router.getPathname() === '/recovery/reset-password') {
         router.resolve();
+        loader.remove();
         return;
     }
 
-    const loader = new ScreenSpinner({ opaque: true });
     const token = localStorage.getItem('token');
     
     window.app = {};
@@ -44,6 +47,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             window.app.logged = false;
             new Alert("La sesión ha expirado.", { error: true });
             router.navigateTo('/');
+            loader.remove();
             return;
         }
 
@@ -61,6 +65,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     router.navigateTo('/');
+    loader.remove();
 });
 
 export const init = () => {
