@@ -1,6 +1,7 @@
 import { authenticationRepository } from "../database/repository/authenticationRepository";
 import InvalidArgumentError from "../errors/InvalidArgumentError";
 import UnauthorizedError from "../errors/UnauthorizedError";
+import UnexpectedError from "../errors/UnexpectedError";
 import JWT from "../helpers/JWT";
 import ReCaptcha from "../helpers/ReCaptcha";
 import Validator from "../helpers/Validator";
@@ -15,13 +16,14 @@ const authenticate = async (data: {
     Validator.Id(data.id);
     Validator.Username(data.username);
     Validator.Email(data.email);
-
     return await authenticationRepository.Authenticate(data);
 }
 
 const signin = async (data: {
     username: string;
     password: string;
+    ip: string;
+    platform: string;
     captcha_token: string;
 }) => {
     if (!data.username) throw new InvalidArgumentError("Debes ingresar tu nombre de usuario.");
@@ -29,11 +31,13 @@ const signin = async (data: {
 
     if (!data.password) throw new InvalidArgumentError("Debes ingresar tu clave.");
     if (!data.password.trim()) throw new InvalidArgumentError("Debes ingresar tu clave.");
+    if (data.password.length > PARAMETERS.PASSWORD_MAX_LENGTH) throw new UnexpectedError();
+
+    Validator.Ip(data.ip);
+    Validator.Platform(data.platform);
+    // Validator.Token(data.captcha_token);
     
-    const recaptchaResponse = await ReCaptcha.Verify(data.captcha_token);
-    
-    if (!recaptchaResponse.success) throw new UnauthorizedError('Ha ocurrido un error de autorización.');
-    if (recaptchaResponse.score <= PARAMETERS.RECAPTCHA_SCORE) throw new UnauthorizedError('Ha ocurrido un error de autorización.');
+    await ReCaptcha.Verify(data.captcha_token);
 
     return await authenticationRepository.Signin(data);
 }

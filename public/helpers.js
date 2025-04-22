@@ -221,3 +221,7 @@ export function getTimeElapsedSince (date) {
     if (seconds <= 30) return `ahora`;
     return `hace ${seconds} ${seconds === 1 ? 'segundo' : 'segundos'}`;
 }
+
+export function sleep (ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}

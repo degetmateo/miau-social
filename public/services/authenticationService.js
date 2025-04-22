@@ -4,6 +4,7 @@ const authenticate = async (data = {
     try {
         const request = await fetch ('/api/authentication/authenticate', {
             method: 'POST',
+            credentials: "include",
             headers: { "authorization": `Bearer ${data.token}` }
         });
         

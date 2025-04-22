@@ -9,6 +9,8 @@ import Postgres from "../../Postgres";
 export default async function Signin (data: {
     username: string;
     password: string;
+    ip: string;
+    platform: string;
 }) {
     try {
         let response: any;
@@ -41,15 +43,41 @@ export default async function Signin (data: {
             delete member.password;
             delete member.status;
 
-            const token = await JWT.Generate({
+            const ACCESS_TOKEN = await JWT.Generate({
                 id: member.id,
                 username: member.username,
                 role: member.role,
                 email: member.email
-            }, "30d");
+            }, "15m");
+
+            // const REFRESH_TOKEN = await JWT.Generate({
+            //     id: member.id,
+            //     username: member.username,
+            //     role: member.role,
+            //     email: member.email
+            // }, "30d");
+
+            // (await transaction`
+            //     INSERT INTO
+            //         session (
+            //             member_id,
+            //             date,
+            //             ip,
+            //             platform,
+            //             token
+            //         )
+            //         VALUES (
+            //             ${member.id},
+            //             ${new Date().toISOString()},
+            //             ${data.ip},
+            //             ${data.platform},
+            //             ${REFRESH_TOKEN}
+            //         );
+            // `);
 
             response = member;
-            response.token = token;
+            response.token = ACCESS_TOKEN
+            // response.refresh_token = REFRESH_TOKEN;
         });
         return response;
     } catch (error) {

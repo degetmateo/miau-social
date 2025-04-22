@@ -36,15 +36,32 @@ export default async function Authenticate (data: {
 
             if (!member) throw new UnauthorizedError("Ha ocurrido un error de autorización.");
 
-            const token = await JWT.Generate({
+            const ACCESS_TOKEN = await JWT.Generate({
                 id: member.id,
                 username: member.username,
                 role: member.role,
                 email: member.email
-            }, "30d");
+            }, "15m");
+
+            // const REFRESH_TOKEN = await JWT.Generate({
+            //     id: member.id,
+            //     username: member.username,
+            //     role: member.role,
+            //     email: member.email
+            // }, "30d");
+
+            // (await transaction`
+            //     UPDATE 
+            //         session
+            //     SET
+            //         token = ${REFRESH_TOKEN}
+            //     WHERE
+            //         token = ${data.refresh_token};
+            // `);
 
             response = member;
-            response.token = token;
+            response.token = ACCESS_TOKEN;
+            // response.refresh_token = REFRESH_TOKEN;
         });
         return response;
     } catch (error) {

@@ -1,11 +1,8 @@
+import BadGatewayError from "../errors/BadGatewayError";
+import GenericError from "../errors/GenericError";
 import InvalidArgumentError from "../errors/InvalidArgumentError";
 
 const get = async (data: {
-    member: {
-        id: number;
-        username: string;
-        role: string;
-    };
     pos: string | null;
     args: string | null;
 }) => {
@@ -19,8 +16,18 @@ const get = async (data: {
     const TENOR_KEY = process.env.TENOR_KEY;
     const SEARCH_URL = `${TENOR_URL}q=${data.args}&key=${TENOR_KEY}&limit=${LIMIT}&contentfilter=off&media_filter=minimal${ data.pos ? `&pos=${data.pos}` : '' }`;
 
-    const request = await fetch(SEARCH_URL, { method: "GET" });
-    const response = await request.json();
+    let response = null;
+    try {
+        const request = await fetch(SEARCH_URL, { method: "GET" });
+        response = await request.json();
+    } catch (error) {
+        if (error instanceof GenericError) throw error;
+        else {
+            console.error(error);
+            throw new BadGatewayError();
+        }    
+    }
+
     return response;
 }
 

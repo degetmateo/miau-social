@@ -12,9 +12,9 @@ class Validator {
     }
 
     Id (value: number) {
-        if (!value) throw new UnauthorizedError("Datos de autorizacion invalidos.");
-        if (isNaN(value)) throw new UnauthorizedError("Datos de autorizacion invalidos.");
-        if (value <= 0) throw new UnauthorizedError("Datos de autorizacio invalidos.");
+        if (!value) throw new UnauthorizedError("Datos de autorización inválidos.");
+        if (isNaN(value)) throw new UnauthorizedError("Datos de autorización inválidos.");
+        if (value <= 0) throw new UnauthorizedError("Datos de autorización inválidos.");
     }
 
     Email (value: string) {
@@ -44,6 +44,21 @@ class Validator {
         if (!value.trim()) throw new InvalidArgumentError('Tu clave no puede estar vacía.');
         if (value.length < PARAMETERS.PASSWORD_MIN_LENGTH) throw new InvalidArgumentError(`Tu clave debe tener un mínimo de ${PARAMETERS.PASSWORD_MIN_LENGTH} carácteres.`);
         if (value.length > PARAMETERS.PASSWORD_MAX_LENGTH) throw new InvalidArgumentError(`Tu clave debe tener un máximo de ${PARAMETERS.PASSWORD_MAX_LENGTH} carácteres.`);
+    }
+
+    Ip (value: string) {
+        if (!value) throw new UnauthorizedError();
+        if (!value.trim()) throw new UnauthorizedError();
+    }
+
+    Platform (value: string) {
+        if (!value) throw new UnauthorizedError();
+        if (!value.trim()) throw new UnauthorizedError();
+    }
+
+    Token (value: string) {
+        if (!value) throw new UnauthorizedError();
+        if (!value.trim()) throw new UnauthorizedError();
     }
 }
 

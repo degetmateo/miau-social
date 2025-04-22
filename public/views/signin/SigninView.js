@@ -137,7 +137,8 @@ export default class SigninView extends AbstractView {
             response = await authenticationService.signin({
                 username: this.username.value,
                 password: this.password.value,
-                captcha_token: token
+                captcha_token: token,
+                platform: platform.description
             });
         } catch (error) {
             loader.remove();

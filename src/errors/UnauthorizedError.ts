@@ -2,7 +2,11 @@ import { RESPONSES } from "../static/responses";
 import GenericError from "./GenericError";
 
 export default class UnauthorizedError extends GenericError {    
-    constructor(_message?: string) {
-      super(_message || 'No estás autorizado.', RESPONSES.UNAUTHORIZED);
+    constructor(message?: string, code?: string) {
+      super(
+        message || 'No estás autorizado.', 
+        RESPONSES.UNAUTHORIZED, 
+        code || 'UNAUTHORIZED'
+      );
     }
 }

@@ -1,18 +1,18 @@
 import { Request, Response } from "express"
-import { ResponseError, ResponseOk } from "../helpers/ControllerResponse";
+import { ResponseError, ResponseOk, ResponseRefreshToken } from "../helpers/ControllerResponse";
 import { RESPONSES } from "../static/responses";
 import { authenticationService } from "../services/authenticationService";
 
 const authenticate = async (req: Request, res: Response) => {
     try {
-        const response = await authenticationService.authenticate({
+        const data = await authenticationService.authenticate({
             id: req.member.id,
             username: req.member.username,
             role: req.member.role,
             email: req.member.email
         });
 
-        ResponseOk(res, RESPONSES.OK, response);
+        ResponseOk(res, RESPONSES.OK, data);
     } catch (error) {
         console.error(error);
         ResponseError(res, error);
@@ -21,13 +21,19 @@ const authenticate = async (req: Request, res: Response) => {
 
 const signin = async (req: Request, res: Response) => {
     try {
-        const response = await authenticationService.signin({
+        const data = await authenticationService.signin({
             username: req.body.username as string,
             password: req.body.password as string,
+            ip: req.ip || req.socket.remoteAddress,
+            platform: req.body.platform as string,
             captcha_token: req.body.captcha_token as string
         });
 
-        ResponseOk(res, RESPONSES.OK, response);
+        // const REFRESH_TOKEN = data.refresh_token;
+        // delete data.refresh_token;
+
+        // ResponseRefreshToken(res, REFRESH_TOKEN);
+        ResponseOk(res, RESPONSES.OK, data);
     } catch (error) {
         console.error(error);
         ResponseError(res, error);

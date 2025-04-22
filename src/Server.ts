@@ -51,6 +51,12 @@ export default class Server {
               origin: process.env.FRONTEND_URL
             })
         );
+
+        this.app.use((_, res, next) => {
+            res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+            // res.setHeader('Content-Security-Policy', `default-src 'self'; img-src 'self' data:; script-src 'self'; style 'self' 'unsafe-inline'; object-src 'none';`);
+            next();
+        });
     }
 
     private database = () => {

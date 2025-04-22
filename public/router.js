@@ -1,5 +1,4 @@
 import SettingsView from "./views/settings/SettingsView.js";
-import LoginView from "./views/LoginView.js";
 import MemberView from "./views/member/MemberView.js";
 import AdminView from "./views/AdminView.js";
 import CommentsView from "./views/comments/CommentsView.js";
@@ -29,7 +28,6 @@ class Router {
             home: new HomeView(),
             settings: new SettingsView(),
             notifications: new NotificationsView(),
-            login: new LoginView(),
             messages: new MessagesView(),
             member: new MemberView(),
             followed: new FollowedView(),
@@ -47,7 +45,6 @@ class Router {
         this.router
             .on("/", () => this.views.landing.init())
             .on("/home", () => this.views.home.init())
-            .on("/login", () => this.views.login.init())
             .on("/settings", () => this.views.settings.init())
             .on("/member/:username", ({ data }) => this.views.member.init(data))
             .on("/member/:username/followed", ({ data }) => this.views.followed.init(data))

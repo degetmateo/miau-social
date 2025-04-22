@@ -5,6 +5,7 @@ import router from "./router.js";
 import ScreenSpinner from "./components/screen-spinner/ScreenSpinner.js";
 import {authenticationService} from "./services/authenticationService.js";
 import Alert from "./components/alert/alert.js";
+import {sleep} from "./helpers.js";
 
 window.addEventListener("popstate", () => router.resolve());
 
@@ -20,6 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     const loader = new ScreenSpinner({ opaque: true });
+    await sleep(1000);
 
     if (router.getPathname() === '/verify') {
         router.resolve();

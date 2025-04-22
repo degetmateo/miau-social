@@ -7,7 +7,7 @@ import IconInput from '../icon-input/IconInput.js';
 import BannerInput from '../banner-input/BannerInput.js';
 import Alert from '../alert/alert.js';
 import ScreenSpinner from '../screen-spinner/ScreenSpinner.js';
-import Profile from '../../views/member/Profile.js';
+// import Profile from '../../views/member/Profile.js';
 import Button from '../button/Button.js';
 import EventsHandler from '../../modules/EventsHandler.js';
 import {memberService} from '../../services/memberService.js';
@@ -15,9 +15,10 @@ import {memberService} from '../../services/memberService.js';
 importCSS('/public/components/profile-editor/styles/profile-editor.css');
 
 export default class ProfileEditor extends Component {
-    constructor (member) {
+    constructor (member, profile) {
         super();
         this.member = member;
+        this.profile = profile;
         this.observerId = 'profile-editor';
 
         this.container = document.createElement('div');
@@ -185,17 +186,18 @@ export default class ProfileEditor extends Component {
             return new Alert(error.message, { error: true });
         }
 
-        window.app.member.icon_url = response.icon_url;
-        window.app.member.banner_url = response.banner_url;
+        window.app.member = response;
+        this.member = response;
+        this.profile.member = response;
 
-        Profile.setIcon(response.icon_url);
-        Profile.setBanner(response.banner_url);
+        this.profile.setIcon(response.icon_url);
+        this.profile.setBanner(response.banner_url);
 
-        Profile.setName(response.name);
-        Profile.setBio(response.bio);
+        this.profile.setName(response.name);
+        this.profile.setBio(response.bio);
 
-        Profile.setLocation(response.location);
-        Profile.setLink(response.link);
+        this.profile.setLocation(response.location);
+        this.profile.setLink(response.link);
 
         loader.remove();
         new Alert('¡Perfil actualizado!', { error: false });

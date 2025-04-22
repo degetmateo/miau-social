@@ -1,3 +1,8 @@
+import BadGatewayError from "../errors/BadGatewayError";
+import GenericError from "../errors/GenericError";
+import UnauthorizedError from "../errors/UnauthorizedError";
+import { PARAMETERS } from "../static/parameters";
+
 class ReCaptcha {
     public readonly API_URL: string = 'https://www.google.com/recaptcha/api/siteverify';
 
@@ -24,10 +29,21 @@ class ReCaptcha {
                 'error-codes': ERROR_CODE[]
             } = await request.json();
 
+            if (!request.ok) throw new BadGatewayError();
+            if (!response.success) {
+                throw new UnauthorizedError(null, response["error-codes"][0].toUpperCase());
+            }
+            if (response.score <= PARAMETERS.RECAPTCHA_SCORE) {
+                throw new UnauthorizedError(null, "LOW_SCORE");
+            }
+
             return response;
         } catch (error) {
-            console.error(error);
-            throw error;
+            if (error instanceof GenericError) throw error;
+            else {
+                console.error(error);
+                throw new BadGatewayError();
+            }
         }
     }
 }

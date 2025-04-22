@@ -95,7 +95,7 @@ export default class Profile {
             this.button.classList.remove('profile-button--other');
             this.button.classList.add('profile-button--self');
             this.button.onclick = () => {
-                new ProfileEditor(this.member);
+                new ProfileEditor(this.member, this);
             }
         } else {
             this.button.classList.remove('profile-button--self');
@@ -203,6 +203,7 @@ export default class Profile {
     }
 
     update (member) {
+        this.member = member;
         this.setIcon(member.icon_url);
         this.setBanner(member.banner_url);
         this.setName(member.name);
