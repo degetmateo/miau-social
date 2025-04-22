@@ -41,7 +41,7 @@ export default async function Authenticate (data: {
                 username: member.username,
                 role: member.role,
                 email: member.email
-            }, "15m");
+            }, "30d");
 
             // const REFRESH_TOKEN = await JWT.Generate({
             //     id: member.id,
