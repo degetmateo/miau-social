@@ -49,7 +49,10 @@ export default class VerifyView extends AbstractView {
 
         let response;
         try {
-            response = await authenticationService.verify({ token: this.query.token });
+            response = await authenticationService.verify({ 
+                token: this.query.token,
+                platform: platform.description
+            });
         } catch (error) {
             new Alert(error.message, { 
                 error: true,

@@ -12,8 +12,8 @@ const execute = (action) => {
             reject(error);
         }
     });
-}
+};
 
 export const grecaptchaService = {
     execute
-}
+};

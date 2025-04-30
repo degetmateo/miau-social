@@ -7,6 +7,7 @@ declare module 'express' {
       username: string;
       role: string;
       email: string;
+      session_id: number;
     };
   }
 }

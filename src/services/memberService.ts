@@ -2,6 +2,7 @@ import { memberRepository } from "../database/repository/memberRepository";
 import InvalidArgumentError from "../errors/InvalidArgumentError";
 import ImgBB from "../helpers/ImgBB";
 import Password from "../helpers/Password";
+import Validator from "../helpers/Validator";
 import { PARAMETERS } from "../static/parameters";
 
 const getByUsername = async (data: {
@@ -30,20 +31,14 @@ const updateName = async (data: {
 }
 
 const updateUsername = async (data: {
-    id_member: number;
+    member: any;
+    token: string;
     username: string;
 }) => {
-    data.username = data.username + '';
-    data.username = data.username.trim();
-    
-    if (!data.username) throw new InvalidArgumentError("Tenés que escribir tu nuevo nombre de usuario.");
-
-    if (data.username.length > PARAMETERS.USERNAME_MAX_LENGTH) throw new InvalidArgumentError(`Tu nuevo nombre debe tener como máximo ${PARAMETERS.USERNAME_MAX_LENGTH} carácteres.`);
-    if (data.username.length < PARAMETERS.USERNAME_MIN_LENGTH) throw new InvalidArgumentError(`Tu nuevo nombre debe tener como mínimo ${PARAMETERS.USERNAME_MIN_LENGTH} carácteres.`);
-
-    const response = await memberRepository.updateUsername(data);
-    return response;
-}
+    Validator.Username(data.username);
+    Validator.Token(data.token);
+    return await memberRepository.UpdateUsername(data);
+};
 
 const updateBio = async (data: {
     id_member: number;
@@ -56,21 +51,17 @@ const updateBio = async (data: {
 }
 
 const updatePassword = async (data: {
-    id_member: number;
+    member: any;
+    token: string;
     password: string;
     new_password: string;
 }) => {
-    if (!data.password) throw new InvalidArgumentError("Tenés que escribir tu clave anterior.")
-    if (!data.new_password) throw new InvalidArgumentError("Tenés que escribir tu nueva clave.");
-
-    if (data.password.length > PARAMETERS.PASSWORD_MAX_LENGTH) throw new InvalidArgumentError(`Tu nueva clave tiene que tener como máximo ${PARAMETERS.PASSWORD_MAX_LENGTH} carácteres.`);
-    if (data.password.length < PARAMETERS.PASSWORD_MIN_LENGTH) throw new InvalidArgumentError(`Tu nueva clave tiene que tener como mínimo ${PARAMETERS.PASSWORD_MIN_LENGTH} carácteres.`);
-
+    if (!data.password) throw new InvalidArgumentError("Tenés que escribir tu clave anterior.");
+    Validator.Password(data.new_password);
+    Validator.Token(data.token);
     data.new_password = await Password.hash(data.new_password);
-
-    const response = await memberRepository.updatePassword(data);
-    return response;
-}
+    return await memberRepository.UpdatePassword(data);
+};
 
 const updateIconURL = async (data: {
     id_member: number;

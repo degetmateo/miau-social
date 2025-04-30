@@ -43,41 +43,43 @@ export default async function Signin (data: {
             delete member.password;
             delete member.status;
 
-            const ACCESS_TOKEN = await JWT.Generate({
+            const REFRESH_TOKEN = await JWT.Generate({
                 id: member.id,
                 username: member.username,
                 role: member.role,
                 email: member.email
             }, "30d");
 
-            // const REFRESH_TOKEN = await JWT.Generate({
-            //     id: member.id,
-            //     username: member.username,
-            //     role: member.role,
-            //     email: member.email
-            // }, "30d");
+            const session: any = (await transaction`
+                INSERT INTO
+                    session (
+                        member_id,
+                        date,
+                        ip,
+                        platform,
+                        token
+                    )
+                    VALUES (
+                        ${member.id},
+                        ${new Date().toISOString()},
+                        ${data.ip},
+                        ${data.platform},
+                        ${REFRESH_TOKEN}
+                    )
+                RETURNING *;
+            `)[0];
 
-            // (await transaction`
-            //     INSERT INTO
-            //         session (
-            //             member_id,
-            //             date,
-            //             ip,
-            //             platform,
-            //             token
-            //         )
-            //         VALUES (
-            //             ${member.id},
-            //             ${new Date().toISOString()},
-            //             ${data.ip},
-            //             ${data.platform},
-            //             ${REFRESH_TOKEN}
-            //         );
-            // `);
+            const ACCESS_TOKEN = await JWT.Generate({
+                id: member.id,
+                username: member.username,
+                role: member.role,
+                email: member.email,
+                session_id: session.id
+            }, "15m");
 
             response = member;
             response.token = ACCESS_TOKEN
-            // response.refresh_token = REFRESH_TOKEN;
+            response.refresh_token = REFRESH_TOKEN;
         });
         return response;
     } catch (error) {

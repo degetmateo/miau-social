@@ -1,22 +1,17 @@
-const getByUsername = async ({
+import Service from "../modules/Service.js";
+
+const getByUsername = async (data = {
     username
 }) => {
     try {
-        const request = await fetch(`/api/member/${username}`, {
-            method: "GET",
-            headers: {
-                "Authorization": "Bearer " + localStorage.getItem('token')
-            }
+        return await Service.Fetch(`/api/member/${data.username}`, {
+            method: "GET"
         });
-
-        const response = await request.json();
-        if (!request.ok) throw new Error(response.error.message);
-        return response.data;
     } catch (error) {
         console.error(error);
         throw error;
-    }
-}
+    };
+};
 
 const updateProfile = async (data = {
     name: '',
@@ -40,23 +35,57 @@ const updateProfile = async (data = {
         form.append('banner', data.banner);
         form.append('banner_action', data.banner_action);
 
-        const request = await fetch('/api/member/update-profile', {
+        return await Service.Fetch('/api/member/update-profile', {
             method: 'POST',
-            headers: { "Authorization": "Bearer " + localStorage.getItem('token') },
             body: form
         });
-
-        const response = await request.json();
-        if (!request.ok) throw new Error(response.error.message);
-
-        return response.data;
     } catch (error) {
         console.error(error);
         throw error;
-    }
-}
+    };
+};
+
+const updateUsername = async (data = {
+    username: ''
+}) => {
+    try {
+        return await Service.Fetch('/api/member/update-username', {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Content-Type": "Application/JSON",
+            },
+            body: JSON.stringify(data)
+        });
+    } catch (error) {
+        console.error(error);
+        throw error;  
+    };
+};
+
+const updatePassword = async (data = {
+    password: '',
+    new_password: ''
+}) => {
+    try {
+        return await Service.Fetch('/api/member/update-password', {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Content-Type": "Application/JSON",
+            },
+            body: JSON.stringify(data)
+        });
+    } catch (error) {
+        console.error(error);
+        throw error;  
+    };
+};
 
 export const memberService = {
     getByUsername,
-    updateProfile
-}
+    updateProfile,
+
+    updateUsername,
+    updatePassword
+};

@@ -1,15 +1,27 @@
 import { Request, Response } from "express"
-import { ResponseError, ResponseOk, ResponseRefreshToken } from "../helpers/ControllerResponse";
+import { ResponseError, ResponseOk, SetRefreshToken } from "../helpers/ControllerResponse";
 import { RESPONSES } from "../static/responses";
 import { authenticationService } from "../services/authenticationService";
 
 const authenticate = async (req: Request, res: Response) => {
     try {
         const data = await authenticationService.authenticate({
-            id: req.member.id,
-            username: req.member.username,
-            role: req.member.role,
-            email: req.member.email
+            token: req.cookies ? req.cookies['refresh-token'] as string : null
+        });
+
+        SetRefreshToken(res, data.refresh_token);
+        delete data.refresh_token;
+        ResponseOk(res, RESPONSES.OK, data);
+    } catch (error) {
+        console.error(error);
+        ResponseError(res, error);
+    }
+}
+
+const refreshToken = async (req: Request, res: Response) => {
+    try {
+        const data = await authenticationService.refreshToken({
+            token: req.cookies ? req.cookies['refresh-token'] as string : null
         });
 
         ResponseOk(res, RESPONSES.OK, data);
@@ -29,10 +41,8 @@ const signin = async (req: Request, res: Response) => {
             captcha_token: req.body.captcha_token as string
         });
 
-        // const REFRESH_TOKEN = data.refresh_token;
-        // delete data.refresh_token;
-
-        // ResponseRefreshToken(res, REFRESH_TOKEN);
+        SetRefreshToken(res, data.refresh_token);
+        delete data.refresh_token;
         ResponseOk(res, RESPONSES.OK, data);
     } catch (error) {
         console.error(error);
@@ -60,7 +70,9 @@ const signup = async (req: Request, res: Response) => {
 const verify = async (req: Request, res: Response) => {
     try {
         const response = await authenticationService.verify({
-            token: req.body.token as string
+            token: req.body.token as string,
+            ip: req.ip || req.socket.remoteAddress,
+            platform: req.body.platform as string
         });
 
         ResponseOk(res, RESPONSES.OK, response);
@@ -129,9 +141,30 @@ const recoverUsername = async (req: Request, res: Response) => {
     }
 }
 
+const logout = async (req: Request, res: Response) => {
+    try {
+        const data = await authenticationService.logout({
+            token: req.cookies['refresh-token'] as string
+        });
+
+        res.clearCookie('refresh-token', {
+            httpOnly: true,
+            secure: process.env.PRODUCTION === "TRUE",
+            sameSite: "strict",
+            maxAge: null
+        });
+        ResponseOk(res, RESPONSES.OK, data);
+    } catch (error) {
+        console.error(error);
+        ResponseError(res, error);
+    };
+};
+
 export const authenticationController = {
+    refreshToken,
     authenticate,
     signin,
+    logout,
     signup,
     verify,
     activate,

@@ -7,18 +7,20 @@ import {authenticationService} from "./services/authenticationService.js";
 import Alert from "./components/alert/alert.js";
 import {sleep} from "./helpers.js";
 
-window.addEventListener("popstate", () => router.resolve());
+window.addEventListener("popstate", () => {
+    router.resolve();
+});
 
 document.addEventListener('DOMContentLoaded', async () => {
-    document.body.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const linkElement = e.target.closest("[data-link]");
+    // document.body.addEventListener("click", (e) => {
+    //     e.stopPropagation();
+    //     const linkElement = e.target.closest("[data-link]");
         
-        if (linkElement) {
-            e.preventDefault();
-            router.navigateTo(linkElement.getAttribute('data-url') || linkElement.href || linkElement.getAttribute('href'));
-        }
-    });
+    //     if (linkElement) {
+    //         e.preventDefault();
+    //         router.navigateTo(linkElement.getAttribute('data-url') || linkElement.href || linkElement.getAttribute('href'));
+    //     };
+    // });
 
     const loader = new ScreenSpinner({ opaque: true });
     await sleep(1000);
@@ -34,39 +36,31 @@ document.addEventListener('DOMContentLoaded', async () => {
         loader.remove();
         return;
     }
-
-    const token = localStorage.getItem('token');
     
     window.app = {};
     window.app.logged = false;
 
-    if (token) {
-        let response;
-        try {
-            response = await authenticationService.authenticate({ token });
-        } catch (error) {
-            localStorage.removeItem('token');
-            window.app.logged = false;
-            new Alert("La sesión ha expirado.", { error: true });
-            router.navigateTo('/');
-            loader.remove();
-            return;
-        }
-
-        localStorage.setItem('token', response.token);
-
-        window.app.logged = true;
-        window.app.alerts = [];
-        window.app.member = response;
-        
-        init();
-
+    let response;
+    try {
+        response = await authenticationService.authenticate();
+    } catch (error) {
+        localStorage.removeItem('token');
+        window.app.logged = false;
+        router.navigateTo('/');
         router.resolve();
         loader.remove();
         return;
     }
 
-    router.navigateTo('/');
+    localStorage.setItem('token', response.token);
+
+    window.app.logged = true;
+    window.app.alerts = [];
+    window.app.member = response;
+    
+    init();
+
+    router.resolve();
     loader.remove();
 });
 

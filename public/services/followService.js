@@ -1,58 +1,48 @@
-const get = async ({
+import Service from "../modules/Service.js";
+
+const get = async (data = {
     username,
     type,
     offset
 }) => {
     try {
-        const request = await fetch(`/api/follow/?username=${username}&type=${type}&offset=${offset}`, {
-            method: "GET",
-            headers: { "Authorization": "Bearer " + localStorage.getItem('token') }
+        return await Service.Fetch(`/api/follow/?username=${data.username}&type=${data.type}&offset=${data.offset}`, {
+            method: "GET"
         });
-        const response = await request.json();
-        if (!request.ok) throw new Error(response.error.message);
-        return response.data;
     } catch (error) {
         console.error(error);
         throw error;
-    }
-}
+    };
+};
 
-const follow = async ({
+const follow = async (data = {
     id
 }) => {
     try {
-        const request = await fetch('/api/follow/member/' + id, {
-            method: "POST",
-            headers: { "Authorization": "Bearer " + localStorage.getItem('token') }
+        return await Service.Fetch('/api/follow/member/' + data.id, {
+            method: "POST"
         });
-        const response = await request.json();
-        if (!request.ok) throw new Error(response.error.message);
-        return response.data;
     } catch (error) {
         console.error(error);
         throw error;
-    }
-}
+    };
+};
 
-const unfollow = async ({
+const unfollow = async (data ={
     id
 }) => {
     try {
-        const request = await fetch('/api/follow/member/' + id, {
-            method: "DELETE",
-            headers: { "Authorization": "Bearer " + localStorage.getItem('token') }
+        return await Service.Fetch('/api/follow/member/' + data.id, {
+            method: "DELETE"
         });
-        const response = await request.json();
-        if (!request.ok) throw new Error(response.error.message);
-        return response.data;
     } catch (error) {
         console.error(error);
         throw error;
-    }
-}
+    };
+};
 
 export const followService = {
     get,
     follow,
     unfollow
-}
+};

@@ -1,4 +1,5 @@
 import Alert from "../../components/alert/alert.js";
+import Header from "../../components/header/Header.js";
 import PostsContainer from "../../components/posts-container/PostsContainer.js";
 import Profile from "../../components/profile/Profile.js";
 import {Scroll} from "../../helpers.js";
@@ -22,17 +23,14 @@ export default class extends AbstractView {
 
         this.view.appendChild(this.main);
 
-        this.header = document.createElement('header');
-        this.header.classList.add('member-main-header');
-        this.header.onclick = () => {
-            this.setScroll(0);
-        }
+        this.header = new Header({
+            text: ''
+        });
+        this.header.onclick = (e) => {
+            e.stopPropagation();
+            this.main.scrollTo({ top: 0, behavior: 'instant' });
+        };
         this.main.append(this.header);
-
-        this.title = document.createElement('span');
-        this.title.classList.add('member-main-header-title');
-        this.title.textContent = '';
-        this.header.append(this.title);
 
         this.profile = document.createElement('div');
         this.main.append(this.profile);
@@ -49,7 +47,7 @@ export default class extends AbstractView {
         this.view.appendChild(window.app.nav.getNode());
         this.appContainer.append(this.view);
 
-        this.title.textContent = '';
+        this.header.text.textContent = '';
         this.profile.innerHTML = '';
         this.posts.innerHTML = '';
 
@@ -63,7 +61,7 @@ export default class extends AbstractView {
         }
 
         if (found) {
-            this.title.textContent = this.members[this.i].username;
+            this.header.text.textContent = this.members[this.i].username;
             this.profile.append(this.members[this.i].profile.render());
             this.posts.append(this.members[this.i].posts.render());
             this.setScroll(this.members[this.i].scroll);
@@ -112,7 +110,7 @@ export default class extends AbstractView {
 
             this.members.push(member);
             this.i = this.members.length - 1;
-            this.title.textContent = this.members[this.i].username;
+            this.header.text.textContent = this.members[this.i].username;
 
             let posts;
             try {

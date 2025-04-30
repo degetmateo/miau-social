@@ -6,14 +6,14 @@ export const ResponseOk = (res: Response, statusCode: number, data: any) => {
     return res.status(statusCode).json({ data });
 };
 
-export const ResponseRefreshToken = (res: Response, token: string) => {
+export const SetRefreshToken = (res: Response, token: string) => {
     res.cookie("refresh-token", token, {
         httpOnly: true,
         secure: process.env.PRODUCTION === "TRUE",
         sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000
+        maxAge: null
     });
-}
+};
 
 export const ResponseError = (res: Response, error: any) => {
     if (error instanceof GenericError) return res.status(error.statusCode).json({ error: { message: error.message, code: error.code } });

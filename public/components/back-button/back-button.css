@@ -1,0 +1,19 @@
+back-button {
+    background-color: var(--primary-color);
+    cursor: pointer;
+    height: 50px;
+    width: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+back-button:hover {
+    background-color: var(--hover-color);
+}
+
+back-button span {
+    font-size: 1.5em;
+    color: var(--color-font);
+    text-align: center;
+}

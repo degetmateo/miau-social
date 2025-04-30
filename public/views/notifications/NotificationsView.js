@@ -1,4 +1,6 @@
-import Notification from "../../components/notification/notification.js";
+import Header from "../../components/header/Header.js";
+import Notification from "../../components/notification/Notification.js";
+import Separator from "../../components/separator/Separator.js";
 import EventsHandler from "../../modules/EventsHandler.js";
 import Notifier from "../../modules/Notifier.js";
 import {notificationService} from "../../services/notificationService.js";
@@ -26,17 +28,14 @@ export default class NotificationsView extends AbstractView {
         this.container_notifications = document.createElement('div');
         this.container_notifications.classList.add('container-notifications');
 
-        this.header = document.createElement('header');
-        this.header.classList.add('notifications-main-header');
-        this.header.onclick = () => {
-            this.setScroll(0);
-        }
+        this.header = new Header({
+            text: 'Notificaciones'
+        });
+        this.header.onclick = (e) => {
+            e.stopPropagation();
+            this.main.scrollTo({ top: 0, behavior: 'instant' });
+        };
         this.main.append(this.header);
-
-        this.title = document.createElement('span');
-        this.title.classList.add('notifications-main-header-title');
-        this.title.textContent = 'Notificaciones';
-        this.header.append(this.title);
 
         this.main.appendChild(this.container_notifications);
         this.viewContainer.appendChild(this.main);
@@ -80,7 +79,8 @@ export default class NotificationsView extends AbstractView {
         for (const n of data) {
             const notification = new Notification(n);
             this.notifications.push(notification);
-            this.container_notifications.appendChild(notification.getElement());
+            this.container_notifications.append(notification);
+            this.container_notifications.append(new Separator().render());
         }
 
         this.read();
@@ -105,7 +105,8 @@ export default class NotificationsView extends AbstractView {
                 for (const n of data) {
                     const notification = new Notification(n);
                     this.notifications.push(notification);
-                    this.container_notifications.appendChild(notification.getElement());
+                    this.container_notifications.append(notification);
+                    this.container_notifications.append(new Separator().render());
                 }
             }
         });
@@ -116,7 +117,7 @@ export default class NotificationsView extends AbstractView {
             const notification = new Notification(n);
             if (this.notifications.find(n => n.getID() === notification.getID())) return;
             this.notifications.push(notification);
-            this.container_notifications.prepend(notification.getElement());
+            this.container_notifications.prepend(notification);
         }
     }
 }

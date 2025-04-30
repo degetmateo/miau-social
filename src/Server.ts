@@ -10,6 +10,8 @@ import upvoteRouter from "./routes/upvoteRouter";
 import followRouter from "./routes/followRouter";
 import adminRouter from "./routes/adminRouter";
 import tenorRouter from "./routes/tenorRouter";
+import sessionRouter from './routes/sessionRouter';
+const cookieParser = require('cookie-parser');
 
 export default class Server {
     private readonly port: number;
@@ -24,7 +26,8 @@ export default class Server {
         notification: '/api/notification',
         upvote: '/api/upvote',
         follow: '/api/follow',
-        tenor: '/api/tenor'
+        tenor: '/api/tenor',
+        session: '/api/session'
     }
 
     constructor (port: number) {
@@ -46,6 +49,7 @@ export default class Server {
         this.app.use('/public', express.static(path.join(__dirname + '/../public/')));
 
         this.app.use(express.json());
+        this.app.use(cookieParser());
         this.app.use(
             cors({
               origin: process.env.FRONTEND_URL
@@ -72,6 +76,7 @@ export default class Server {
         this.app.use(this.paths.follow, followRouter);
         this.app.use(this.paths.admin, adminRouter);
         this.app.use(this.paths.tenor, tenorRouter);
+        this.app.use(this.paths.session, sessionRouter);
 
         this.app.use('*', (_, res) => {
             res.sendFile(path.join(__dirname + '/../public/app.html'));

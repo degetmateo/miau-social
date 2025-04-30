@@ -16,10 +16,16 @@ import ActivateView from "./views/activate/ActivateView.js";
 import RecoverPasswordView from "./views/recover-password/RecoverPasswordView.js";
 import RecoverUsernameView from "./views/recover-username/RecoverUsernameView.js";
 import ResetPasswordView from "./views/reset-password/ResetPasswordView.js";
+import AccountView from "./views/account/AccountView.js";
+import SecurityView from "./views/security/SecurityView.js";
+import UsernameView from "./views/username/UsernameView.js";
+import PasswordView from "./views/password/PasswordView.js";
+import SessionsView from "./views/sessions/SessionsView.js";
 
 class Router {
     constructor () {
-        this.router = new Navigo("/", { hash: false });
+        this.router = new Navigo("/", { hash: true });
+        this.history = [];
 
         this.views = {
             error: new ErrorView(),
@@ -39,13 +45,23 @@ class Router {
             activate: new ActivateView(),
             recoverPassword: new RecoverPasswordView(),
             recoverUsername: new RecoverUsernameView(),
-            resetPassword: new ResetPasswordView()
-        }
+            resetPassword: new ResetPasswordView(),
+            account: new AccountView(),
+            security: new SecurityView(),
+            username: new UsernameView(),
+            password: new PasswordView(),
+            sessions: new SessionsView()
+        };
 
         this.router
             .on("/", () => this.views.landing.init())
             .on("/home", () => this.views.home.init())
             .on("/settings", () => this.views.settings.init())
+            .on("/settings/account", () => this.views.account.init())
+            .on("/settings/account/username", () => this.views.username.init())
+            .on("/settings/security", () => this.views.security.init())
+            .on("/settings/security/password", () => this.views.password.init())
+            .on("/settings/security/sessions", () => this.views.sessions.init())
             .on("/member/:username", ({ data }) => this.views.member.init(data))
             .on("/member/:username/followed", ({ data }) => this.views.followed.init(data))
             .on("/member/:username/followers", ({ data }) => this.views.followers.init(data))
@@ -65,29 +81,35 @@ class Router {
 
     resolve = () => {
         this.router.resolve();
-    }
+    };
 
     navigateTo = (url) => {
+        if (url == window.location.pathname) return;
         window.history.pushState(null, null, url);
         this.resolve();
     };
 
     replace = (url) => {
+        if (url == window.location.pathname) return;
         window.history.replaceState(null, null, url);
         this.resolve();
-    }
+    };
 
     goBack = () => {
         window.history.back();
-    }
+    };
 
     goForward = () => {
         window.history.forward();
-    }
+    };
 
     getPathname = () => {
         return window.location.pathname;
-    }
-}
+    };
+
+    reload = () => {
+        window.location.reload();
+    };
+};
 
 export default new Router();

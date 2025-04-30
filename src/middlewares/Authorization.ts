@@ -50,6 +50,19 @@ class Authorization {
         const qMember = await memberRepository.getById({ id: member.id });
         return qMember.role_member === 'admin' || perms.includes(qMember.role_member);
     }
+
+    RefreshToken = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const token = req.cookies['refresh-token'];
+            if (!token) throw new UnauthorizedError("No estás autorizado.");
+
+            const member = await JWT.Validate(token);
+            req.member = member;
+            next();
+        } catch (error) {
+            ResponseError(res, new UnauthorizedError("La sesión expiró."));
+        }
+    }
 }
 
 export default new Authorization();

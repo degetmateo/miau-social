@@ -9,6 +9,8 @@ export default async function Verify (data: {
     email: string;
     username: string;
     role: string;
+    ip: string;
+    platform: string;
 }) {
     try {
         let response: any;
@@ -60,15 +62,43 @@ export default async function Verify (data: {
 
             if (!q) throw new UnauthorizedError('Ha ocurrido un error de autorización.');
 
-            const TOKEN = await JWT.Generate({
+            const REFRESH_TOKEN = await JWT.Generate({
                 id: member.id,
                 username: member.username,
                 role: member.role,
                 email: member.email
             }, '30d');
 
+            const session: any = (await transaction`
+                INSERT INTO
+                    session (
+                        member_id,
+                        date,
+                        ip,
+                        platform,
+                        token
+                    )
+                VALUES (
+                    ${member.id},
+                    ${new Date().toISOString()},
+                    ${data.ip},
+                    ${data.platform},
+                    ${REFRESH_TOKEN}
+                )
+                RETURNING *;
+            `)[0];
+
+            const ACCESS_TOKEN = await JWT.Generate({
+                id: member.id,
+                username: member.username,
+                role: member.role,
+                email: member.email,
+                session_id: session.id
+            }, '15m');
+
             response = member;
-            response.token = TOKEN;
+            response.token = ACCESS_TOKEN;
+            response.refresh_token = REFRESH_TOKEN;
         });
         return response;
     } catch (error) {

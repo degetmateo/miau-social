@@ -28,6 +28,13 @@ export default async function ResetPassword (data: {
             `)[0];
 
             if (!member) throw new UnauthorizedError();
+
+            (await transaction`
+                DELETE FROM
+                    session
+                WHERE
+                    member_id = ${data.id};
+            `);
         });
     } catch (error) {
         if (error instanceof GenericError) throw error;

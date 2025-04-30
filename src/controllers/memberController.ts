@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-import { ResponseError, ResponseOk } from "../helpers/ControllerResponse";
+import { ResponseError, ResponseOk, SetRefreshToken } from "../helpers/ControllerResponse";
 import { RESPONSES } from "../static/responses";
 import { memberService } from "../services/memberService";
 import BadGatewayError from "../errors/BadGatewayError";
@@ -35,16 +35,19 @@ const updateName = async (req: Request, res: Response) => {
 const updateUsername = async (req: Request, res: Response) => {
     try {
         const response = await memberService.updateUsername({
-            id_member: req.member.id,
+            member: req.member,
+            token: req.cookies["refresh-token"] as string,
             username: req.body.username
         });
 
-        ResponseOk(res, RESPONSES.ACCEPTED, response);
+        SetRefreshToken(res, response.refresh_token);
+        delete response.refresh_token;
+        ResponseOk(res, RESPONSES.OK, response);
     } catch (error) {
         console.error(error);
         ResponseError(res, error);
-    }
-}
+    };
+};
 
 const updateBio = async (req: Request, res: Response) => {
     try {
@@ -63,17 +66,18 @@ const updateBio = async (req: Request, res: Response) => {
 const updatePassword = async (req: Request, res: Response) => {
     try {
         const response = await memberService.updatePassword({
-            id_member: req.member.id,
+            member: req.member,
+            token: req.cookies["refresh-token"] as string,
             password: req.body.password,
             new_password: req.body.new_password
         });
 
-        ResponseOk(res, RESPONSES.ACCEPTED, response);
+        ResponseOk(res, RESPONSES.OK, response);
     } catch (error) {
         console.error(error);
         ResponseError(res, error);
-    }
-}
+    };
+};
 
 const updateIconURL = async (req: Request, res: Response) => {
     try {

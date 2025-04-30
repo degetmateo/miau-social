@@ -1,144 +1,126 @@
 import {URL_NO_IMAGE} from "../../consts.js";
+import {formatContent, importCSS} from "../../helpers.js";
 import router from "../../router.js";
-import ImagesContainer from "../images-container/ImagesContainer.js";
-import MediaContainer from "../media-container/MediaContainer.js";
+import Post from "../post/Post.js";
+import Quote from "../quote/Quote.js";
 
-export default class Notification {
-    notification = {
-        id: '',
-        date: '',
-        type: '',
-        target_member: {
-            id: '',
-            name: '',
-            username: '',
-            role: '',
-            icon_url: ''
-        },
-        target_post: {
-            id: '',
-            id_post_replied: '',
-            content: '',
-            date: '',
-            images: []
-        }
-    }
+importCSS('/public/components/notification/notification.css');
 
-    constructor (_notification) {
-        this.notification = _notification;
-        this.container = document.createElement('div');
-        this.container.classList.add('container-notification', 'container-notification--'+this.notification.type);
-        this.Create();
+class Notification extends HTMLElement {
+    constructor (data) {
+        super();
+        this.data = data;
+        this.classList.add('notification');
+        if (this.data.status === 'pending') this.classList.add('notification-pending');
 
         this.isSelectingText = false;
-        this.container.onmousedown = () => {
+        this.onmousedown = () => {
             this.isSelectingText = false;
-        }
-        this.container.onmousemove = () => {
+        };
+        this.onmousemove = () => {
             this.isSelectingText = true;
-            this.setRead();
-        }
-        this.container.onmouseup = (e) => {
-            if (e.target.closest('.container-notification-comment-pic')) return;
-            if (e.target.closest('.notification-comment-signature-name')) return;
-            if (!this.isSelectingText) return router.navigateTo(this.container.getAttribute('href'));
-        }
+            this.classList.remove('notification-pending');
+        };
+        this.onmouseup = (e) => {
+            if (e.target.closest('.notification-icon')) return;
+            if (e.target.closest('.notification-name')) return;
+            if (!this.isSelectingText) return router.navigateTo(this.href);
+        };
 
-        if (this.notification.status === 'pending') this.setUnread();
-        else this.setRead();
-    }
+        this.header = document.createElement('div');
+        this.header.classList.add('notification-header');
+
+        this.icon = document.createElement('img');
+        this.icon.classList.add('notification-icon');
+        this.icon.src = this.data.target_member.icon_url || URL_NO_IMAGE;
+        this.icon.onclick = (e) => {
+            e.stopPropagation();
+            router.navigateTo(`/member/${this.data.target_member.username}`);
+        };
+        this.header.append(this.icon);
+
+        this.text = document.createElement('div');
+        this.text.classList.add('notification-text');
+        this.header.append(this.text);
+
+        this.name = document.createElement('span');
+        this.name.classList.add('notification-name');
+        this.name.textContent = this.data.target_member.name;
+        this.name.onclick = (e) => {
+            e.stopPropagation();
+            router.navigateTo(`/member/${this.data.target_member.username}`);
+        };
+        this.text.append(this.name);
+
+        this.action = document.createElement('span');
+        this.action.classList.add('notification-action');
+        this.text.append(this.action);
+
+        if (this.data.type === 'quote') {
+            this.href = '/post/'+this.data.target_post.id+'/comments';
+            this.action.textContent = ' citó tu publicación.';
+
+            this.classList.add('notification-post');
+
+            this.body = document.createElement('div');
+            this.body.classList.add('notification-body');
+            this.append(this.body);
+
+            this.post = new Post(this.data.target_post);
+            this.body.append(this.post.render());
+        };
+
+        if (this.data.type === 'reply') {
+            this.href = '/post/'+this.data.target_post.id+'/comments';
+            this.action.textContent = ' te respondió.';
+
+            this.classList.add('notification-post');
+
+            this.body = document.createElement('div');
+            this.body.classList.add('notification-body');
+            this.append(this.body);
+
+            this.post = new Post(this.data.target_post);
+            this.body.append(this.post.render());
+        };
+
+        if (this.data.type === 'upvote') {
+            this.append(this.header);
+
+            this.href = '/post/'+this.data.target_post.id+'/comments';
+            this.action.textContent = ' indicó que le gusta tu publicación';
+
+            this.body = document.createElement('div');
+            this.body.classList.add('notification-body');
+            this.append(this.body);
+
+            if (this.data.target_post.content) {
+                this.content = document.createElement('span');
+                this.content.classList.add('notification-content');
+                this.content.append(formatContent(this.data.target_post.content));
+                this.body.append(this.content);
+            }
+
+            if (this.data.target_post.media) {
+                this.links = document.createElement('span');
+                this.links.classList.add('notification-links');
+                this.links.textContent = ' ' + this.data.target_post.media.join(' ');
+                this.body.append(this.links); 
+            }
+        };
+
+        if (this.data.type === 'follow') {
+            this.append(this.header);
+
+            this.href = '/member/'+this.data.target_member.username;
+            this.action.textContent = ' te siguió.';
+        };
+    };
 
     getID () {
-        return this.notification.id;
-    }
+        return this.data.id;
+    };
+};
 
-    getElement () {
-        return this.container;
-    }
-
-    remove () {
-        this.container.remove();
-    }
-
-    setUnread () {
-        this.container.classList.add('notification-container--unread');
-    }
-
-    setRead () {
-        this.container.classList.remove('notification-container--unread');
-    }
-
-    Create () {
-        if (this.notification.type === 'quote') this.CreateNotificationQuote();
-        if (this.notification.type === 'reply') this.CreateNotificationComment();
-        if (this.notification.type === 'upvote') this.CreateNotificationUpvote();
-        if (this.notification.type === 'follow') this.CreateNotificationFollow();
-    }
-
-    CreateNotificationQuote () {
-        this.container.setAttribute('href', '/post/'+this.notification.target_post.id+'/comments');
-        if (!this.notification.target_post.content) this.notification.target_post.content = '';
-        if (!this.notification.target_post.images) this.notification.target_post.images = [];
-        this.container.innerHTML = `
-            <div class="container-notification-comment-signature">
-                <div class="container-notification-comment-pic">
-                    <img class="notification-comment-signature-pic" src="${this.notification.target_member.icon_url || URL_NO_IMAGE}" href="/member/${this.notification.target_member.username}" data-link />
-                </div>
-                <span class="notification-comment-signature-title"><span class="notification-comment-signature-name" href="/member/${this.notification.target_member.username}" data-link>${this.notification.target_member.name}</span> te ha citado:</span>
-            </div>
-            ${this.notification.target_post.content.length > 0 ? `<span class="notification-comment-post-content">${this.notification.target_post.content}</span>` : ''}
-            ${this.notification.target_post.media.length > 0 ? `${this.images()}` : ''}
-        `;
-    }
-
-    CreateNotificationComment () {
-        this.container.setAttribute('href', '/post/'+this.notification.target_post.id+'/comments');
-        if (!this.notification.target_post.content) this.notification.target_post.content = '';
-        if (!this.notification.target_post.images) this.notification.target_post.images = [];
-        this.container.innerHTML = `
-            <div class="container-notification-comment-signature">
-                <div class="container-notification-comment-pic">
-                    <img class="notification-comment-signature-pic" src="${this.notification.target_member.icon_url || URL_NO_IMAGE}" href="/member/${this.notification.target_member.username}" data-link />
-                </div>
-                <span class="notification-comment-signature-title"><span class="notification-comment-signature-name" href="/member/${this.notification.target_member.username}" data-link>${this.notification.target_member.name}</span> te ha respondido:</span>
-            </div>
-            ${this.notification.target_post.content.length > 0 ? `<span class="notification-comment-post-content">${this.notification.target_post.content}</span>` : ''}
-            ${this.notification.target_post.media.length > 0 ? `${this.images()}` : ''}
-        `;
-    }
-
-    images () {
-        const mediaContainer = new MediaContainer({ media: this.notification.target_post.media, editable: false });
-        return mediaContainer.container.outerHTML;
-    }
-
-    CreateNotificationUpvote () {
-        this.container.setAttribute('href', '/post/'+this.notification.target_post.id+'/comments');
-        if (!this.notification.target_post.content) this.notification.target_post.content = '';
-        if (!this.notification.target_post.images) this.notification.target_post.images = [];
-        this.container.innerHTML = `
-            <div class="container-notification-comment-signature">
-                <div class="container-notification-comment-pic">
-                    <img class="notification-comment-signature-pic" src="${this.notification.target_member.icon_url || URL_NO_IMAGE}" href="/member/${this.notification.target_member.username}" data-link />
-                </div>
-                <span class="notification-comment-signature-title"><span class="notification-comment-signature-name" href="/member/${this.notification.target_member.username}" data-link>${this.notification.target_member.name}</span> ha indicado que le gusta tu publicación.</span>
-            </div>
-            ${this.notification.target_post.content.length > 0 ? `<span class="notification-comment-post-content">${this.notification.target_post.content}</span>` : ''}
-            ${this.notification.target_post.media.length > 0 ? `${this.images()}` : ''}
-        `;
-    }
-
-    CreateNotificationFollow () {
-        this.container.setAttribute('href', '/member/'+this.notification.target_member.username);
-        if (!this.notification.target_post.content) this.notification.target_post.content = '';
-        if (!this.notification.target_post.images) this.notification.target_post.images = [];
-        this.container.innerHTML = `
-            <div class="container-notification-comment-signature">
-                <div class="container-notification-comment-pic">
-                    <img class="notification-comment-signature-pic" src="${this.notification.target_member.icon_url || URL_NO_IMAGE}" href="/member/${this.notification.target_member.username}" data-link />
-                </div>
-                <span class="notification-comment-signature-title"><span href="/member/${this.notification.target_member.username}" data-link class="notification-comment-signature-name">${this.notification.target_member.name}</span> te ha seguido.</span>
-            </div>
-        `;
-    }
-}
+customElements.define("app-notification", Notification);
+export default Notification;

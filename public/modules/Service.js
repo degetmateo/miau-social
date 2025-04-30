@@ -1,6 +1,50 @@
-import Alert from "../components/alert/alert";
+import Alert from "../components/alert/alert.js";
 
 class Service {
+    Fetch = async (url, options = {}) => {
+        options.headers = options.headers || {};
+        options.headers["Authorization"] = `Bearer ${localStorage.getItem('token')}`;
+
+        let request = await fetch(url, options);
+        let response = await request.json();
+
+        if (request.status === 401) {
+            await this.Refresh({
+                callback: async () => {
+                    options.headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
+                    request = await fetch(url, options);
+                    response = await request.json();
+                }
+            });
+        };
+
+        if (!request.ok) throw response.error;
+        return response.data;
+    };
+
+    Refresh = async ({ callback } = {}) => {
+        try {
+            const request = await fetch('/api/authentication/refresh-token', {
+                method: "POST",
+                credentials: "include"
+            });
+    
+            const response = await request.json();
+            if (!request.ok) throw new Error(response.error.message);
+    
+            localStorage.setItem("token", response.data);
+    
+            if (typeof callback === "function") {
+                return await callback();
+            }
+        } catch (error) {
+            console.error("Error al refrescar token:", error);
+            localStorage.removeItem("token");
+            new Alert("La sesión expiró, por favor vuelve a iniciar sesión.", { error: true });
+            router.navigateTo("/signin");
+        }
+    };
+
     API = '/api/post'
 
     get = async ({

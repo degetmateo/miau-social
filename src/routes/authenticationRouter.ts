@@ -1,12 +1,15 @@
 import { Router } from "express";
 import { authenticationController } from "../controllers/authenticationController";
-import Authorization from "../middlewares/Authorization";
 
 const router: Router = Router();
 
-router.post('/authenticate', Authorization.Everyone, authenticationController.authenticate);
+router.post('/authenticate', authenticationController.authenticate);
+
+router.post('/refresh-token', authenticationController.refreshToken);
 
 router.post('/signin', authenticationController.signin);
+
+router.post('/logout', authenticationController.logout);
 
 router.post('/signup', authenticationController.signup);
 

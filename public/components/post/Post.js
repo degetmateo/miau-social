@@ -1,6 +1,7 @@
 import {URL_NO_IMAGE} from "../../consts.js";
 import {formatContent, getTimeElapsedSince, importCSS} from "../../helpers.js";
 import router from "../../router.js";
+import {postService} from "../../services/postService.js";
 import {upvoteService} from "../../services/upvoteService.js";
 import Alert from "../alert/alert.js";
 import MediaContainer from "../media-container/MediaContainer.js";
@@ -347,14 +348,14 @@ export default class Post {
                     this.remove();
                     popupConfirmation.delete();
                     popup.delete();
-                    const request = await fetch(`/api/post/${this.data.id}`, {
-                        method: 'DELETE',
-                        headers: {
-                            "Authorization": "Bearer " + localStorage.getItem('token')
-                        }
-                    });
-                    const response = await request.json();
-                    if (!request.ok) return new Alert(response.error.message);
+
+                    try {
+                        await postService.remove({ id: this.data.id });
+                    } catch (error) {
+                        return new Alert(error.message, { error: true });  
+                    };
+
+                    return new Alert("Publicación eliminada.", { error: false });
                 });
                 popupConfirmation.CreateButton('No, no quiero.', () => {
                     popupConfirmation.delete();
@@ -370,14 +371,15 @@ export default class Post {
                 const btn = popup.CreateButton("Eliminar Publicación", async () => {
                     popup.delete();
                     new Alert("Espere...");
-                    const request = await fetch(`/api/post/${this.data.id}/admin`, {
-                        method: "DELETE",
-                        headers: { "Authorization": "Bearer " + localStorage.getItem('token') }
-                    });
-                    const response = await request.json();
-                    if (!request.ok) return new Alert(response.error.message);
+
+                    try {
+                        await postService.removeAdmin({ id: this.data.id });
+                    } catch (error) {
+                        return new Alert(error.message, { error: true });  
+                    };
+
                     this.remove();
-                    return new Alert("Publicación eliminada correctamente.");
+                    return new Alert("Publicación eliminada.", { error: false });
                 });
     
                 btn.innerHTML = `

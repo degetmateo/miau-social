@@ -7,6 +7,7 @@ import PostsContainer from "../../components/posts-container/PostsContainer.js";
 import PostCreator from "../../components/post-creator/PostCreator.js";
 import PostsHandler from "../../modules/PostsHandler.js";
 import Separator from "../../components/separator/Separator.js";
+import Header from "../../components/header/Header.js";
 
 importCSS('/public/views/comments/styles/comments.css');
 
@@ -21,17 +22,14 @@ export default class CommentsView extends AbstractView {
         this.main.classList.add('comments-main');
         this.view.append(this.main);
 
-        this.header = document.createElement('header');
-        this.header.classList.add('comments-main-header');
-        this.header.onclick = () => {
-            this.setScroll(0);
-        }
+        this.header = new Header({
+            text: 'Publicación'
+        });
+        this.header.onclick = (e) => {
+            e.stopPropagation();
+            this.main.scrollTo({ top: 0, behavior: 'instant' });
+        };
         this.main.append(this.header);
-
-        this.title = document.createElement('span');
-        this.title.classList.add('comments-main-header-title');
-        this.title.textContent = 'Publicación';
-        this.header.append(this.title);
 
         this.repliedPosts = document.createElement('div');
         this.repliedPosts.classList.add('comments-replied-posts');

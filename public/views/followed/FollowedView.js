@@ -1,6 +1,8 @@
 import Alert from "../../components/alert/alert.js";
+import Header from "../../components/header/Header.js";
 import {URL_NO_IMAGE} from "../../consts.js";
 import {importCSS, Scroll} from "../../helpers.js";
+import router from "../../router.js";
 import {followService} from "../../services/followService.js";
 import AbstractView from "../AbstractView.js";
 
@@ -17,16 +19,14 @@ export default class extends AbstractView {
         this.main.classList.add('followers-main');
         this.view.append(this.main);
     
-        this.header = document.createElement('header');
-        this.header.classList.add('followers-main-header');
-        this.header.onclick = () => {
-            this.setScroll(0);
-        }
+        this.header = new Header({
+            text: ''
+        });
+        this.header.onclick = (e) => {
+            e.stopPropagation();
+            this.main.scrollTo({ top: 0, behavior: 'instant' });
+        };
         this.main.append(this.header);
-
-        this.title = document.createElement('span');
-        this.title.classList.add('followers-main-header-title');
-        this.header.append(this.title);
 
         this.content = document.createElement('div');
         this.content.classList.add('followers-main-content');
@@ -39,7 +39,7 @@ export default class extends AbstractView {
         this.params = params;
 
         this.setTitle('Seguidos - ' + this.params.username);
-        this.title.textContent = this.params.username;
+        this.header.set(this.params.username);
         this.content.innerHTML = '';
         this.clear();
         
@@ -139,8 +139,11 @@ class Follower {
         this.member = member;
         this.container = document.createElement('div');
         this.container.classList.add('followed-container');
-        this.container.setAttribute('data-link', '');
-        this.container.setAttribute('href', '/member/'+this.member.username);
+        this.container.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            router.navigateTo(`/member/${this.member.username}`);
+        };
         this.container.innerHTML = `
             <div class="followed-icon-container">
                 <img src="${this.member.icon_url || URL_NO_IMAGE}" class="followed-icon" />

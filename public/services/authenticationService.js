@@ -1,21 +1,18 @@
-const authenticate = async (data = {
-    token: ""
-}) => {
+const authenticate = async () => {
     try {
         const request = await fetch ('/api/authentication/authenticate', {
             method: 'POST',
-            credentials: "include",
-            headers: { "authorization": `Bearer ${data.token}` }
+            credentials: "include"
         });
         
         const response = await request.json();
-        if (!request.ok) throw new Error(response.error.message);
+        if (!request.ok) throw response.error;
         return response.data;
     } catch (error) {
         console.error(error);
         throw error;
-    }
-}
+    };
+};
 
 const signin = async (data = {
     username: '',
@@ -68,7 +65,8 @@ const signup = async (data = {
 }
 
 const verify = async (data = {
-    token: ''
+    token: '',
+    platform: ''
 }) => {
     try {
         const request = await fetch('/api/authentication/verify', {
@@ -182,6 +180,22 @@ const resetPassword = async (data = {
     }
 }
 
+const logout = async () => {
+    try {
+        const request = await fetch('/api/authentication/logout', {
+            method: 'POST',
+            credentials: "include"
+        });
+
+        const response = await request.json();
+        if (!request.ok) throw response.error;
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    };
+};
+
 export const authenticationService = {
     authenticate,
     signin,
@@ -190,5 +204,6 @@ export const authenticationService = {
     activate,
     recoverPassword,
     recoverUsername,
-    resetPassword
+    resetPassword,
+    logout
 }

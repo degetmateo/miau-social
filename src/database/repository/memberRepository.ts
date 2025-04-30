@@ -8,6 +8,8 @@ import { Member } from "../models/Member";
 import InvalidArgumentError from "../../errors/InvalidArgumentError";
 import Password from "../../helpers/Password";
 import ImgBB from "../../helpers/ImgBB";
+import UpdateUsername from "./member/UpdateUsername";
+import UpdatePassword from "./member/UpdatePassword";
 
 const getById = async (data: {
     transaction?: postgres.TransactionSql<{}>;
@@ -608,10 +610,12 @@ export const memberRepository = {
     getPrivateByUsername,
     getByUsername,
     updateName,
-    updateUsername,
     updateBio,
     updatePassword,
     updateIcon,
     updateBanner,
-    updateProfile
+    updateProfile,
+
+    UpdateUsername,
+    UpdatePassword
 }

@@ -8,15 +8,17 @@ import Validator from "../helpers/Validator";
 import { PARAMETERS } from "../static/parameters";
 
 const authenticate = async (data: {
-    id: number;
-    username: string;
-    email: string;
-    role: string;
+    token: string;
 }) => {
-    Validator.Id(data.id);
-    Validator.Username(data.username);
-    Validator.Email(data.email);
+    if (!data.token) throw new UnauthorizedError("No estás autorizado.");
     return await authenticationRepository.Authenticate(data);
+}
+
+const refreshToken = async (data: {
+    token: string;
+}) => {
+    if (!data.token) throw new UnauthorizedError("No estás autorizado.");
+    return await authenticationRepository.RefreshToken(data);
 }
 
 const signin = async (data: {
@@ -35,8 +37,6 @@ const signin = async (data: {
 
     Validator.Ip(data.ip);
     Validator.Platform(data.platform);
-    // Validator.Token(data.captcha_token);
-    
     await ReCaptcha.Verify(data.captcha_token);
 
     return await authenticationRepository.Signin(data);
@@ -64,6 +64,8 @@ const signup = async (data: {
 
 const verify = async (data: {
     token: string;
+    ip: string;
+    platform: string;
 }) => {
     if (!data.token) throw new UnauthorizedError("Ha ocurrido un error de autorización.");
 
@@ -74,7 +76,11 @@ const verify = async (data: {
         role: string;
     } = JWT.Validate(data.token);
 
-    return await authenticationRepository.Verify(tokenData);
+    return await authenticationRepository.Verify({
+        ...tokenData,
+        ip: data.ip,
+        platform: data.platform
+    });
 }
 
 const activate = async (data: {
@@ -152,9 +158,18 @@ const recoverUsername = async (data: {
     return await authenticationRepository.RecoverUsername(data);
 }
 
+const logout = async (data: {
+    token: string;
+}) => {
+    if (!data.token) throw new UnauthorizedError("No estás autorizado.");
+    return await authenticationRepository.Logout(data);
+};
+
 export const authenticationService = {
     authenticate,
+    refreshToken,
     signin,
+    logout,
     signup,
     verify,
     activate,

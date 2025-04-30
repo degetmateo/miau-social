@@ -12,10 +12,10 @@ class Validators {
     }
 
     Username (value) {
-        if (!value) return false;
-        if (value.length < 1 || value.length > 16) return false;
-        return this.REGEX_USERNAME.test(value);
-    }
+        if (!value || value.length < 1) throw new Error('Tenés que escribir tu nuevo nombre de usuario.');
+        if (value.length > 16) throw new Error('Tu nombre de usuario debe tener como máximo 16 carácteres.');
+        if (!this.REGEX_USERNAME.test(value)) throw new Error('Tu nombre de usuario solo puede contener letras, números y guiones bajos.');
+    };
 
     Name (value) {
         if (!value) return false;

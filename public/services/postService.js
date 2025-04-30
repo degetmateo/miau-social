@@ -1,43 +1,31 @@
+import Service from "../modules/Service.js";
+
 const get = async (data = {
     username,
     offset
 }) => {
     try {
-        const request = await fetch(`/api/post?${data.username ? 'username='+data.username : ''}&offset=${data.offset}`, {
+        return await Service.Fetch(`/api/post?${data.username ? 'username='+data.username : ''}&offset=${data.offset}`, {
             method: "GET",
-            headers: {
-                "Authorization": "Bearer " + localStorage.getItem('token')
-            }
         });
-
-        const response = await request.json();
-        if (!request.ok) throw new Error(response.error.message);
-        return response.data;
     } catch (error) {
         console.error(error);
         throw error;
-    }
-}
+    };
+};
 
 const getFollowing = async (data = {
     offset: 0
 }) => {
     try {
-        const request = await fetch(`/api/post/following?offset=${data.offset}`, {
+        return await Service.Fetch(`/api/post/following?offset=${data.offset}`, {
             method: "GET",
-            headers: {
-                "Authorization": "Bearer " + localStorage.getItem('token')
-            }
         });
-
-        const response = await request.json();
-        if (!request.ok) throw new Error(response.error.message);
-        return response.data;
     } catch (error) {
         console.error(error);
         throw error;
-    }
-}
+    };
+};
 
 const post = async (data = {
     content,
@@ -64,77 +52,67 @@ const post = async (data = {
 
         if (data.target_id) form.append('target_id', data.target_id);
 
-        const request = await fetch('/api/post', {
+        return await Service.Fetch(`/api/post`, {
             method: 'POST',
-            headers: { "Authorization": "Bearer " + localStorage.getItem('token') },
             body: form
         });
-
-        const response = await request.json();
-        if (!request.ok) throw new Error(response.error.message);
-        return response.data;
     } catch (error) {
         console.error(error);
         throw error;
-    }
-}
+    };
+};
 
 const getById = async (data = {
     id
 }) => {
     try {
-        const request = await fetch(`/api/post/`+data.id, {
-            method: "GET",
-            headers: {
-                "Authorization": "Bearer " + localStorage.getItem('token')
-            }
+        return await Service.Fetch(`/api/post/`+data.id, {
+            method: "GET"
         });
-
-        const response = await request.json();
-        if (!request.ok) throw new Error(response.error.message);
-        return response.data;
     } catch (error) {
         console.error(error);
         throw error;
-    }
-}
+    };
+};
 
 const getReplies = async (data = {
     id,
     offset: 0
 }) => {
     try {
-        const request = await fetch(`/api/post/${data.id}/replies?offset=${data.offset}`, {
-            method: "GET",
-            headers: {
-                "Authorization": "Bearer " + localStorage.getItem('token')
-            }
+        return await Service.Fetch(`/api/post/${data.id}/replies?offset=${data.offset}`, {
+            method: "GET"
         });
-
-        const response = await request.json();
-        if (!request.ok) throw new Error(response.error.message);
-        return response.data;
     } catch (error) {
         console.error(error);
         throw error;
-    }
-}
+    };
+};
 
 const getThread = async (data = {
     id,
     offset: 0
 }) => {
-    const request = await fetch(`/api/post/${data.id}/thread?offset=${data.offset}`, {
-        method: "GET",
-        headers: {
-            "Authorization": "Bearer " + localStorage.getItem('token')
-        }
+    return await Service.Fetch(`/api/post/${data.id}/thread?offset=${data.offset}`, {
+        method: "GET"
     });
+};
 
-    const response = await request.json();
-    if (!request.ok) throw new Error(response.error.message);
-    return response.data;
-}
+const remove = async (data = {
+    id
+}) => {
+    return await Service.Fetch(`/api/post/${data.id}`, {
+        method: "DELETE"
+    });
+};
+
+const removeAdmin = async (data = {
+    id
+}) => {
+    return await Service.Fetch(`/api/post/${data.id}/admin`, {
+        method: "DELETE"
+    });
+};
 
 export const postService = {
     get,
@@ -142,5 +120,7 @@ export const postService = {
     post,
     getById,
     getReplies,
-    getThread
-}
+    getThread,
+    remove,
+    removeAdmin
+};

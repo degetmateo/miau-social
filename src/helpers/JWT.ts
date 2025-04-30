@@ -17,7 +17,7 @@ class JWT {
             const { data } = jwt.verify(token, process.env.JWT_KEY) as any;
             return data;
         } catch (error) {
-            throw new UnauthorizedError("Token inválido.");
+            throw new UnauthorizedError("No estás autorizado.");
         }
     }
 }

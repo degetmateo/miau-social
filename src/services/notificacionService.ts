@@ -8,7 +8,7 @@ const get = async (data: {
     if (isNaN(data.offset)) throw new InvalidArgumentError("Offset must be a number.");
     if (data.offset < 0) throw new InvalidArgumentError("Offset cannot be negative.");
 
-    const response = await notificationRepository.get(data);
+    const response = await notificationRepository.Get(data);
     return response;
 }
 
