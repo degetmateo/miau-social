@@ -2,7 +2,6 @@ import {URL_NO_IMAGE} from "../../consts.js";
 import {formatContent, importCSS} from "../../helpers.js";
 import router from "../../router.js";
 import Post from "../post/Post.js";
-import Quote from "../quote/Quote.js";
 
 importCSS('/public/components/notification/notification.css');
 

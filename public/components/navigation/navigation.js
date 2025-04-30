@@ -1,5 +1,4 @@
 import Observer from "../../interfaces/Observer.js";
-import Notifier from "../../modules/Notifier.js";
 import router from "../../router.js";
 
 const HOME_IMAGE_OFF = new Image();
