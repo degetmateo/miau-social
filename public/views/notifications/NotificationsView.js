@@ -1,5 +1,5 @@
 import Header from "../../components/header/Header.js";
-import Notification from "../../components/notification/Notification.js";
+import Notification from "/public/components/notification/Notification.js";
 import Separator from "../../components/separator/Separator.js";
 import EventsHandler from "../../modules/EventsHandler.js";
 import Notifier from "../../modules/Notifier.js";
