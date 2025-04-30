@@ -42,4 +42,5 @@
 
 .notification-body {
     color: var(--font-color-light);
+    word-break: break-all;
 }
