@@ -36,7 +36,7 @@ const signin = async (req: Request, res: Response) => {
         const data = await authenticationService.signin({
             username: req.body.username as string,
             password: req.body.password as string,
-            ip: req.ip || req.socket.remoteAddress,
+            ip: req.clientIp,
             platform: req.body.platform as string,
             captcha_token: req.body.captcha_token as string
         });

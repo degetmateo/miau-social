@@ -9,6 +9,7 @@ declare module 'express' {
       email: string;
       session_id: number;
     };
+    clientIp: any;
   }
 }
 

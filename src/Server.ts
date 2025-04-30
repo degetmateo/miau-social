@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import path from 'path';
 import cors from 'cors';
 import Postgres from "./database/Postgres";
@@ -11,6 +11,7 @@ import followRouter from "./routes/followRouter";
 import adminRouter from "./routes/adminRouter";
 import tenorRouter from "./routes/tenorRouter";
 import sessionRouter from './routes/sessionRouter';
+const requestIp = require('request-ip');
 const cookieParser = require('cookie-parser');
 
 export default class Server {
@@ -35,7 +36,7 @@ export default class Server {
             this.port = port as number;
             this.app = express();
             this.app.set('port', this.port);
-
+            
             this.middlewares();
             this.database();
             this.routes();
@@ -48,6 +49,7 @@ export default class Server {
     private middlewares = () => {
         this.app.use('/public', express.static(path.join(__dirname + '/../public/')));
 
+        this.app.use(requestIp.mw());
         this.app.use(express.json());
         this.app.use(cookieParser());
         this.app.use(
