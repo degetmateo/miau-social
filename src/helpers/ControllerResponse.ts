@@ -11,7 +11,7 @@ export const SetRefreshToken = (res: Response, token: string) => {
         httpOnly: true,
         secure: process.env.PRODUCTION === "TRUE",
         sameSite: "strict",
-        maxAge: null
+        maxAge: 30 * 24 * 60 * 60 * 1000
     });
 };
 
