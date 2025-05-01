@@ -61,6 +61,7 @@ export default class Server {
 
         this.app.use((_, res, next) => {
             res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+            res.setHeader("Access-Control-Allow-Credentials", "true");
             // res.setHeader('Content-Security-Policy', `default-src 'self'; img-src 'self' data:; script-src 'self'; style 'self' 'unsafe-inline'; object-src 'none';`);
             next();
         });

@@ -42,8 +42,7 @@ export default async function RefreshToken (data: {
                 id: memberData.id,
                 username: memberData.username,
                 role: memberData.role,
-                email: memberData.email,
-                session_id: session.id
+                email: memberData.email
             }, "15m");
 
             response = ACCESS_TOKEN;

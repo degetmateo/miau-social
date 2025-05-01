@@ -92,8 +92,7 @@ export default async function Verify (data: {
                 id: member.id,
                 username: member.username,
                 role: member.role,
-                email: member.email,
-                session_id: session.id
+                email: member.email
             }, '15m');
 
             response = member;

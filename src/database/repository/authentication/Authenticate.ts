@@ -62,8 +62,7 @@ export default async function Authenticate (data: {
                 SET
                     token = ${REFRESH_TOKEN}
                 WHERE
-                    token = ${data.token} AND
-                    member_id = ${member.id}
+                    token = ${data.token}
                 RETURNING *;
             `)[0];
 
@@ -73,8 +72,7 @@ export default async function Authenticate (data: {
                 id: member.id,
                 username: member.username,
                 role: member.role,
-                email: member.email,
-                session_id: session.id
+                email: member.email
             }, "15m");
 
             response = member;
