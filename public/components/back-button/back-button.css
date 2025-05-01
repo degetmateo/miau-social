@@ -1,5 +1,4 @@
 back-button {
-    background-color: var(--primary-color);
     cursor: pointer;
     height: 50px;
     width: 50px;
@@ -9,7 +8,7 @@ back-button {
 }
 
 back-button:hover {
-    background-color: var(--hover-color);
+    filter: brightness(50%);
 }
 
 back-button span {

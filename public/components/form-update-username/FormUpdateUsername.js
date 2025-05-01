@@ -8,11 +8,13 @@ import ScreenSpinner from "../screen-spinner/ScreenSpinner.js";
 
 importCSS('/public/components/form-update-username/form-update-username.css');
 
-class FormUpdateUsername extends HTMLFormElement {
+class FormUpdateUsername extends HTMLElement {
     constructor () {
         super();
-        this.classList.add('form-update-username');
-        
+        this.form = document.createElement('form');
+        this.form.classList.add('form-update-username');
+        this.append(this.form);
+
         this.username = new Input({
             autocomplete: "on",
             type: "text",
@@ -22,11 +24,11 @@ class FormUpdateUsername extends HTMLFormElement {
             min: 1
         });
         this.username.container.classList.add('form-update-username-input');
-        this.append(this.username.render());
+        this.form.append(this.username.render());
 
         this.buttonContainer = document.createElement('div');
         this.buttonContainer.classList.add('form-update-username-button-container');
-        this.append(this.buttonContainer);
+        this.form.append(this.buttonContainer);
 
         this.button = document.createElement('button');
         this.button.type = 'submit';
@@ -62,5 +64,5 @@ class FormUpdateUsername extends HTMLFormElement {
     };
 };
 
-customElements.define('form-update-username', FormUpdateUsername, { extends: 'form' });
+customElements.define('form-update-username', FormUpdateUsername);
 export default FormUpdateUsername;

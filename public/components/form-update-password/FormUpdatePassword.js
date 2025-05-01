@@ -1,5 +1,4 @@
 import {importCSS} from "../../helpers.js";
-import router from "../../router.js";
 import {memberService} from "../../services/memberService.js";
 import Validators from "../../Validators.js";
 import Alert from "../alert/alert.js";
@@ -8,10 +7,12 @@ import ScreenSpinner from "../screen-spinner/ScreenSpinner.js";
 
 importCSS('/public/components/form-update-password/form-update-password.css');
 
-class FormUpdatePassword extends HTMLFormElement {
+class FormUpdatePassword extends HTMLElement {
     constructor () {
         super();
-        this.classList.add('form-update-password');
+        this.form = document.createElement('form');
+        this.form.classList.add('form-update-password');
+        this.append(this.form);
         
         this.actualPassword = new Input({
             autocomplete: "password",
@@ -22,7 +23,7 @@ class FormUpdatePassword extends HTMLFormElement {
             min: 0
         });
         this.actualPassword.container.classList.add('form-update-password-input');
-        this.append(this.actualPassword.render());
+        this.form.append(this.actualPassword.render());
 
         this.newPasword = new Input({
             autocomplete: "new-password",
@@ -34,7 +35,7 @@ class FormUpdatePassword extends HTMLFormElement {
         });
 
         this.newPasword.container.classList.add('form-update-password-input');
-        this.append(this.newPasword.render());
+        this.form.append(this.newPasword.render());
 
         this.confirmation = new Input({
             autocomplete: "new-password",
@@ -46,11 +47,11 @@ class FormUpdatePassword extends HTMLFormElement {
         });
 
         this.confirmation.container.classList.add('form-update-password-input');
-        this.append(this.confirmation.render());
+        this.form.append(this.confirmation.render());
 
         this.buttonContainer = document.createElement('div');
         this.buttonContainer.classList.add('form-update-password-button-container');
-        this.append(this.buttonContainer);
+        this.form.append(this.buttonContainer);
 
         this.button = document.createElement('button');
         this.button.type = 'submit';
@@ -96,5 +97,5 @@ class FormUpdatePassword extends HTMLFormElement {
     };
 };
 
-customElements.define('form-update-password', FormUpdatePassword, { extends: 'form' });
+customElements.define('form-update-password', FormUpdatePassword);
 export default FormUpdatePassword;
