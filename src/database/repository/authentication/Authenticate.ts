@@ -24,7 +24,7 @@ export default async function Authenticate (data: {
                     DELETE FROM session WHERE token = ${data.token}; 
                 `);
                 throw error;
-            }
+            };
 
             const member = (await transaction`
                 SELECT 

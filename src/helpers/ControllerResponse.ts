@@ -9,7 +9,8 @@ export const ResponseOk = (res: Response, statusCode: number, data: any) => {
 export const SetRefreshToken = (res: Response, token: string) => {
     res.cookie("refresh_token", token, {
         httpOnly: true,
-        secure: process.env.PRODUCTION === "TRUE",
+        secure: false,
+        // secure: process.env.PRODUCTION == "TRUE",
         sameSite: "lax",
         maxAge: 30 * 24 * 60 * 60 * 1000
     });
