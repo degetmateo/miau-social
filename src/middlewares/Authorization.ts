@@ -53,7 +53,7 @@ class Authorization {
 
     RefreshToken = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const token = req.cookies['refresh-token'];
+            const token = req.cookies['refresh_token'];
             if (!token) throw new UnauthorizedError("No estás autorizado.");
 
             const member = await JWT.Validate(token);

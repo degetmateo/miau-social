@@ -36,7 +36,7 @@ const updateUsername = async (req: Request, res: Response) => {
     try {
         const response = await memberService.updateUsername({
             member: req.member,
-            token: req.cookies["refresh-token"] as string,
+            token: req.cookies["refresh_token"] as string,
             username: req.body.username
         });
 
@@ -67,7 +67,7 @@ const updatePassword = async (req: Request, res: Response) => {
     try {
         const response = await memberService.updatePassword({
             member: req.member,
-            token: req.cookies["refresh-token"] as string,
+            token: req.cookies["refresh_token"] as string,
             password: req.body.password,
             new_password: req.body.new_password
         });

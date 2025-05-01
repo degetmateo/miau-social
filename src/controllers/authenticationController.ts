@@ -6,7 +6,7 @@ import { authenticationService } from "../services/authenticationService";
 const authenticate = async (req: Request, res: Response) => {
     try {
         const data = await authenticationService.authenticate({
-            token: req.cookies['refresh-token'] as string
+            token: req.cookies['refresh_token'] as string
         });
 
         SetRefreshToken(res, data.refresh_token);
@@ -21,7 +21,7 @@ const authenticate = async (req: Request, res: Response) => {
 const refreshToken = async (req: Request, res: Response) => {
     try {
         const data = await authenticationService.refreshToken({
-            token: req.cookies ? req.cookies['refresh-token'] as string : null
+            token: req.cookies['refresh_token'] as string
         });
 
         ResponseOk(res, RESPONSES.OK, data);
@@ -144,10 +144,10 @@ const recoverUsername = async (req: Request, res: Response) => {
 const logout = async (req: Request, res: Response) => {
     try {
         const data = await authenticationService.logout({
-            token: req.cookies['refresh-token'] as string
+            token: req.cookies['refresh_token'] as string
         });
 
-        res.clearCookie('refresh-token');
+        res.clearCookie('refresh_token');
         ResponseOk(res, RESPONSES.OK, data);
     } catch (error) {
         console.error(error);
