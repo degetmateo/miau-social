@@ -32,11 +32,10 @@ export default async function RefreshToken (data: {
                 FROM
                     session
                 WHERE
-                    token = ${data.token} AND
-                    member_id = ${memberData.id};
+                    token = ${data.token};
             `)[0];
 
-            if (!session) throw new UnauthorizedError("Expiró la sesión.", "EXPIRED_SESSION");
+            if (!session) throw new UnauthorizedError("Expiró la sesión.", "EXPIRED_SESSION_rf");
 
             const ACCESS_TOKEN = await JWT.Generate({
                 id: memberData.id,

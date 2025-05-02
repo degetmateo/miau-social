@@ -66,7 +66,7 @@ export default async function Authenticate (data: {
                 RETURNING *;
             `)[0];
 
-            if (!session) throw new UnauthorizedError("Expiró la sesión.", "EXPIRED_SESSION");
+            if (!session) throw new UnauthorizedError("Expiró la sesión.", "EXPIRED_SESSION_au");
 
             const ACCESS_TOKEN = await JWT.Generate({
                 id: member.id,
