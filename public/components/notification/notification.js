@@ -11,20 +11,7 @@ class Notification extends HTMLElement {
         this.data = data;
         this.classList.add('notification');
         if (this.data.status === 'pending') this.classList.add('notification-pending');
-
         this.isSelectingText = false;
-        this.onmousedown = () => {
-            this.isSelectingText = false;
-        };
-        this.onmousemove = () => {
-            this.isSelectingText = true;
-            this.classList.remove('notification-pending');
-        };
-        this.onmouseup = (e) => {
-            if (e.target.closest('.notification-icon')) return;
-            if (e.target.closest('.notification-name')) return;
-            if (!this.isSelectingText) return router.navigateTo(this.href);
-        };
 
         this.header = document.createElement('div');
         this.header.classList.add('notification-header');
@@ -98,14 +85,16 @@ class Notification extends HTMLElement {
                 this.content.classList.add('notification-content');
                 this.content.append(formatContent(this.data.target_post.content));
                 this.body.append(this.content);
-            }
+            };
 
             if (this.data.target_post.media) {
                 this.links = document.createElement('span');
                 this.links.classList.add('notification-links');
                 this.links.textContent = ' ' + this.data.target_post.media.join(' ');
                 this.body.append(this.links); 
-            }
+            };
+
+            this.SelectingText();
         };
 
         if (this.data.type === 'follow') {
@@ -113,11 +102,28 @@ class Notification extends HTMLElement {
 
             this.href = '/member/'+this.data.target_member.username;
             this.action.textContent = ' te siguió.';
+
+            this.SelectingText();
         };
     };
 
     getID () {
         return this.data.id;
+    };
+
+    SelectingText () {
+        this.onmousedown = () => {
+            this.isSelectingText = false;
+        };
+        this.onmousemove = () => {
+            this.isSelectingText = true;
+            this.classList.remove('notification-pending');
+        };
+        this.onmouseup = (e) => {
+            if (e.target.closest('.notification-icon')) return;
+            if (e.target.closest('.notification-name')) return;
+            if (!this.isSelectingText) return router.navigateTo(this.href);
+        };
     };
 };
 
