@@ -8,7 +8,7 @@ declare module 'express' {
       role: string;
       email: string;
     };
-    clientIp: any;
+    clientIp: string;
   }
 }
 

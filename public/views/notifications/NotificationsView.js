@@ -5,6 +5,9 @@ import EventsHandler from "../../modules/EventsHandler.js";
 import Notifier from "../../modules/Notifier.js";
 import {notificationService} from "../../services/notificationService.js";
 import AbstractView from "../AbstractView.js";
+import {importCSS} from "../../helpers.js";
+
+importCSS('/public/views/notifications/styles/notifications.css');
 
 export default class NotificationsView extends AbstractView {
     constructor () {
@@ -14,19 +17,19 @@ export default class NotificationsView extends AbstractView {
         this.scroll = 0;
         this.limit = 20;
         this.firstLoad = true;
-
         this.notifications = [];
-
+        this.observerId = 'notificationsView';
         this.unread = [];
         this.flag = false;
 
-        this.viewContainer = document.createElement('div');
-        this.viewContainer.classList.add('container-view', 'container-view-notifications');
+        EventsHandler.addObserver(this);
+
+        this.view = document.createElement('view');
+        this.view.classList.add('notifications-view');
 
         this.main = document.createElement('main');
-        this.main.classList.add('notifications-view-main');
-        this.container_notifications = document.createElement('div');
-        this.container_notifications.classList.add('container-notifications');
+        this.main.classList.add('notifications-main');
+        this.view.append(this.main);
 
         this.header = new Header({
             text: 'Notificaciones'
@@ -37,24 +40,19 @@ export default class NotificationsView extends AbstractView {
         };
         this.main.append(this.header);
 
-        this.main.appendChild(this.container_notifications);
-        this.viewContainer.appendChild(this.main);
-
-        this.observerId = 'notificationsView';
+        this.notificationsContainer = document.createElement('div');
+        this.notificationsContainer.classList.add('container-notifications');
+        this.main.append(this.notificationsContainer);
 
         this.eventScroll();
     }
 
     async init (params) {
         this.params = params;
-        this.clear();
         this.setTitle("Notificaciones");
 
-        EventsHandler.removeObserver(this);
-        EventsHandler.addObserver(this);
-
-        this.viewContainer.appendChild(window.app.nav.getNode());
-        this.appContainer.appendChild(this.viewContainer);
+        this.view.append(window.app.nav.getNode());
+        this.setView(this.view);
 
         if (this.firstLoad) {
             this.firstLoad = false;
@@ -72,15 +70,15 @@ export default class NotificationsView extends AbstractView {
  
     async CreateMain () {
         this.setScroll(0);
-        this.container_notifications.innerHTML = '';
+        this.notificationsContainer.innerHTML = '';
         
         const data = await notificationService.get({ offset: this.offset });
 
         for (const n of data) {
             const notification = new Notification(n);
             this.notifications.push(notification);
-            this.container_notifications.append(notification);
-            this.container_notifications.append(new Separator().render());
+            this.notificationsContainer.append(notification);
+            this.notificationsContainer.append(new Separator().render());
         }
 
         this.read();
@@ -105,8 +103,8 @@ export default class NotificationsView extends AbstractView {
                 for (const n of data) {
                     const notification = new Notification(n);
                     this.notifications.push(notification);
-                    this.container_notifications.append(notification);
-                    this.container_notifications.append(new Separator().render());
+                    this.notificationsContainer.append(notification);
+                    this.notificationsContainer.append(new Separator().render());
                 }
             }
         });
@@ -117,7 +115,8 @@ export default class NotificationsView extends AbstractView {
             const notification = new Notification(n);
             if (this.notifications.find(n => n.getID() === notification.getID())) return;
             this.notifications.push(notification);
-            this.container_notifications.prepend(notification);
+            this.notificationsContainer.prepend(new Separator().render());
+            this.notificationsContainer.prepend(notification);
         }
     }
 }

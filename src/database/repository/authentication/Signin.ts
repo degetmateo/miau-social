@@ -50,7 +50,7 @@ export default async function Signin (data: {
                 email: member.email
             }, "30d");
 
-            const session: any = (await transaction`
+            (await transaction`
                 INSERT INTO
                     session (
                         member_id,
@@ -67,7 +67,7 @@ export default async function Signin (data: {
                         ${REFRESH_TOKEN}
                     )
                 RETURNING *;
-            `)[0];
+            `);
 
             const ACCESS_TOKEN = await JWT.Generate({
                 id: member.id,

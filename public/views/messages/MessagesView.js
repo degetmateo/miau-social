@@ -1,4 +1,7 @@
+import {importCSS} from "../../helpers.js";
 import AbstractView from "../AbstractView.js";
+
+importCSS('/public/views/messages/styles/messages.css');
 
 export default class MessagesView extends AbstractView {
     constructor () {

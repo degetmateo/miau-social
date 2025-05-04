@@ -1,4 +1,4 @@
-.container-view-notifications {
+.notifications-view {
     display: grid;
     grid-template-columns: 1fr 700px 1fr;
     grid-template-rows: 1fr 1fr 1fr;
@@ -9,7 +9,7 @@
     height: 100%;
 }
 
-.notifications-view-main {
+.notifications-main {
     grid-area: main;
     overflow-y: scroll;
 
@@ -17,31 +17,14 @@
     border-left: 1px solid var(--border-color);
 }
 
-.notifications-main-header {
-    display: flex;
-    position: sticky;
-    top: 0;
-    width: 100%;
-    cursor: pointer;
-    min-height: 50px;
-    background-color: var(--primary-color--transparent);
-    color: #FFF;
-    border-bottom: 1px solid var(--border-color);
-    z-index: 1;
-
-    justify-content: center;
-    align-items: center;
-}
-
 .container-notifications {
     display: flex;
     flex-direction: column;
-
     min-height: 100%;
 }
 
 @media (max-width: 900px) {
-    .container-view-notifications {
+    .notifications-view {
         grid-template-columns: 1fr;
         grid-template-rows: 1fr 1fr 50px;
         grid-template-areas: 
@@ -50,7 +33,7 @@
             "nav nav nav";
     }
 
-    .notifications-view-main {
+    .notifications-main {
         border: none;
     }
 

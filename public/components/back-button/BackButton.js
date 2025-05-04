@@ -1,4 +1,5 @@
-import {importCSS} from "../../helpers.js";
+import { importCSS } from "../../helpers.js";
+
 importCSS('/public/components/back-button/back-button.css');
 
 class BackButton extends HTMLElement {

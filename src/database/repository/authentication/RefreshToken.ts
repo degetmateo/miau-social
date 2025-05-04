@@ -10,38 +10,34 @@ export default async function RefreshToken (data: {
     try {
         let response: any;
         await Postgres.query().begin(async transaction => {
-            let memberData: {
-                id: number;
-                username: string;
-                role: string;
-                email: string;
-            } = null;
+            let member: any;
 
             try {
-                memberData = await JWT.Validate(data.token);
+                member = await JWT.Validate(data.token);
             } catch (error) {
                 (await transaction`
                     DELETE FROM session WHERE token = ${data.token}; 
                 `);
-                throw error;
-            }
+                throw new UnauthorizedError();
+            };
 
-            const session: any = (await transaction`
+            const session = (await transaction`
                 SELECT
                     *
                 FROM
                     session
                 WHERE
+                    member_id = ${member.id} AND
                     token = ${data.token};
             `)[0];
 
             if (!session) throw new UnauthorizedError("Expiró la sesión.", "EXPIRED_SESSION_rf");
 
             const ACCESS_TOKEN = await JWT.Generate({
-                id: memberData.id,
-                username: memberData.username,
-                role: memberData.role,
-                email: memberData.email
+                id: member.id,
+                username: member.username,
+                role: member.role,
+                email: member.email
             }, "15m");
 
             response = ACCESS_TOKEN;

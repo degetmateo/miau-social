@@ -61,8 +61,16 @@ export default class Server {
 
         this.app.use((_, res, next) => {
             res.setHeader('X-Frame-Options', 'SAMEORIGIN');
-            res.setHeader("Access-Control-Allow-Credentials", "true");
-            // res.setHeader('Content-Security-Policy', `default-src 'self'; img-src 'self' data:; script-src 'self'; style 'self' 'unsafe-inline'; object-src 'none';`);
+            res.setHeader('Access-Control-Allow-Credentials', 'true');
+            res.setHeader('Content-Security-Policy',
+                "default-src 'self'; " +
+                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google.com https://www.gstatic.com social-miau.onrender.com http://localhost:4000; " +
+                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+                "font-src 'self' https://fonts.gstatic.com http://localhost:4000; " +
+                "img-src 'self' https://www.gstatic.com https://i.ibb.co https://media.tenor.com https://animesher.com data:; " +
+                "connect-src 'self'; " +
+                "frame-src https://www.google.com;"
+              );
             next();
         });
     }

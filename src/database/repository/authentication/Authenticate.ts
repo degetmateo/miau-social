@@ -23,7 +23,7 @@ export default async function Authenticate (data: {
                 (await transaction`
                     DELETE FROM session WHERE token = ${data.token}; 
                 `);
-                throw error;
+                throw new UnauthorizedError();
             };
 
             const member = (await transaction`
@@ -49,6 +49,18 @@ export default async function Authenticate (data: {
 
             if (!member) throw new UnauthorizedError("Ha ocurrido un error de autorización.");
  
+            const session = (await transaction`
+                SELECT
+                    id
+                FROM
+                    session
+                WHERE
+                    member_id = ${member.id} AND
+                    token = ${data.token};
+            `)[0];
+
+            if (!session) throw new UnauthorizedError("Expiró la sesión.", "EXPIRED_SESSION_au");
+
             const REFRESH_TOKEN = await JWT.Generate({
                 id: member.id,
                 username: member.username,
@@ -56,17 +68,14 @@ export default async function Authenticate (data: {
                 email: member.email
             }, "30d");
 
-            const session = (await transaction`
+            (await transaction`
                 UPDATE 
                     session
                 SET
                     token = ${REFRESH_TOKEN}
                 WHERE
-                    token = ${data.token}
-                RETURNING *;
-            `)[0];
-
-            if (!session) throw new UnauthorizedError("Expiró la sesión.", "EXPIRED_SESSION_au");
+                    id = ${session.id};
+            `);
 
             const ACCESS_TOKEN = await JWT.Generate({
                 id: member.id,

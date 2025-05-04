@@ -1,3 +1,7 @@
+import {importCSS} from "../../helpers.js";
+
+importCSS('/public/components/alert/alert.css');
+
 export default class Alert {
     constructor (message, options = {
         error: false,
