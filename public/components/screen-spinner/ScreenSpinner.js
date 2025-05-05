@@ -1,7 +1,4 @@
-import {importCSS} from "../../helpers.js";
 import SpinnerLoader from "../spinner-loader/SpinnerLoader.js";
-
-importCSS('/public/components/screen-spinner/styles/screen-spinner.css');
 
 export default class ScreenSpinner {
     constructor (data = {
