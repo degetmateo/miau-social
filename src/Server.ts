@@ -67,7 +67,7 @@ export default class Server {
                 "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google.com https://www.gstatic.com social-miau.onrender.com http://localhost:4000; " +
                 "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
                 "font-src 'self' https://fonts.gstatic.com http://localhost:4000; " +
-                "img-src 'self' https://www.gstatic.com https://i.ibb.co https://media.tenor.com https://animesher.com data:; " +
+                "img-src 'self' https://www.gstatic.com https://i.ibb.co https://media.tenor.com https://animesher.com https://pbs.twimg.com data:; " +
                 "connect-src 'self' https://www.google.com; " +
                 "frame-src https://www.google.com;"
               );

@@ -27,6 +27,7 @@ declare global {
         RECAPTCHA_KEY: string;
         MAILER_PASSWORD: string;
         MAILER_USER: string;
+        PRODUCTION: "TRUE" | "FALSE";
       }
     }
   }

@@ -37,7 +37,8 @@ const signin = async (data: {
 
     Validator.Ip(data.ip);
     Validator.Platform(data.platform);
-    await ReCaptcha.Verify(data.captcha_token);
+
+    if (process.env.PRODUCTION === "TRUE") await ReCaptcha.Verify(data.captcha_token);
 
     return await authenticationRepository.Signin(data);
 }
