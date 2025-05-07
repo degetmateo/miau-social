@@ -57,8 +57,25 @@
     justify-content: center;
 }
 
+.session-ip-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
 .session-ip {
     color: var(--font-color);
+}
+
+.session-ip-actual {
+    font-size: 12px;
+    border: 1px solid var(--font-color);
+    padding: 5px;
+    border-radius: 10px;
+    white-space: nowrap;
 }
 
 .session-platform {
@@ -66,11 +83,19 @@
     font-size: 14px;
 }
 
-.sessions-message {
+.sessions-button {
     box-sizing: border-box;
     width: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: start;
     align-items: center;
     padding: 20px;
+    cursor: pointer;
+
+    color: var(--danger-color);
 }
+
+.sessions-button:hover {
+    background-color: var(--danger-color);
+    color: var(--font-color);
+}   
