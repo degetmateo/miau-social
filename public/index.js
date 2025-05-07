@@ -6,6 +6,7 @@ import ScreenSpinner from "./components/screen-spinner/ScreenSpinner.js";
 import {authenticationService} from "./services/authenticationService.js";
 import Alert from "./components/alert/alert.js";
 import {sleep} from "./helpers.js";
+import Nav from "./components/nav/Nav.js";
 
 window.addEventListener("popstate", () => {
     router.resolve();
@@ -64,12 +65,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     loader.remove();
 });
 
-export const init = () => {
-    EventsHandler.clear();
-
-    window.app.nav = new Navigation();
-    EventsHandler.addObserver(window.app.nav);
-    
+export const init = () => {    
+    EventsHandler.addObserver(Nav);
+    Nav.set(window.app.member);
     EventsHandler.addObserver(Notifier);
     Notifier.initialize();
 }

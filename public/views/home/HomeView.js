@@ -1,4 +1,5 @@
 import Alert from "../../components/alert/alert.js";
+import Nav from "../../components/nav/Nav.js";
 import PostCreator from "../../components/post-creator/PostCreator.js";
 import Post from "../../components/post/Post.js";
 import Separator from "../../components/separator/Separator.js";
@@ -105,7 +106,7 @@ export default class extends AbstractView {
         this.params = params;
         this.setTitle('Inicio');
 
-        this.view.append(window.app.nav.getNode());
+        this.view.append(Nav);
 
         EventsHandler.removeObserver(this);
         EventsHandler.addObserver(this);

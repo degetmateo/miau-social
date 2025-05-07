@@ -8,6 +8,7 @@ import PostCreator from "../../components/post-creator/PostCreator.js";
 import PostsHandler from "../../modules/PostsHandler.js";
 import Separator from "../../components/separator/Separator.js";
 import Header from "../../components/header/Header.js";
+import Nav from "../../components/nav/Nav.js";
 
 importCSS('/public/views/comments/styles/comments.css');
 
@@ -60,7 +61,7 @@ export default class CommentsView extends AbstractView {
         this.setTitle("Respuestas");
         this.clear();
 
-        this.view.append(window.app.nav.getNode());
+        this.view.append(Nav);
         this.app.append(this.view);
 
         this.i = 0;

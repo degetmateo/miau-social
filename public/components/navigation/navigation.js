@@ -48,21 +48,12 @@ export default class Navigation extends Observer {
         this.nav.classList.add('nav');
         this.buttons = new Array();
         this.observerId = 'navigation';
-
         this.CreateButtons();
     }
 
-    render (element) {
-        element.append(this.nav);
+    render () {
+        return this.nav;
     }
-
-    // update = () => {
-    //     this.homeButton.remove();
-    //     this.profileButton.remove();
-    //     this.notificationsButton.remove();
-    //     this.settingsButton.remove();
-    //     this.CreateButtons();
-    // }
 
     CreateButtons = () => {
         this.homeButton = this.CreateButton({ text: 'Inicio', icon_on: HOME_IMAGE_ON, icon_off: HOME_IMAGE_OFF, href: '/home' });
@@ -79,7 +70,6 @@ export default class Navigation extends Observer {
     CreateButton ({ text, icon_on, icon_off, href }) {
         const button = document.createElement('a');
         button.classList.add('nav-button');
-        button.setAttribute('data-link', '');
         button.href = href;
 
         const buttonText = document.createElement('span');
@@ -118,7 +108,7 @@ export default class Navigation extends Observer {
             return text;
         }
 
-        this.nav.appendChild(button);
+        this.nav.append(button);
         this.buttons.push(button);
         return button;
     }
@@ -126,7 +116,6 @@ export default class Navigation extends Observer {
     CreateNotificationsButton = () => {
         const button = document.createElement('a');
         button.classList.add('nav-button');
-        button.setAttribute('data-link', '');
         button.href = '/notifications';
 
         const iconContainer = document.createElement('div');
@@ -185,7 +174,7 @@ export default class Navigation extends Observer {
             return button.href;
         }
 
-        this.nav.appendChild(button);
+        this.nav.append(button);
         this.buttons.push(button);
         return button;
     }

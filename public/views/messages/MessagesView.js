@@ -1,3 +1,4 @@
+import Nav from "../../components/nav/Nav.js";
 import {importCSS} from "../../helpers.js";
 import AbstractView from "../AbstractView.js";
 
@@ -16,7 +17,7 @@ export default class MessagesView extends AbstractView {
         this.viewContainer.classList.add('container-view', 'container-view-messages');
         this.appContainer.appendChild(this.viewContainer);
 
-        this.viewContainer.appendChild(window.app.nav.getNode());
+        this.viewContainer.appendChild(Nav);
         this.CreateMain();
     }
 

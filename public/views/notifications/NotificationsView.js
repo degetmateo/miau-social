@@ -6,6 +6,7 @@ import Notifier from "../../modules/Notifier.js";
 import {notificationService} from "../../services/notificationService.js";
 import AbstractView from "../AbstractView.js";
 import {importCSS} from "../../helpers.js";
+import Nav from "../../components/nav/Nav.js";
 
 importCSS('/public/views/notifications/styles/notifications.css');
 
@@ -51,7 +52,7 @@ export default class NotificationsView extends AbstractView {
         this.params = params;
         this.setTitle("Notificaciones");
 
-        this.view.append(window.app.nav.getNode());
+        this.view.append(Nav);
         this.setView(this.view);
 
         if (this.firstLoad) {

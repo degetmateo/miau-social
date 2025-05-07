@@ -1,5 +1,6 @@
 import FormUpdateUsername from "../../components/form-update-username/FormUpdateUsername.js";
 import Header from "../../components/header/Header.js";
+import Nav from "../../components/nav/Nav.js";
 import Separator from "../../components/separator/Separator.js";
 import Tab from "../../components/tab/Tab.js";
 import {importCSS} from "../../helpers.js";
@@ -38,7 +39,7 @@ export default class AccountView extends AbstractView {
     };
 
     init () {
-        this.view.append(window.app.nav.getNode());
+        this.view.append(Nav);
         this.setTitle('Configurá tu cuenta');
         this.setView(this.view);
     };

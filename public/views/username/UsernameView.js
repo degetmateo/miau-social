@@ -1,5 +1,6 @@
 import FormUpdateUsername from "../../components/form-update-username/FormUpdateUsername.js";
 import Header from "../../components/header/Header.js";
+import Nav from "../../components/nav/Nav.js";
 import Separator from "../../components/separator/Separator.js";
 import {importCSS} from "../../helpers.js";
 import AbstractView from "../AbstractView.js";
@@ -35,7 +36,7 @@ export default class UsernameView extends AbstractView {
     };
 
     init () {
-        this.view.append(window.app.nav.getNode());
+        this.view.append(Nav);
         this.setTitle('Configurá tu nombre de usuario');
         this.setView(this.view);
         this.formUsername.username.set(window.app.member.username);

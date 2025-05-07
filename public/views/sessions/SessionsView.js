@@ -1,4 +1,5 @@
 import Header from "../../components/header/Header.js";
+import Nav from "../../components/nav/Nav.js";
 import ScreenSpinner from "../../components/screen-spinner/ScreenSpinner.js";
 import Separator from "../../components/separator/Separator.js";
 import Tab from "../../components/tab/Tab.js";
@@ -39,7 +40,7 @@ export default class SessionsView extends AbstractView {
     };
 
     async init () {
-        this.view.append(window.app.nav.getNode());
+        this.view.append(Nav);
         this.setTitle('Sesiones');
         this.setView(this.view);
 

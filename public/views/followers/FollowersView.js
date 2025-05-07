@@ -1,5 +1,6 @@
 import Alert from "../../components/alert/alert.js";
 import Header from "../../components/header/Header.js";
+import Nav from "../../components/nav/Nav.js";
 import {URL_NO_IMAGE} from "../../consts.js";
 import {importCSS, Scroll} from "../../helpers.js";
 import router from "../../router.js";
@@ -43,7 +44,7 @@ export default class extends AbstractView {
         this.content.innerHTML = '';
         this.clear();
         
-        this.view.append(window.app.nav.getNode());
+        this.view.append(Nav);
         this.appContainer.append(this.view);
 
         this.i = 0;

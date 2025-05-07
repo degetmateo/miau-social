@@ -1,5 +1,6 @@
 import FormUpdatePassword from "../../components/form-update-password/FormUpdatePassword.js";
 import Header from "../../components/header/Header.js";
+import Nav from "../../components/nav/Nav.js";
 import Separator from "../../components/separator/Separator.js";
 import Tab from "../../components/tab/Tab.js";
 import {importCSS} from "../../helpers.js";
@@ -41,6 +42,6 @@ export default class SecurityView extends AbstractView {
     init () {
         this.setTitle('Seguridad de la Cuenta');
         this.setView(this.view);
-        this.view.append(window.app.nav.getNode());
+        this.view.append(Nav);
     };
 };

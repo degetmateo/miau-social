@@ -9,4 +9,5 @@ export default class Observer {
     async onEscape () {}
     async onEnter () {}
     async onNotification () {}
+    async onPathnameChange () {}
 }

@@ -8,6 +8,7 @@ import {authenticationService} from '../../services/authenticationService.js';
 import Alert from '../../components/alert/alert.js';
 import EventsHandler from '../../modules/EventsHandler.js';
 import Tab from '../../components/tab/Tab.js';
+import Nav from '../../components/nav/Nav.js';
 
 importCSS('/public/views/settings/styles/settings.css');
 
@@ -77,6 +78,6 @@ export default class extends AbstractView {
         this.params = params;
         this.setTitle('Configuración');
         this.setView(this.view);
-        this.view.append(window.app.nav.getNode());
+        this.view.append(Nav);
     };
 };

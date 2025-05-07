@@ -1,4 +1,5 @@
 import Alert from "../components/alert/alert.js";
+import Nav from "../components/nav/Nav.js";
 import router from "../router.js";
 import AbstractView from "./AbstractView.js";
 
@@ -14,7 +15,7 @@ export default class extends AbstractView {
         if (window.app.member.role != 'admin') return router.navigateTo('/home');
         const appContainer = document.getElementById('app');
         appContainer.innerHTML = VIEW_CONTENT;
-        document.getElementById('container-view').appendChild(window.app.nav.getNode());
+        document.getElementById('container-view').appendChild(Nav);
         this.events();
     }
 

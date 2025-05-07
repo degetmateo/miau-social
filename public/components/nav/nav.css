@@ -1,0 +1,27 @@
+.nav {
+    grid-area: nav;
+
+    display: flex;
+    justify-content: center;
+}
+
+.nav-buttons {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+@media (max-width: 900px) {
+    .nav {
+        justify-content: unset;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .nav-buttons {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 0;
+    }
+}

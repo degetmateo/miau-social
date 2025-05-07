@@ -1,5 +1,6 @@
 import Alert from "../../components/alert/alert.js";
 import Header from "../../components/header/Header.js";
+import Nav from "../../components/nav/Nav.js";
 import PostsContainer from "../../components/posts-container/PostsContainer.js";
 import Profile from "../../components/profile/Profile.js";
 import {Scroll} from "../../helpers.js";
@@ -44,7 +45,7 @@ export default class extends AbstractView {
         this.setTitle(this.params.username);
         this.clear();
 
-        this.view.appendChild(window.app.nav.getNode());
+        this.view.append(Nav);
         this.appContainer.append(this.view);
 
         this.header.text.textContent = '';

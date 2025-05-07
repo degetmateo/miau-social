@@ -25,7 +25,7 @@ import SessionsView from "./views/sessions/SessionsView.js";
 class Router {
     constructor () {
         this.router = new Navigo("/", { hash: true });
-        this.history = [];
+        this.event = new Event('pathnamechange');
 
         this.views = {
             error: new ErrorView(),
@@ -86,12 +86,14 @@ class Router {
     navigateTo = (url) => {
         if (url == window.location.pathname) return;
         window.history.pushState(null, null, url);
+        window.dispatchEvent(this.event);
         this.resolve();
     };
 
     replace = (url) => {
         if (url == window.location.pathname) return;
         window.history.replaceState(null, null, url);
+        window.dispatchEvent(this.event);
         this.resolve();
     };
 

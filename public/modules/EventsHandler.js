@@ -3,6 +3,7 @@ class EventsHandler {
         this.observers = new Array();
         this.onVisibilityChange();
         this.onKeyDown();
+        this.onPathnameChange();
     }
 
     addObserver (observer) {
@@ -20,14 +21,14 @@ class EventsHandler {
 
     onNotification (unread) {
         for (const observer of this.observers) {
-            observer.onNotification(unread);
+            if (observer.onNotification) observer.onNotification(unread);
         }
     }
 
     onVisibilityChange () {
         document.onvisibilitychange = () => {
             for (const observer of this.observers) {
-                observer.onVisibilityChange();
+                if (observer.onVisibilityChange) observer.onVisibilityChange();
             }
         }
     }
@@ -36,16 +37,30 @@ class EventsHandler {
         document.onkeydown = (e) => {
             if (e.code === 'Escape') {
                 for (const observer of this.observers) {
-                    observer.onEscape();
+                    if (observer.onEscape) observer.onEscape();
                 }
             }
 
             if (e.code === 'Enter') {
                 for (const observer of this.observers) {
-                    observer.onEnter();
+                    if (observer.onEnter) observer.onEnter();
                 }
             }
         }
+    }
+
+    onPathnameChange () {
+        window.addEventListener('pathnamechange', () => {
+            for (const observer of this.observers) {
+                if (observer.onPathnameChange) observer.onPathnameChange();
+            }
+        });
+
+        window.onpopstate = () => {
+            for (const observer of this.observers) {
+                if (observer.onPathnameChange) observer.onPathnameChange();
+            }
+        };
     }
 }
 
