@@ -64,6 +64,15 @@
         align-items: center;
         justify-content: center;
     }
+
+    .nav-button:hover {
+        background-color: var(--primary-color);
+    }
+
+    .nav-button:active {
+        background-color: var(--primary-color);
+    }
+    
     .nav-button-text {
         display: none;
     }
