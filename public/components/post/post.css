@@ -20,6 +20,16 @@
     background-color: var(--hover-color);
 }
 
+@media (max-width: 900px) {
+    .post:hover {
+        background-color: unset;
+    }
+    
+    .post:active {
+        background-color: var(--hover-color);
+    }
+}
+
 .post-header {
     display: flex;
     flex-direction: row;

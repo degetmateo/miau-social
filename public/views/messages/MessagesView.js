@@ -7,26 +7,13 @@ importCSS('/public/views/messages/styles/messages.css');
 export default class MessagesView extends AbstractView {
     constructor () {
         super();
+        this.view = document.createElement('view');
+        this.view.classList.add('messages-view');
     }
 
-    async init (params) {
-        this.params = params;
-        this.clear();
-        this.setTitle("Mensajes")
-        this.viewContainer = document.createElement('div');
-        this.viewContainer.classList.add('container-view', 'container-view-messages');
-        this.appContainer.appendChild(this.viewContainer);
-
-        this.viewContainer.appendChild(Nav);
-        this.CreateMain();
-    }
-
-    CreateMain () {
-        this.main = document.createElement('main');
-        this.main.classList.add('comments-view-main');
-        this.main.innerHTML = `
-            <p style="padding: 10px; text-align: center; font-size: 20px;">Under development.</p>
-        `;
-        this.viewContainer.appendChild(this.main);
+    init () {    
+        this.setTitle("Mensajes");
+        this.setView(this.view);
+        this.view.append(Nav);
     }
 }

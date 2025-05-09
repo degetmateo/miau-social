@@ -13,6 +13,12 @@ class FormUpdatePassword extends HTMLElement {
         this.form = document.createElement('form');
         this.form.classList.add('form-update-password');
         this.append(this.form);
+
+        this.username = document.createElement('input');
+        this.username.type = 'text';
+        this.username.autocomplete = 'username';
+        this.username.hidden = true;
+        this.form.append(this.username);
         
         this.actualPassword = new Input({
             autocomplete: "password",

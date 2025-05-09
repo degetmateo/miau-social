@@ -54,6 +54,9 @@ class Notification extends HTMLElement {
 
             this.post = new Post(this.data.target_post);
             this.body.append(this.post.render());
+            this.body.onmousemove = () => {
+                this.classList.remove('notification-pending');
+            }
         };
 
         if (this.data.type === 'reply') {
@@ -68,6 +71,9 @@ class Notification extends HTMLElement {
 
             this.post = new Post(this.data.target_post);
             this.body.append(this.post.render());
+            this.body.onmousemove = () => {
+                this.classList.remove('notification-pending');
+            }
         };
 
         if (this.data.type === 'upvote') {
@@ -116,6 +122,7 @@ class Notification extends HTMLElement {
             this.isSelectingText = false;
         };
         this.onmousemove = () => {
+            console.log('mouse move')
             this.isSelectingText = true;
             this.classList.remove('notification-pending');
         };

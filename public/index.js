@@ -1,4 +1,3 @@
-import Navigation from "./components/navigation/navigation.js";
 import Notifier from "./modules/Notifier.js";
 import EventsHandler from "./modules/EventsHandler.js";
 import router from "./router.js";
@@ -13,18 +12,7 @@ window.addEventListener("popstate", () => {
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // document.body.addEventListener("click", (e) => {
-    //     e.stopPropagation();
-    //     const linkElement = e.target.closest("[data-link]");
-        
-    //     if (linkElement) {
-    //         e.preventDefault();
-    //         router.navigateTo(linkElement.getAttribute('data-url') || linkElement.href || linkElement.getAttribute('href'));
-    //     };
-    // });
-
     const loader = new ScreenSpinner({ opaque: true });
-    await sleep(1000);
 
     if (router.getPathname() === '/verify') {
         router.resolve();
@@ -65,7 +53,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     loader.remove();
 });
 
-export const init = () => {    
+export const init = () => {
+    router.reset();
+    
     EventsHandler.addObserver(Nav);
     Nav.set(window.app.member);
     EventsHandler.addObserver(Notifier);

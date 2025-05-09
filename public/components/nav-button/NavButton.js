@@ -59,12 +59,14 @@ class NavButton extends HTMLElement {
         this.icon.innerHTML = '';
         this.icon.append(this.counter);
         this.icon.append(this.iconOn);
+        this.text.classList.add('nav-button-text-active');
     };
 
     off () {
         this.icon.innerHTML = '';
         this.icon.append(this.counter);
         this.icon.append(this.iconOff);
+        this.text.classList.remove('nav-button-text-active');
     };
 
     setPathname (pathname) {

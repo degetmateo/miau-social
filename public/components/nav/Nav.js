@@ -20,6 +20,14 @@ class Nav extends HTMLElement {
         });
         this.buttons.append(this.buttonHome);
 
+        this.buttonExplore = new NavButton({
+            pathname: '/explore',
+            text: 'Explorar',
+            icon_on: '/public/assets/nav/explore-on.png',
+            icon_off: '/public/assets/nav/explore-off.png',
+        });
+        // this.buttons.append(this.buttonExplore);
+
         this.buttonProfile = new NavButton({
             pathname: '/member',
             text: 'Perfil',
@@ -39,6 +47,14 @@ class Nav extends HTMLElement {
         });
         this.buttons.append(this.buttonNotifications);
 
+        this.buttonMessages = new NavButton({
+            pathname: '/messages',
+            text: 'Mensajes',
+            icon_on: '/public/assets/nav/messages-on.svg',
+            icon_off: '/public/assets/nav/messages-off.svg'
+        });
+        // this.buttons.append(this.buttonMessages);
+
         this.buttonSettings = new NavButton({
             pathname: '/settings',
             text: 'Configuración',
@@ -56,8 +72,10 @@ class Nav extends HTMLElement {
 
     onPathnameChange () {
         this.buttonHome.update();
+        this.buttonExplore.update();
         this.buttonProfile.update();
         this.buttonNotifications.update();
+        this.buttonMessages.update();
         this.buttonSettings.update();
     };
 

@@ -21,6 +21,7 @@ import SecurityView from "./views/security/SecurityView.js";
 import UsernameView from "./views/username/UsernameView.js";
 import PasswordView from "./views/password/PasswordView.js";
 import SessionsView from "./views/sessions/SessionsView.js";
+import ExploreView from "./views/explore/ExploreView.js";
 
 class Router {
     constructor () {
@@ -50,12 +51,14 @@ class Router {
             security: new SecurityView(),
             username: new UsernameView(),
             password: new PasswordView(),
-            sessions: new SessionsView()
+            sessions: new SessionsView(),
+            explore: new ExploreView()
         };
 
         this.router
             .on("/", () => this.views.landing.init())
             .on("/home", () => this.views.home.init())
+            .on("/explore", () => this.views.explore.init())
             .on("/settings", () => this.views.settings.init())
             .on("/settings/account", () => this.views.account.init())
             .on("/settings/account/username", () => this.views.username.init())
@@ -78,6 +81,35 @@ class Router {
             .on("/recovery/reset-password", ({ data, params }) => this.views.resetPassword.init(data, params))
             .notFound(() => this.views.error.init());
     }
+
+    reset = () => {
+        this.views = {
+            error: new ErrorView(),
+            landing: new LandingView(),
+            verify: new VerifyView(),
+            home: new HomeView(),
+            settings: new SettingsView(),
+            notifications: new NotificationsView(),
+            messages: new MessagesView(),
+            member: new MemberView(),
+            followed: new FollowedView(),
+            followers: new FollowersView(),
+            admin: new AdminView(),
+            post: new CommentsView(),
+            signup: new SignupView(),
+            signin: new SigninView(),
+            activate: new ActivateView(),
+            recoverPassword: new RecoverPasswordView(),
+            recoverUsername: new RecoverUsernameView(),
+            resetPassword: new ResetPasswordView(),
+            account: new AccountView(),
+            security: new SecurityView(),
+            username: new UsernameView(),
+            password: new PasswordView(),
+            sessions: new SessionsView(),
+            explore: new ExploreView()
+        };
+    };
 
     resolve = () => {
         this.router.resolve();

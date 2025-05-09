@@ -20,7 +20,7 @@
 }
 
 .notification-pending {
-    background-color: var(--hover-color);
+    background-color: rgb(21, 49, 64);
 }
 
 .notification-header {

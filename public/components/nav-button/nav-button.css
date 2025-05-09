@@ -57,6 +57,10 @@
     font-size: 14px;
 }
 
+.nav-button-text-active {
+    font-weight: bolder;
+}
+
 @media (max-width: 900px) {
     .nav-button {
         width: 100%;
