@@ -9,11 +9,14 @@ export default class MessagesView extends AbstractView {
         super();
         this.view = document.createElement('view');
         this.view.classList.add('messages-view');
+
+        this.nav = document.createElement('div');
+        this.view.append(this.nav);
     }
 
     init () {    
         this.setTitle("Mensajes");
         this.setView(this.view);
-        this.view.append(Nav);
+        this.nav.append(Nav);
     }
 }

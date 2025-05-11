@@ -19,6 +19,9 @@ export default class CommentsView extends AbstractView {
         this.view = document.createElement('div');
         this.view.classList.add('comments-view');
 
+        this.nav = document.createElement('div');
+        this.view.append(this.nav);
+
         this.main = document.createElement('main');
         this.main.classList.add('comments-main');
         this.view.append(this.main);
@@ -59,10 +62,8 @@ export default class CommentsView extends AbstractView {
     async init (params) {
         this.params = params;
         this.setTitle("Respuestas");
-        this.clear();
-
-        this.view.append(Nav);
-        this.app.append(this.view);
+        this.setView(this.view);
+        this.nav.append(Nav);
 
         this.i = 0;
         let found = false;
@@ -176,7 +177,7 @@ export default class CommentsView extends AbstractView {
         this.creator.render(this.replyCreatorContainer);
 
         Scroll({
-            element: this.main,
+            element: this.view,
             top: () => {
                 this.loadThread();
             },
@@ -200,7 +201,7 @@ export default class CommentsView extends AbstractView {
         const thread = await postService.getThread({ id: this.params.id_post, offset: this.posts[this.i].thread.offset });
 
         threadLoader.remove();
-s
+
         if (this.posts[this.i]) this.posts[this.i].thread.offset += 10;
 
         if (thread.length <= 0) {
@@ -218,6 +219,7 @@ s
     }
 
     async loadReplies () {
+        console.log('test')
         if (this.cooldown) return;
         this.activateCooldown();
 

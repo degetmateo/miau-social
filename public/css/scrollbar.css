@@ -1,6 +1,6 @@
 /* BASICOS */
 ::-webkit-scrollbar {
-    width: 8px;
+    width: 12px;
 }
 
 /* FONDO */
@@ -14,7 +14,6 @@
     /* background: #bbbbbb; */
     /* border-radius: 6px; */
     border: 1px solid var(--border-color);
-    border-left: 2px solid var(--border-color);
     background-color: var(--primary-color);
     /* cursor: pointer; */
 }

@@ -15,6 +15,9 @@ export default class PasswordView extends AbstractView {
         this.view = document.createElement('view');
         this.view.classList.add('password-view');
 
+        this.nav = document.createElement('div');
+        this.view.append(this.nav);
+
         this.main = document.createElement('main');
         this.main.classList.add('password-main');
         this.view.append(this.main);
@@ -39,7 +42,7 @@ export default class PasswordView extends AbstractView {
     };
 
     init () {
-        this.view.append(Nav);
+        this.nav.append(Nav);
         this.setTitle('Contraseña');
         this.setView(this.view);
     };

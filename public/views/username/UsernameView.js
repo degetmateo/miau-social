@@ -14,6 +14,9 @@ export default class UsernameView extends AbstractView {
         this.view = document.createElement('view');
         this.view.classList.add('username-view');
 
+        this.nav = document.createElement('div');
+        this.view.append(this.nav);
+
         this.main = document.createElement('main');
         this.main.classList.add('username-main');
         this.view.append(this.main);
@@ -36,7 +39,7 @@ export default class UsernameView extends AbstractView {
     };
 
     init () {
-        this.view.append(Nav);
+        this.nav.append(Nav);
         this.setTitle('Configurá tu nombre de usuario');
         this.setView(this.view);
         this.formUsername.username.set(window.app.member.username);

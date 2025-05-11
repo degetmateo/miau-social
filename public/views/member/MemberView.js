@@ -3,6 +3,7 @@ import Header from "../../components/header/Header.js";
 import Nav from "../../components/nav/Nav.js";
 import PostsContainer from "../../components/posts-container/PostsContainer.js";
 import Profile from "../../components/profile/Profile.js";
+import Spinner from "../../components/spinner/Spinner.js";
 import {Scroll} from "../../helpers.js";
 import {memberService} from "../../services/memberService.js";
 import {postService} from "../../services/postService.js";
@@ -15,14 +16,19 @@ export default class extends AbstractView {
         
         this.members = [];
         this.cooldown = true;
+        this.fetching = false;
+        this.spinner = new Spinner();
 
         this.view = document.createElement('div');
         this.view.classList.add('member-view');
         
+        this.nav = document.createElement('nav');
+        this.view.append(this.nav);
+
         this.main = document.createElement('div');
         this.main.classList.add('member-main');
 
-        this.view.appendChild(this.main);
+        this.view.append(this.main);
 
         this.header = new Header({
             text: ''
@@ -37,21 +43,42 @@ export default class extends AbstractView {
         this.main.append(this.profile);
 
         this.posts = document.createElement('div');
-        this.main.appendChild(this.posts);
+        this.main.append(this.posts);
+
+        Scroll({
+            element: this.view,
+            scroll: (scroll) => {
+                this.members[this.i].scroll = scroll;
+            },
+            bottom: async () => {
+                if (this.fetching) return;
+                this.fetching = true;
+                this.main.append(this.spinner);
+                this.members[this.i].offset += 20;
+                let posts;
+                try {
+                    posts = await postService.get({ username: this.params.username, offset: this.members[this.i].offset });
+                } catch (error) {
+                    return new Alert(error.message);
+                }
+                this.members[this.i].posts.renderPosts(posts);
+                this.spinner.remove();
+                this.fetching = false;
+            }
+        });
     }
     
     async init (params) {
         this.params = params;
         this.setTitle(this.params.username);
-        this.clear();
-
-        this.view.append(Nav);
-        this.appContainer.append(this.view);
+        this.setView(this.view);        
+        this.nav.append(Nav);
 
         this.header.text.textContent = '';
         this.profile.innerHTML = '';
         this.posts.innerHTML = '';
 
+        this.main.append(this.spinner);
         this.i = 0;
         let found = false;
         for (this.i = 0; this.i < this.members.length; this.i++) {
@@ -119,26 +146,10 @@ export default class extends AbstractView {
             } catch (error) {
                 return new Alert(error.message);
             }
+            this.spinner.remove();
             this.members[this.i].posts.renderPosts(posts);
             this.posts.append(this.members[this.i].posts.render());
         }
-
-        Scroll({
-            element: this.main,
-            scroll: (scroll) => {
-                this.members[this.i].scroll = scroll;
-            },
-            bottom: async () => {
-                this.members[this.i].offset += 20;
-                let posts;
-                try {
-                    posts = await postService.get({ username: this.params.username, offset: this.members[this.i].offset });
-                } catch (error) {
-                    return new Alert(error.message);
-                }
-                this.members[this.i].posts.renderPosts(posts);
-            }
-        });
     }
 
     setScroll (scroll) {

@@ -19,6 +19,9 @@ export default class extends AbstractView {
         this.view = document.createElement('view');
         this.view.classList.add('settings-view');
 
+        this.nav = document.createElement('div');
+        this.view.append(this.nav);
+
         this.main = document.createElement('main');
         this.main.classList.add('settings-main');
         this.view.append(this.main);
@@ -78,6 +81,6 @@ export default class extends AbstractView {
         this.params = params;
         this.setTitle('Configuración');
         this.setView(this.view);
-        this.view.append(Nav);
+        this.nav.append(Nav);
     };
 };

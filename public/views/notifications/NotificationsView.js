@@ -5,8 +5,9 @@ import EventsHandler from "../../modules/EventsHandler.js";
 import Notifier from "../../modules/Notifier.js";
 import {notificationService} from "../../services/notificationService.js";
 import AbstractView from "../AbstractView.js";
-import {importCSS} from "../../helpers.js";
+import {importCSS, Scroll} from "../../helpers.js";
 import Nav from "../../components/nav/Nav.js";
+import Spinner from "../../components/spinner/Spinner.js";
 
 importCSS('/public/views/notifications/styles/notifications.css');
 
@@ -22,11 +23,16 @@ export default class NotificationsView extends AbstractView {
         this.observerId = 'notificationsView';
         this.unread = [];
         this.flag = false;
+        this.fetching = false;
+        this.spinner = new Spinner();
 
         EventsHandler.addObserver(this);
 
         this.view = document.createElement('view');
         this.view.classList.add('notifications-view');
+
+        this.nav = document.createElement('div');
+        this.view.append(this.nav);
 
         this.main = document.createElement('main');
         this.main.classList.add('notifications-main');
@@ -45,14 +51,35 @@ export default class NotificationsView extends AbstractView {
         this.notificationsContainer.classList.add('container-notifications');
         this.main.append(this.notificationsContainer);
 
-        this.eventScroll();
+        Scroll({
+            element: this.view,
+            scroll: (scroll) => {
+                this.scroll = scroll;
+            },
+            bottom: async () => {
+                if (this.fetching) return;
+                this.fetching = true;
+                this.main.append(this.spinner);
+                this.offset += this.limit;
+                const data = await notificationService.get({ offset: this.offset });
+                
+                for (const n of data) {
+                    const notification = new Notification(n);
+                    this.notifications.push(notification);
+                    this.notificationsContainer.append(notification);
+                    this.notificationsContainer.append(new Separator().render());
+                }
+                this.spinner.remove();
+                this.fetching = false;
+            }
+        });
     }
 
     async init (params) {
         this.params = params;
         this.setTitle("Notificaciones");
 
-        this.view.append(Nav);
+        this.nav.append(Nav);
         this.setView(this.view);
 
         if (this.firstLoad) {
@@ -73,6 +100,8 @@ export default class NotificationsView extends AbstractView {
         this.setScroll(0);
         this.notificationsContainer.innerHTML = '';
         
+        this.main.append(this.spinner);
+
         const data = await notificationService.get({ offset: this.offset });
 
         for (const n of data) {
@@ -81,34 +110,13 @@ export default class NotificationsView extends AbstractView {
             this.notificationsContainer.append(notification);
             this.notificationsContainer.append(new Separator().render());
         }
-
+        this.spinner.remove();
         this.read();
     }
 
     async read () {
         Notifier.setRead();
         await notificationService.read();
-    }
-
-    eventScroll () {
-        this.main.addEventListener('scroll', async () => {
-            const scrollHeight = this.main.scrollHeight;
-            const clientHeight = this.main.clientHeight;
-            this.scroll = this.main.scrollTop;
-            const umbral = 1;
-
-            if (this.scroll + clientHeight >= scrollHeight - umbral) {
-                this.offset += this.limit;
-                const data = await notificationService.get({ offset: this.offset });
-                
-                for (const n of data) {
-                    const notification = new Notification(n);
-                    this.notifications.push(notification);
-                    this.notificationsContainer.append(notification);
-                    this.notificationsContainer.append(new Separator().render());
-                }
-            }
-        });
     }
 
     onNotification = (unread) => {

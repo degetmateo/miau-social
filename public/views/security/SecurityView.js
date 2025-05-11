@@ -15,6 +15,9 @@ export default class SecurityView extends AbstractView {
         this.view = document.createElement('view');
         this.view.classList.add('security-view');
 
+        this.nav = document.createElement('div');
+        this.view.append(this.nav);
+
         this.main = document.createElement('main');
         this.main.classList.add('security-main');
         this.view.append(this.main);
@@ -42,6 +45,6 @@ export default class SecurityView extends AbstractView {
     init () {
         this.setTitle('Seguridad de la Cuenta');
         this.setView(this.view);
-        this.view.append(Nav);
+        this.nav.append(Nav);
     };
 };

@@ -68,7 +68,7 @@ export default class Server {
                 "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
                 "font-src 'self' https://fonts.gstatic.com http://localhost:4000; " +
                 "img-src 'self' https://www.gstatic.com https://i.ibb.co https://media.tenor.com https://animesher.com https://pbs.twimg.com data:; " +
-                "connect-src 'self' https://www.google.com; " +
+                "connect-src 'self' https://www.google.com data:; " +
                 "frame-src https://www.google.com;"
               );
             next();

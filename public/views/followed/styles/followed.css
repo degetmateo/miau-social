@@ -1,36 +1,30 @@
 .view-followed {
-    display: grid;
-    grid-template-columns: 1fr 700px 1fr;
-    grid-template-rows: 1fr 1fr 1fr;
-    grid-template-areas: 
-        "nav main aside"
-        "nav main aside"
-        "nav main aside";
-
     width: 100%;
     height: 100%;
+
+    display: grid;
+    grid-template-columns: 1fr 700px 1fr;
+    grid-template-rows: auto;
+    grid-template-areas: "nav main aside";
+
+    overflow-y: scroll;
 }
 
 .container-followed {
     grid-area: main;
-    height: 100%;
+
     border-right: 1px solid var(--border-color);
     border-left: 1px solid var(--border-color);
-    overflow-y: scroll;
 }
 
 @media (max-width: 900px) {
     .view-followed {    
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr 1fr 50px;
-        grid-template-areas: 
-            "main main main"
-            "main main main"
-            "nav nav nav"
-        ;
+        display: flex;
+        flex-direction: column;
     }
     .container-followed {
         border: none;
+        padding-bottom: 50px;
     }
 }
 

@@ -4,11 +4,10 @@
 
     display: grid;
     grid-template-columns: 1fr 700px 1fr;
-    grid-template-rows: 1fr 1fr 1fr;
-    grid-template-areas: 
-        "nav main aside"
-        "nav main aside"
-        "nav main aside";
+    grid-template-rows: auto;
+    grid-template-areas: "nav main aside";
+
+    overflow-y: scroll;
 }
 
 .account-main {
@@ -16,25 +15,19 @@
 
     border-right: 1px solid var(--border-color);
     border-left: 1px solid var(--border-color);
-
-    overflow-y: scroll;
     position: relative;
 }
 
 @media (max-width: 900px) {
     .account-view {
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr 1fr 50px;
-        grid-template-areas: 
-            "main main main"
-            "main main main"
-            "nav nav nav";
+        display: flex;
+        flex-direction: column;
     }
 
     .account-main {
         grid-area: main;
         border: none;
-        overflow-y: auto;
+        padding-bottom: 50px;
         display: flex;
         flex-direction: column;
     }

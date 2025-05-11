@@ -4,11 +4,10 @@
 
     display: grid;
     grid-template-columns: 1fr 700px 1fr;
-    grid-template-rows: 1fr 1fr 1fr;
-    grid-template-areas: 
-        "nav main aside"
-        "nav main aside"
-        "nav main aside";
+    grid-template-rows: auto;
+    grid-template-areas: "nav main aside";
+
+    overflow-y: scroll;
 }
 
 .home-main {
@@ -16,36 +15,35 @@
 
     border-right: 1px solid var(--border-color);
     border-left: 1px solid var(--border-color);
-
-    overflow-y: scroll;
-    position: relative;
 }
 
-.home-aside {
-    grid-area: aside;
-}
-
-.home-main-timeline-buttons {
+.home-timeline {
     display: flex;
+    height: 50px;
+
     position: sticky;
     top: 0;
-    width: 100%;
-    height: 50px;
+
+    margin: 0 1px;
 }
 
-.home-main-timeline-button {
-    width: 100%;
-    cursor: pointer;
-
+.home-timeline-button {
     border: none;
     outline: none;
+    background: none;
     background-color: var(--primary-color--transparent);
-    color: #FFF;
+
+    cursor: pointer;
+    color: var(--font-color);
+    
+    width: 100%;
+    height: 100%;
+
     border-bottom: 1px solid var(--border-color);
 }
 
-.home-main-timeline-button--active {
-    border-bottom: 1px solid var(--border-color--active);
+.home-timeline-button-active {
+    border-bottom: 1px solid var(--font-color);
 }
 
 .home-main-timeline {
@@ -54,15 +52,19 @@
 
 @media (max-width: 900px) {
     .home-view {
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr 1fr 50px;
-        grid-template-areas: 
-            "main main main"
-            "main main main"
-            "nav nav nav";
+        display: flex;
+        flex-direction: column;
     }
 
     .home-main {
         border: none;
+        padding-top: 50px;
+        padding-bottom: 50px;
+    }
+
+    .home-timeline {
+        width: 100%;
+        position: fixed;
+        top: 0;
     }
 }
