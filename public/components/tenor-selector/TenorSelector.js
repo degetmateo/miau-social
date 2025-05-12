@@ -3,6 +3,7 @@ import Observer from "../../interfaces/Observer.js";
 import EventsHandler from "../../modules/EventsHandler.js";
 import {tenorService} from "../../services/tenorService.js";
 import Button from "../button/Button.js";
+import CloseButton from "../close-button/CloseButton.js";
 import Input from "../input/input.js";
 
 importCSS('/public/components/tenor-selector/styles/tenor-selector.css');
@@ -14,6 +15,7 @@ export default class TenorSelector extends Observer {
         super();
         this.options = options;
         this.observerId = 'tenor-selector';
+        this.fetching = false;
 
         EventsHandler.addObserver(this);
 
@@ -42,20 +44,21 @@ export default class TenorSelector extends Observer {
             max: 128, 
             title: 'Buscar GIF', 
             type: 'text',
-            onStop: () => this.submit()
+            onStop: () => this.submit(),
+            length: false
         });
 
         this.input.container.classList.add('tenor-selector-input');
         this.inputContainer.append(this.input.render());
 
-        this.cancelButton = new Button({
-            appearance: 'default',
-            text: 'X',
+        this.closeButtonContainer = document.createElement('div');
+        this.closeButtonContainer.classList.add('tenor-selector-button-container');
+        this.inputContainer.append(this.closeButtonContainer);
+
+        this.closeButton = new CloseButton({
             onClick: () => this.remove()
         });
-
-        this.cancelButton.add('tenor-selector-cancel-button');
-        this.inputContainer.append(this.cancelButton.render());
+        this.closeButtonContainer.append(this.closeButton.render());
 
         this.resultsContainer = document.createElement('div');
         this.resultsContainer.classList.add('tenor-selector-results-container', 'tenor-selector-results-container--empty');
@@ -111,8 +114,11 @@ export default class TenorSelector extends Observer {
         Scroll({
             element: this.resultsContainer,
             bottom_limit: 1000,
-            bottom: () => {
-                this.submit(response.next);
+            bottom: async () => {
+                if (this.fetching) return;
+                this.fetching = true;
+                await this.submit(response.next);
+                this.fetching = false;
             }
         });
     }

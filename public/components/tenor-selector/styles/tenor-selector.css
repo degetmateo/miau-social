@@ -38,9 +38,10 @@
     width: 100%;
 }
 
-.tenor-selector-cancel-button {
-    border: 2px solid #FFF;
-    font-size: 24px;
+.tenor-selector-button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .tenor-selector-results-container {
