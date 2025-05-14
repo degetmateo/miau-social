@@ -103,7 +103,6 @@ export default class NotificationsView extends AbstractView {
         this.main.append(this.spinner);
 
         const data = await notificationService.get({ offset: this.offset });
-
         for (const n of data) {
             const notification = new Notification(n);
             this.notifications.push(notification);

@@ -22,6 +22,7 @@ const read = async (data: {
         if (error instanceof GenericError) throw error;
         else {
             console.error(error);
+            throw new DatabaseError();
         }
     }
 }

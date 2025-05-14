@@ -80,7 +80,7 @@ class Notification extends HTMLElement {
             this.append(this.header);
 
             this.href = '/post/'+this.data.target_post.id+'/comments';
-            this.action.textContent = ' indicó que le gusta tu publicación';
+            this.action.textContent = ' indicó que le gusta tu publicación.';
 
             this.body = document.createElement('div');
             this.body.classList.add('notification-body');
@@ -97,6 +97,35 @@ class Notification extends HTMLElement {
                 this.links = document.createElement('span');
                 this.links.classList.add('notification-links');
                 this.links.textContent = ' ' + this.data.target_post.media.join(' ');
+                this.body.append(this.links); 
+            };
+
+            this.SelectingText();
+        };
+
+        if (this.data.type === 'shared') {
+            this.append(this.header);
+
+            this.href = '/post/'+this.data.target_post.id+'/comments';
+            this.action.textContent = ' compartió tu publicación.';
+
+            this.body = document.createElement('div');
+            this.body.classList.add('notification-body');
+            this.append(this.body);
+
+            console.log(this.data.target_post.target_post);
+
+            if (this.data.target_post.target_post.content) {
+                this.content = document.createElement('span');
+                this.content.classList.add('notification-content');
+                this.content.append(formatContent(this.data.target_post.target_post.content));
+                this.body.append(this.content);
+            };
+
+            if (this.data.target_post.target_post.media) {
+                this.links = document.createElement('span');
+                this.links.classList.add('notification-links');
+                this.links.textContent = ' ' + this.data.target_post.target_post.media.join(' ');
                 this.body.append(this.links); 
             };
 

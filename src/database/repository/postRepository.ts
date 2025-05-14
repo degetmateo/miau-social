@@ -122,12 +122,20 @@ const remove = async (data: {
                     id_post = ${data.id_post};
             `;
 
-            const qDeleteImages = await transaction`
+            await transaction`
                 DELETE FROM 
                     image
                 WHERE
                     post_id = ${data.id_post}
                 RETURNING *;
+            `;
+
+            await transaction`
+                DELETE FROM
+                    post
+                WHERE
+                    target_post_id = ${data.id_post} AND
+                    type = 'shared';
             `;
 
             const qDelete = await transaction`

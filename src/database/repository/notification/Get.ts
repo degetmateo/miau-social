@@ -106,7 +106,41 @@ export default async function Get (data: {
                                 SELECT jsonb_agg(tmedia.url ORDER BY tmedia.id ASC)
                                 FROM image tmedia 
                                 WHERE tmedia.post_id = tp.id_post AND tmedia.type = 'media'
-                            ), '[]'::jsonb)
+                            ), '[]'::jsonb),
+                            'target_post', COALESCE((
+                                SELECT jsonb_build_object(
+                                    'id', ttp.id_post,
+                                    'content', ttp.content_post,
+                                    'date', ttp.date_post,
+                                    'type', ttp.type,
+                                    'target_post_id', ttp.target_post_id,
+                                    'upvotes_count', (SELECT COUNT(*) FROM upvote WHERE id_post = ttp.id_post),
+                                    'comments_count', (SELECT COUNT(*) FROM post WHERE target_post_id = ttp.id_post AND type = 'reply'),
+                                    'quotes_count', (SELECT COUNT(*) FROM post WHERE target_post_id = ttp.id_post AND type = 'quote'),
+                                    'shared_count', (SELECT COUNT(*) FROM post WHERE target_post_id = ttp.id_post AND type = 'shared'),
+                                    'is_upvoted', EXISTS (
+                                        SELECT 1 FROM upvote
+                                        WHERE id_post = ttp.id_post 
+                                        AND id_member_upvote = ${data.id_member}               
+                                    ),
+                                    'creator', jsonb_build_object(
+                                        'id', ttm.id_member,
+                                        'name', ttm.name_member,
+                                        'username', ttm.username_member,
+                                        'role', ttm.role_member,
+                                        'icon_url', tticon.url
+                                    ),
+                                    'media', COALESCE((
+                                        SELECT jsonb_agg(ttmedia.url ORDER BY ttmedia.id ASC)
+                                        FROM image ttmedia 
+                                        WHERE ttmedia.post_id = ttp.id_post AND ttmedia.type = 'media'
+                                    ), '[]'::jsonb)
+                                )
+                                FROM post ttp
+                                LEFT JOIN member ttm ON ttp.id_member = ttm.id_member
+                                LEFT JOIN image tticon ON tticon.member_id = ttm.id_member AND tticon.type = 'icon'
+                                WHERE ttp.id_post = tp.target_post_id
+                            ), 'null'::jsonb)
                         )
                         FROM post tp
                         LEFT JOIN member tm ON tp.id_member = tm.id_member
@@ -121,7 +155,7 @@ export default async function Get (data: {
             LEFT JOIN
                 image icon ON icon.member_id = m.id_member AND icon.type = 'icon'
             LEFT JOIN 
-                post p ON (n.type_notification IN ('reply', 'upvote', 'quote') AND n.id_post_target_notification = p.id_post)
+                post p ON (n.type_notification IN ('reply', 'upvote', 'quote', 'shared') AND n.id_post_target_notification = p.id_post)
             LEFT JOIN
                 image media ON media.post_id = p.id_post AND media.type = 'media'
             WHERE 
