@@ -69,13 +69,15 @@ const signup = async (req: Request, res: Response) => {
 
 const verify = async (req: Request, res: Response) => {
     try {
-        const response = await authenticationService.verify({
+        const data = await authenticationService.verify({
             token: req.body.token as string,
             ip: req.ip || req.socket.remoteAddress,
             platform: req.body.platform as string
         });
 
-        ResponseOk(res, RESPONSES.OK, response);
+        SetRefreshToken(res, data.refresh_token);
+        delete data.refresh_token;
+        ResponseOk(res, RESPONSES.OK, data);
     } catch (error) {
         console.error(error);
         ResponseError(res, error);

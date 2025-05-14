@@ -1,7 +1,9 @@
 import {URL_NO_IMAGE} from "../../consts.js";
 import {formatContent, getTimeElapsedSince, importCSS} from "../../helpers.js";
+import PostsHandler from "../../modules/PostsHandler.js";
 import router from "../../router.js";
 import {postService} from "../../services/postService.js";
+import {shareService} from "../../services/shareService.js";
 import {upvoteService} from "../../services/upvoteService.js";
 import Alert from "../alert/alert.js";
 import MediaContainer from "../media-container/MediaContainer.js";
@@ -16,6 +18,18 @@ IMAGE_POST_UPVOTE_ON.classList.add('post-footer-interactions-icon');
 const IMAGE_POST_UPVOTE_OFF = new Image();
 IMAGE_POST_UPVOTE_OFF.src = '/public/components/post/svg/upvote-off.svg';
 IMAGE_POST_UPVOTE_OFF.classList.add('post-footer-interactions-icon');
+
+const IMAGE_POST_SHARE_ON = new Image();
+IMAGE_POST_SHARE_ON.src = '/public/components/post/svg/share-on.svg';
+IMAGE_POST_SHARE_ON.classList.add('post-footer-interactions-icon');
+
+const IMAGE_POST_SHARE_OFF = new Image();
+IMAGE_POST_SHARE_OFF.src = '/public/components/post/svg/share-off.svg';
+IMAGE_POST_SHARE_OFF.classList.add('post-footer-interactions-icon');
+
+const IMAGE_POST_SHARE = new Image();
+IMAGE_POST_SHARE.src = '/public/components/post/svg/share.svg';
+IMAGE_POST_SHARE.classList.add('post-header-shared-icon');
 
 const IMAGE_POST_QUOTE_ON = new Image();
 IMAGE_POST_QUOTE_ON.src = '/public/components/post/svg/quote-on.svg';
@@ -39,6 +53,8 @@ export default class Post {
         onUpvote: () => {}
     }) {
         this.data = data;
+        this.meta = data;
+        if (this.data.type === 'shared') this.data = this.data.target_post;
         this.options = options;
 
         this.post = document.createElement('div');
@@ -53,17 +69,35 @@ export default class Post {
         this.header.classList.add('post-header');
         this.post.append(this.header);
 
+        if (this.meta.type === 'shared') {
+            this.sharedContainer = document.createElement('div');
+            this.sharedContainer.classList.add('post-shared-container');
+            this.header.append(this.sharedContainer);
+
+            this.sharedIcon = IMAGE_POST_SHARE.cloneNode(true);
+            this.sharedContainer.append(this.sharedIcon);
+
+            this.sharedInfo = document.createElement('span');
+            this.sharedInfo.classList.add('post-shared');
+            this.sharedInfo.textContent = 'Compartido por '+this.meta.creator.name;
+            this.sharedContainer.append(this.sharedInfo);
+        };
+
+        this.signContainer = document.createElement('div');
+        this.signContainer.classList.add('post-header-sign');
+        this.header.append(this.signContainer);
+
         this.icon = document.createElement('img');
         this.icon.classList.add('post-header-icon');
         this.icon.src = URL_NO_IMAGE;
-        this.icon.src = data.creator.icon_url || URL_NO_IMAGE;
+        this.icon.src = this.data.creator.icon_url || URL_NO_IMAGE;
         this.icon.onerror = () => this.icon.src = URL_NO_IMAGE;
         this.icon.onclick = (e) => this.onIcon(e);
-        this.header.append(this.icon);
+        this.signContainer.append(this.icon);
 
         this.signature = document.createElement('div');
         this.signature.classList.add('post-header-signature');
-        this.header.append(this.signature);
+        this.signContainer.append(this.signature);
 
         this.signatureTop = document.createElement('div');
         this.signatureTop.classList.add('post-header-signature-top');
@@ -136,7 +170,8 @@ export default class Post {
         }
 
         if (this.data.type === 'quote') {
-            this.body.append(new Quote(this.data.target_post).render());
+            this.quote = new Quote(this.data.target_post);
+            this.body.append(this.quote);
         }
 
         // POST FOOTER
@@ -162,6 +197,21 @@ export default class Post {
         this.upvoteCount.classList.add('post-footer-interaction-count');
         this.upvoteCount.textContent = this.data.upvotes_count || 0;
         this.upvoteContainer.append(this.upvoteCount);
+
+        this.shareContainer = document.createElement('div');
+        this.shareContainer.classList.add('post-footer-interaction-container');
+        this.shareContainer.onclick = (e) => this.onShare(e);
+        this.interactions.append(this.shareContainer);
+
+        this.shareImage = this.data.is_shared ?
+            IMAGE_POST_SHARE_ON.cloneNode(true) :
+            IMAGE_POST_SHARE_OFF.cloneNode(true);
+        this.shareContainer.append(this.shareImage);
+
+        this.shareCount = document.createElement('span');
+        this.shareCount.classList.add('post-footer-interaction-count');
+        this.shareCount.textContent = this.data.shared_count || 0;
+        this.shareContainer.append(this.shareCount);
 
         this.quoteContainer = document.createElement('div');
         this.quoteContainer.classList.add('post-footer-interaction-container');
@@ -198,11 +248,11 @@ export default class Post {
         this.exactDate = document.createElement('span');
         this.exactDate.classList.add('post-footer-exact-date');
         this.exactDate.textContent = new Date(this.data.date).toLocaleString('es-ES');
-        this.dateContainer.append(this.exactDate);
+        // this.dateContainer.append(this.exactDate);
 
         this.relativeDate = document.createElement('span');
         this.relativeDate.classList.add('post-footer-relative-date');
-        this.relativeDate.textContent = `(${getTimeElapsedSince(new Date(this.data.date))})`;
+        this.relativeDate.textContent = `${getTimeElapsedSince(new Date(this.data.date))}`;
         this.dateContainer.append(this.relativeDate);
 
         this.isSelectingText = false;
@@ -245,6 +295,10 @@ export default class Post {
     
     async upvote () {
         this.data.is_upvoted = true;
+        const i = PostsHandler.findIndex(this.data.id);
+        if (i > -1) {
+            PostsHandler.posts[i].is_upvoted = true;
+        }
         this.setUpvoteIcon('on');
         this.increaseUpvotesCount();
 
@@ -259,6 +313,10 @@ export default class Post {
     
     async downvote () {
         this.data.is_upvoted = false;
+        const i = PostsHandler.findIndex(this.data.id);
+        if (i > -1) {
+            PostsHandler.posts[i].is_upvoted = false;
+        }
         this.setUpvoteIcon('off');
         this.decreaseUpvotesCount();
 
@@ -291,6 +349,77 @@ export default class Post {
         }
 
         this.upvoteContainer.prepend(this.upvoteImage);
+    }
+
+    onShare (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        this.data.is_shared ?
+            this.unshare() :
+            this.share();
+    }
+
+    async share () {
+        this.data.is_shared = true;
+        const i = PostsHandler.findIndex(this.data.id);
+        if (i > -1) {
+            PostsHandler.posts[i].is_shared = true;
+        }
+        this.setSharedIcon();
+        this.increaseSharesCount();
+
+        try {
+            await shareService.share({ id: this.data.id });
+        } catch (error) {
+            new Alert(error.message, { error: true });
+            this.setUnsharedIcon();
+            this.decreaseSharesCount();
+        };
+    }
+
+    async unshare () {
+        this.data.is_shared = false;
+        const i = PostsHandler.findIndex(this.data.id);
+        if (i > -1) {
+            PostsHandler.posts[i].is_shared = false;
+        }
+        this.setUnsharedIcon();
+        this.decreaseSharesCount();
+
+        if (this.meta.type == 'shared' && this.meta.creator.id == window.app.member.id) {
+            this.remove();
+        };
+
+        try {
+            await shareService.unshare({ id: this.data.id });
+        } catch (error) {
+            new Alert(error.message, { error: true });
+            this.setSharedIcon();
+            this.increaseSharesCount();
+        };
+    }
+
+    setSharedIcon () {
+        this.shareImage.remove();
+        this.shareImage = IMAGE_POST_SHARE_ON.cloneNode(true);
+        this.shareContainer.prepend(this.shareImage);
+    }
+
+    setUnsharedIcon () {
+        this.shareImage.remove();
+        this.shareImage = IMAGE_POST_SHARE_OFF.cloneNode(true);
+        this.shareContainer.prepend(this.shareImage);
+    }
+
+    increaseSharesCount () {
+        this.data.shared_count = parseInt(this.data.shared_count || 0) + 1;
+        this.shareCount.textContent = this.data.shared_count;
+    }
+
+    decreaseSharesCount () {
+        this.data.shared_count = parseInt(this.data.shared_count || 1) - 1;
+        this.shareCount.textContent = this.data.shared_count;
     }
 
     onQuote (e) {

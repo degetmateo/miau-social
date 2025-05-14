@@ -5,23 +5,26 @@ import MediaContainer from "../media-container/MediaContainer.js";
 
 importCSS('/public/components/quote/quote.css');
 
-export default class Quote {
+class Quote extends HTMLElement {
     constructor (data) {
-        this.data = data;
+        super();
+        this.Build(data);
+    };
 
-        this.quote = document.createElement('div');
-        this.quote.classList.add('quote');
+    Build (data) {
+        this.innerHTML = '';
+        this.data = data;
+        this.classList.add('quote');
 
         if (!this.data) {
-            this.quote.textContent = 'Publicación eliminada.';
+            this.textContent = 'Publicación eliminada.';
             return;
         }
 
         this.header = document.createElement('div');
         this.header.classList.add('quote-header');
-        this.quote.append(this.header);
+        this.append(this.header);
         
-
         this.icon = document.createElement('img');
         this.icon.src = this.data.creator.icon_url || URL_NO_IMAGE;
         this.icon.classList.add('quote-icon');
@@ -37,15 +40,15 @@ export default class Quote {
         this.username.classList.add('quote-username');
         this.header.append(this.username);
 
-        this.role = document.createElement('span');
-        this.role.textContent = this.data.creator.role;
-        this.role.classList.add('post-header-signature-top-role', 'role--'+this.data.creator.role);
-        this.header.append(this.role);
+        this.roleInfo = document.createElement('span');
+        this.roleInfo.textContent = this.data.creator.role;
+        this.roleInfo.classList.add('post-header-signature-top-role', 'role--'+this.data.creator.role);
+        this.header.append(this.roleInfo);
 
         this.body = document.createElement('div');
         this.body.classList.add('quote-body');
 
-        if ((this.data.content && this.data.content.trim()) || this.data.media.length > 0) this.quote.append(this.body);
+        if ((this.data.content && this.data.content.trim()) || this.data.media.length > 0) this.append(this.body);
         
         if (this.data.media.length > 0) {
             if (this.data.content && this.data.content.length > 100) this.data.content = this.data.content.substring(0, 100) + '...';
@@ -62,26 +65,17 @@ export default class Quote {
         }
 
         this.isSelectingText = false;
-        this.quote.onmousedown = () => {
+        this.onmousedown = () => {
             this.isSelectingText = false;
         }
-        this.quote.onmousemove = () => {
+        this.onmousemove = () => {
             this.isSelectingText = true;
         }
-        this.quote.onmouseup = (e) => {
-            // if (e.target.closest('.post-header-icon')) return;
-            // if (e.target.closest('.post-header-button')) return;
-            // if (e.target.closest('.post-header-signature-top-name')) return;
-            // if (e.target.closest('.post-header-button')) return;
-            // if (e.target.closest('.post-footer-interaction-container')) return;
-            // if (e.target.closest('.post-footer-interaction-container')) return;
-            // if (e.target.closest('.link')) return;
-            // if (e.target.closest('.media-container')) return;
+        this.onmouseup = () => {
             if (!this.isSelectingText) return router.navigateTo('/post/'+this.data.id+'/comments');
         }
-    }
+    };
+};
 
-    render () {
-        return this.quote;
-    }
-}
+customElements.define('app-quote', Quote);
+export default Quote;

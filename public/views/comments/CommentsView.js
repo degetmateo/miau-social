@@ -219,7 +219,6 @@ export default class CommentsView extends AbstractView {
     }
 
     async loadReplies () {
-        console.log('test')
         if (this.cooldown) return;
         this.activateCooldown();
 
@@ -242,7 +241,7 @@ export default class CommentsView extends AbstractView {
     }
 
     setScroll (scroll) {
-        this.main.scrollTop = scroll;
+        this.view.scrollTop = scroll;
         if (this.posts[this.i].scroll) this.posts[this.i].scroll = scroll;
     }
 

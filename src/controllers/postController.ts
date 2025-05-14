@@ -10,7 +10,9 @@ const get = async (req: Request, res: Response) => {
             member: req.member,
             offset: req.query.offset ? Number(req.query.offset) : 0,
             id_member: req.query.id_member ? Number(req.query.id_member) : null,
-            username: req.query.username ? req.query.username as string : null
+            username: req.query.username ? req.query.username as string : null,
+            replies: req.query.replies ? Boolean(req.query.replies) : null,
+            shared: req.query.shared ? Boolean(req.query.shared) : null
         });
 
         ResponseOk(res, RESPONSES.OK, response);
@@ -37,22 +39,22 @@ const getFollowing = async (req: Request, res: Response) => {
 const getById = async (req: Request, res: Response) => {
     try {
         const response = await postService.getById({
-            id_member: Number(req.member.id),
-            id_post: Number(req.params.id_post)
+            member: req.member,
+            id: Number(req.params.id_post)
         });
 
         ResponseOk(res, RESPONSES.OK, response);
     } catch (error) {
         console.error(error);
         ResponseError(res, error);
-    }
-}
+    };
+};
 
 const getComments = async (req: Request, res: Response) => {
     try {
         const response = await postService.getComments({
-            id_member: Number(req.member.id),
-            id_post: Number(req.params.id_post),
+            member: req.member,
+            id: Number(req.params.id_post),
             offset: req.query.offset ? Number(req.query.offset) : 0
         });
         
@@ -60,14 +62,14 @@ const getComments = async (req: Request, res: Response) => {
     } catch (error) {
         console.error(error);
         ResponseError(res, error);
-    }
-}
+    };
+};
 
 const getThread = async (req: Request, res: Response) => {
     try {
         const response = await postService.getThread({
-            id_member: Number(req.member.id),
-            id_post: Number(req.params.id_post),
+            member: req.member,
+            id: Number(req.params.id_post),
             offset: req.query.offset ? Number(req.query.offset) : 0
         });
 
@@ -75,8 +77,8 @@ const getThread = async (req: Request, res: Response) => {
     } catch (error) {
         console.error(error);
         ResponseError(res, error);
-    }
-}
+    };
+};
 
 const post = async (req: Request, res: Response) => {
     try {

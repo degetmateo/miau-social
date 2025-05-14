@@ -93,7 +93,7 @@ export default class NotificationsView extends AbstractView {
 
     setScroll (scroll) {
         this.scroll = scroll;
-        this.main.scrollTop = scroll;
+        this.view.scrollTop = scroll;
     }
  
     async CreateMain () {

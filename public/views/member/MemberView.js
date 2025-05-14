@@ -142,7 +142,12 @@ export default class extends AbstractView {
 
             let posts;
             try {
-                posts = await postService.get({ username: this.params.username, offset: this.members[this.i].offset });
+                posts = await postService.get({ 
+                    username: this.params.username, 
+                    offset: this.members[this.i].offset,
+                    replies: false,
+                    shared: true
+                });
             } catch (error) {
                 return new Alert(error.message);
             }
@@ -154,6 +159,6 @@ export default class extends AbstractView {
 
     setScroll (scroll) {
         if (this.members[this.i]) this.members[this.i].scroll = scroll;
-        this.main.scrollTop = scroll;
+        this.view.scrollTop = scroll;
     }
 }

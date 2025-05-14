@@ -32,6 +32,27 @@
 
 .post-header {
     display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.post-shared-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 5px;
+    font-size: 14px;
+    color: var(--font-color-light);
+}
+
+.post-header-shared-icon {
+    width: 15px;
+    height: 15px;
+}
+
+.post-header-sign {
+    display: flex;
     flex-direction: row;
     align-items: center;
     gap: 10px;

@@ -29,7 +29,7 @@ export default class ActivateView extends AbstractView {
 
         this.description = document.createElement('span');
         this.description.classList.add('activate-descripcion');
-        this.description.textContent = 'Tenés que activar tu cuenta. Ingresá los datos. Si tu cuenta aún no tiene correo elentrónico asociado, decidí ahora cuál va a ser.';
+        this.description.textContent = 'Tenés que activar tu cuenta. Ingresá los datos. Si tu cuenta aún no tiene correo electrónico asociado, decidí ahora cuál va a ser.';
         this.descriptionContainer.append(this.description);
 
         this.usernameContainer = document.createElement('div');

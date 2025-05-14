@@ -29,6 +29,7 @@ export default async function Get (data: {
                     'upvotes_count', (SELECT COUNT(*) FROM upvote WHERE id_post = p.id_post),
                     'comments_count', (SELECT COUNT(*) FROM post WHERE target_post_id = p.id_post AND type = 'reply'),
                     'quotes_count', (SELECT COUNT(*) FROM post WHERE target_post_id = p.id_post AND type = 'quote'),
+                    'shared_count', (SELECT COUNT(*) FROM post WHERE target_post_id = p.id_post AND type = 'shared'),
                     'is_upvoted', EXISTS (
                         SELECT 1 FROM upvote
                         WHERE id_post = p.id_post 
@@ -40,6 +41,14 @@ export default async function Get (data: {
                         WHERE
                             target_post_id = p.id_post AND
                             type = 'quote' AND
+                            id_member = ${data.id_member}
+                    ),
+                    'is_shared', EXISTS (
+                        SELECT 1 FROM
+                            post
+                        WHERE
+                            target_post_id = p.id_post AND
+                            type = 'shared' AND
                             id_member = ${data.id_member}
                     ),
                     'creator', jsonb_build_object(
@@ -64,6 +73,7 @@ export default async function Get (data: {
                             'upvotes_count', (SELECT COUNT(*) FROM upvote WHERE id_post = tp.id_post),
                             'comments_count', (SELECT COUNT(*) FROM post WHERE target_post_id = tp.id_post AND type = 'reply'),
                             'quotes_count', (SELECT COUNT(*) FROM post WHERE target_post_id = tp.id_post AND type = 'quote'),
+                            'shared_count', (SELECT COUNT(*) FROM post WHERE target_post_id = tp.id_post AND type = 'shared'),
                             'is_upvoted', EXISTS (
                                 SELECT 1 FROM upvote
                                 WHERE id_post = tp.id_post 
@@ -75,6 +85,14 @@ export default async function Get (data: {
                                 WHERE
                                     target_post_id = tp.id_post AND
                                     type = 'quote' AND
+                                    id_member = ${data.id_member}
+                            ),
+                            'is_shared', EXISTS (
+                                SELECT 1 FROM
+                                    post
+                                WHERE
+                                    target_post_id = tp.id_post AND
+                                    type = 'shared' AND
                                     id_member = ${data.id_member}
                             ),
                             'creator', jsonb_build_object(

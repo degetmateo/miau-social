@@ -36,9 +36,11 @@ const signin = async (data: {
     if (data.password.length > PARAMETERS.PASSWORD_MAX_LENGTH) throw new UnexpectedError();
 
     Validator.Ip(data.ip);
-    Validator.Platform(data.platform);
-
-    if (process.env.PRODUCTION === "TRUE") await ReCaptcha.Verify(data.captcha_token);
+    
+    if (process.env.PRODUCTION === "TRUE") {
+        Validator.Platform(data.platform);
+        await ReCaptcha.Verify(data.captcha_token);
+    }
 
     return await authenticationRepository.Signin(data);
 }
@@ -55,10 +57,12 @@ const signup = async (data: {
     Validator.Name(data.name);
     Validator.Password(data.password);
 
-    const recaptchaResponse = await ReCaptcha.Verify(data.captcha_token);
-    
-    if (!recaptchaResponse.success) throw new UnauthorizedError('Ha ocurrido un error de autorización.');
-    if (recaptchaResponse.score <= PARAMETERS.RECAPTCHA_SCORE) throw new UnauthorizedError('Ha ocurrido un error de autorización.');
+    if (process.env.PRODUCTION === 'TRUE') {
+        const recaptchaResponse = await ReCaptcha.Verify(data.captcha_token);
+        
+        if (!recaptchaResponse.success) throw new UnauthorizedError('Ha ocurrido un error de autorización.');
+        if (recaptchaResponse.score <= PARAMETERS.RECAPTCHA_SCORE) throw new UnauthorizedError('Ha ocurrido un error de autorización.');
+    }
 
     return await authenticationRepository.Signup(data);
 }

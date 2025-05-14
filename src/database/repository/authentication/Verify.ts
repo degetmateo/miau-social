@@ -69,7 +69,7 @@ export default async function Verify (data: {
                 email: member.email
             }, '30d');
 
-            const session: any = (await transaction`
+            (await transaction`
                 INSERT INTO
                     session (
                         member_id,

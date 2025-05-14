@@ -11,8 +11,47 @@ import followRouter from "./routes/followRouter";
 import adminRouter from "./routes/adminRouter";
 import tenorRouter from "./routes/tenorRouter";
 import sessionRouter from './routes/sessionRouter';
+import shareRouter from './routes/shareRouter';
+
 const requestIp = require('request-ip');
 const cookieParser = require('cookie-parser');
+
+const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'PIAU',
+      version: '1.0.0',
+    },
+    components: {
+      securitySchemes: {
+        tokenAutorizacion: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        }
+      }
+    },
+    security: [{
+      bearerAuth: []
+    }]
+  },
+  servers: [
+    {
+      url: "localhost:4000",
+      description: 'Development server',
+    },
+    {
+        url: 'https://social-miau.onrender.com'
+    }
+  ],
+  apis: ['./src/routes/*.ts'],
+};
+
+const swaggerSpec = swaggerJSDoc(swaggerOptions);
 
 export default class Server {
     private readonly port: number;
@@ -20,6 +59,7 @@ export default class Server {
     public readonly router: express.Router;
 
     private readonly paths = {
+        docs: '/api/docs',
         admin: '/api/admin',
         authentication: '/api/authentication',
         post: '/api/post',
@@ -28,7 +68,8 @@ export default class Server {
         upvote: '/api/upvote',
         follow: '/api/follow',
         tenor: '/api/tenor',
-        session: '/api/session'
+        session: '/api/session',
+        share: '/api/share'
     }
 
     constructor (port: number) {
@@ -89,6 +130,8 @@ export default class Server {
         this.app.use(this.paths.admin, adminRouter);
         this.app.use(this.paths.tenor, tenorRouter);
         this.app.use(this.paths.session, sessionRouter);
+        this.app.use(this.paths.share, shareRouter);
+        this.app.use(this.paths.docs, swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
         this.app.use('*', (_, res) => {
             res.sendFile(path.join(__dirname + '/../public/app.html'));

@@ -3,18 +3,15 @@ import { postRepository } from "../database/repository/postRepository";
 import InvalidArgumentError from "../errors/InvalidArgumentError";
 import NotFoundError from "../errors/NotFoundError";
 import UnauthorizedError from "../errors/UnauthorizedError";
-import ImgBB from "../helpers/ImgBB";
-import { PARAMETERS } from "../static/parameters";
+import Post from "./post/Post";
 
 const get = async (data: {
-    member: {
-        id: number;
-        username: string;
-        role: string;
-    };
+    member: any;
     offset: number;
-    id_member: number | null;
-    username: string | null;
+    id_member: number;
+    username: string;
+    replies: boolean;
+    shared: boolean;
 }) => {
     if (data.offset === null || data.offset === undefined) throw new InvalidArgumentError("Offset is needed.");
     if (isNaN(data.offset)) throw new InvalidArgumentError("Offset must be a number.");
@@ -22,6 +19,9 @@ const get = async (data: {
 
     if (data.id_member && isNaN(data.id_member)) throw new InvalidArgumentError("id_member must be a number.");
     if (data.id_member && data.id_member < 0) throw new InvalidArgumentError("id_member cannot be negative.");
+
+    if (data.replies != null && typeof data.replies != 'boolean') throw new InvalidArgumentError("replies is boolean.");
+    if (data.shared != null && typeof data.shared != 'boolean') throw new InvalidArgumentError("shared is boolean.");
 
     return await postRepository.get(data);
 }
@@ -42,52 +42,38 @@ const getFollowing = async (data: {
 }
 
 const getById = async (data: {
-    id_member: number;
-    id_post: number;
+    member: any;
+    id: number;
 }) => {
-    if (!data.id_member) throw new UnauthorizedError("Authorization failed.");
-    if (isNaN(data.id_member)) throw new UnauthorizedError("Authorization failed.");
-    if (data.id_member <= 0) throw new UnauthorizedError("Authorization failed.");
+    if (!data.id) throw new NotFoundError("No se ha encontrado la publicacion.");
+    if (isNaN(data.id)) throw new InvalidArgumentError("La ID de la publicacion debe ser un numero.");
+    if (data.id <= 0) throw new InvalidArgumentError("La ID de la publicacion no puede ser negativa.");
 
-    if (!data.id_post) throw new NotFoundError("No se ha encontrado la publicacion.");
-    if (isNaN(data.id_post)) throw new InvalidArgumentError("La ID de la publicacion debe ser un numero.");
-    if (data.id_post <= 0) throw new InvalidArgumentError("La ID de la publicacion no puede ser negativa.");
-
-    const response = await postRepository.getById(data);
-    return response;
-}
+    return await postRepository.getById(data);
+};
 
 const getComments = async (data: {
-    id_member: number;
-    id_post: number;
+    member: any;
+    id: number;
     offset: number;
 }) => {
-    if (!data.id_member) throw new UnauthorizedError("Authorization failed.");
-    if (isNaN(data.id_member)) throw new UnauthorizedError("Authorization failed.");
-    if (data.id_member <= 0) throw new UnauthorizedError("Authorization failed.");
-
-    if (!data.id_post) throw new NotFoundError("No se ha encontrado la publicacion.");
-    if (isNaN(data.id_post)) throw new InvalidArgumentError("La ID de la publicacion debe ser un numero.");
-    if (data.id_post <= 0) throw new InvalidArgumentError("La ID de la publicacion no puede ser negativa.");
+    if (!data.id) throw new NotFoundError("No se ha encontrado la publicacion.");
+    if (isNaN(data.id)) throw new InvalidArgumentError("La ID de la publicacion debe ser un numero.");
+    if (data.id <= 0) throw new InvalidArgumentError("La ID de la publicacion no puede ser negativa.");
 
     if (data.offset && data.offset < 0) throw new InvalidArgumentError('OFFSET no puede ser negativo.');
 
-    const response = await postRepository.getComments(data);
-    return response;
-}
+    return await postRepository.getComments(data);
+};
 
 const getThread = async (data: {
-    id_member: number;
-    id_post: number;
+    member: any;
+    id: number;
     offset: number;
 }) => {
-    if (!data.id_member) throw new UnauthorizedError("Authorization failed.");
-    if (isNaN(data.id_member)) throw new UnauthorizedError("Authorization failed.");
-    if (data.id_member <= 0) throw new UnauthorizedError("Authorization failed.");
-
-    if (!data.id_post) throw new NotFoundError("No se ha encontrado la publicacion.");
-    if (isNaN(data.id_post)) throw new InvalidArgumentError("La ID de la publicacion debe ser un numero.");
-    if (data.id_post <= 0) throw new InvalidArgumentError("La ID de la publicacion no puede ser negativa.");
+    if (!data.id) throw new NotFoundError("No se ha encontrado la publicacion.");
+    if (isNaN(data.id)) throw new InvalidArgumentError("La ID de la publicacion debe ser un numero.");
+    if (data.id <= 0) throw new InvalidArgumentError("La ID de la publicacion no puede ser negativa.");
 
     if (data.offset && data.offset < 0) throw new InvalidArgumentError('OFFSET no puede ser negativo.');
 
@@ -103,63 +89,8 @@ const post = async (data: {
     type: 'default' | 'reply' | 'quote';
     target_id: number;
 }) => {
-    if (data.content) data.content = data.content.trim();
-    const isEmpty = (!data.content || data.content.length <= 0) && [...data.tenor, ...data.images].length <= 0;
-    if (isEmpty) throw new InvalidArgumentError("No puedes enviar una publicación vacia.");
-
-    if (data.content && data.content.length > 0) {
-        if (data.content.length > PARAMETERS.POST_CONTENT_MAX_LENGTH) throw new InvalidArgumentError(`Has superado el límite de ${PARAMETERS.POST_CONTENT_MAX_LENGTH} carácteres.`);
-    }
-
-    if (data.images || data.tenor || data.images.length > 0 || data.tenor.length > 0) {
-        // if (!Array.isArray(data.images)) throw new InvalidArgumentError("Ha ocurrido un error.");
-        // if (!data.content && data.images.length <= 0) throw new InvalidArgumentError("Debes escribir algo o insertar una imagen.");
-        if ([...data.tenor, ...data.images].length > PARAMETERS.POST_IMAGES_MAX_LENGTH) throw new InvalidArgumentError(`Has superado el límite de ${PARAMETERS.POST_IMAGES_MAX_LENGTH} imágenes.`);
-    }
-
-    if (!['default', 'reply', 'quote'].includes(data.type)) throw new InvalidArgumentError('Tipo de publicación inválida.');
-    if (data.target_id && data.target_id < 0) throw new InvalidArgumentError('TARGET_ID no puede ser negativa.');
-
-    let checkedImages: {
-        url: string;
-        imgbb_id?: string;
-        delete_url?: string;
-        source: 'imgbb' | 'tenor' | 'other';
-        index: number;
-    }[] = [];
-
-    for (const image of data.images) {
-        const apiResponse = await ImgBB.upload({ buffer: image.buffer });
-
-        checkedImages.push({
-            url: apiResponse.data.url,
-            imgbb_id: apiResponse.data.id,
-            delete_url: apiResponse.data.delete_url,
-            source: 'imgbb',
-            index: image.index
-        });
-    }
-
-    for (const gif of data.tenor) {
-        checkedImages.push({
-            url: gif.src,
-            source: 'tenor',
-            index: gif.index
-        });
-    }
-
-    checkedImages = checkedImages.sort((a, b) => a.index - b.index);
-
-    const response = await postRepository.post({
-        id_member: data.id_member,
-        content: data.content,
-        images: checkedImages,
-        type: data.type,
-        target_id: data.target_id
-    });
-
-    return response;
-}
+    return await Post(data);
+};
 
 const remove = async (data: {
     id_member: number;
@@ -191,5 +122,5 @@ export const postService = {
     getThread,
     post,
     remove,
-    removeAdmin
+    removeAdmin,
 }

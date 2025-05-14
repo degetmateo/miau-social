@@ -3,6 +3,10 @@ class PostsHandler {
         this.posts = [];
     }
 
+    findIndex (id) {
+        return this.posts.findIndex(p => p.id === id);
+    }
+
     find (id) {
         return this.posts.find(p => p.id === id);
     }

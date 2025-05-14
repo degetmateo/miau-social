@@ -122,7 +122,6 @@ class Notification extends HTMLElement {
             this.isSelectingText = false;
         };
         this.onmousemove = () => {
-            console.log('mouse move')
             this.isSelectingText = true;
             this.classList.remove('notification-pending');
         };

@@ -2,10 +2,12 @@ import Service from "../modules/Service.js";
 
 const get = async (data = {
     username,
-    offset
+    offset,
+    replies,
+    shared
 }) => {
     try {
-        return await Service.Fetch(`/api/post?${data.username ? 'username='+data.username : ''}&offset=${data.offset}`, {
+        return await Service.Fetch(`/api/post?${data.username ? 'username='+data.username : ''}${data.offset ? '&offset='+data.offset : '&offset=0'}${data.replies ? '&replies='+data.replies : ''}${data.shared ? '&shared='+data.shared : ''}`, {
             method: "GET",
         });
     } catch (error) {
