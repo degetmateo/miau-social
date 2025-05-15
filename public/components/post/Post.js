@@ -72,6 +72,10 @@ export default class Post {
         if (this.meta.type === 'shared') {
             this.sharedContainer = document.createElement('div');
             this.sharedContainer.classList.add('post-shared-container');
+            this.sharedContainer.onclick = (e) => {
+                e.stopPropagation();
+                router.navigateTo('/member/'+this.meta.creator.username);
+            };
             this.header.append(this.sharedContainer);
 
             this.sharedIcon = IMAGE_POST_SHARE.cloneNode(true);
@@ -263,6 +267,7 @@ export default class Post {
             this.isSelectingText = true;
         }
         this.post.onmouseup = (e) => {
+            if (e.target.closest('.post-shared-container')) return;
             if (e.target.closest('.post-header-icon')) return;
             if (e.target.closest('.post-header-button')) return;
             if (e.target.closest('.post-header-signature-top-name')) return;

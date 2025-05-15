@@ -114,7 +114,6 @@ export default class extends AbstractView {
         this.setView(this.view)
         this.nav.append(Nav);
 
-        EventsHandler.removeObserver(this);
         EventsHandler.addObserver(this);
 
         this.creator.updateIcon(window.app.member.icon_url || URL_NO_IMAGE);

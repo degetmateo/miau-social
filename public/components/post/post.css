@@ -41,9 +41,14 @@
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    gap: 5px;
+    gap: 8px;
     font-size: 14px;
     color: var(--font-color-light);
+    cursor: pointer;
+}
+
+.post-shared-container:hover {
+    text-decoration: underline;
 }
 
 .post-header-shared-icon {
@@ -227,5 +232,5 @@
     gap: 5px;
     font-family: "JetBrainsMono-Light", sans-serif;
     color: var(--font-color-light);
-    font-size: 12px;
+    font-size: 14px;
 }
