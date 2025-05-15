@@ -78,6 +78,7 @@ class Notification extends HTMLElement {
 
         if (this.data.type === 'upvote') {
             this.append(this.header);
+            this.classList.add('notification-border');
 
             this.href = '/post/'+this.data.target_post.id+'/comments';
             this.action.textContent = ' indicó que le gusta tu publicación.';
@@ -105,6 +106,7 @@ class Notification extends HTMLElement {
 
         if (this.data.type === 'shared') {
             this.append(this.header);
+            this.classList.add('notification-border');
 
             this.href = '/post/'+this.data.target_post.id+'/comments';
             this.action.textContent = ' compartió tu publicación.';
@@ -134,6 +136,7 @@ class Notification extends HTMLElement {
 
         if (this.data.type === 'follow') {
             this.append(this.header);
+            this.classList.add('notification-border');
 
             this.href = '/member/'+this.data.target_member.username;
             this.action.textContent = ' te siguió.';

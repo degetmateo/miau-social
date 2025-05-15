@@ -13,7 +13,9 @@
     cursor: pointer;
 
     -webkit-tap-highlight-color: transparent; 
-    outline: none; 
+    outline: none;
+
+    border-bottom: 1px solid var(--border-color);
 }
 
 .post:hover {

@@ -529,9 +529,12 @@ export default class Post {
         }
     }
 
+    onRemove () {};
+
     remove () {
         this.post.remove();
-    }
+        this.onRemove();
+    };
 
     render () {
         return this.post;

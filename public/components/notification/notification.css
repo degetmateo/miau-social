@@ -11,6 +11,10 @@
     color: var(--font-color);
 }
 
+.notification-border {
+    border-bottom: 1px solid var(--border-color);
+}
+
 .notification-post {
     padding: 0;
 }

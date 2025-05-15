@@ -177,7 +177,7 @@ export default class extends AbstractView {
     drawPosts (posts) {
         for (const post of posts) {
             this.timeline.append(new Post(post, { expanded: false }).render());
-            this.timeline.append(new Separator().render());
+            // this.timeline.append(new Separator().render());
         }
     }
 

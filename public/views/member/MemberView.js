@@ -52,12 +52,19 @@ export default class extends AbstractView {
             },
             bottom: async () => {
                 if (this.fetching) return;
+                if (!this.members[this.i].fetching) return;
                 this.fetching = true;
                 this.main.append(this.spinner);
                 this.members[this.i].offset += 20;
                 let posts;
                 try {
-                    posts = await postService.get({ username: this.params.username, offset: this.members[this.i].offset });
+                    posts = await postService.get({ 
+                        username: this.params.username, 
+                        offset: this.members[this.i].offset,
+                        replies: false,
+                        shared: true
+                    });
+                    if (posts.length <= 0) this.members[this.i].fetching = false;
                 } catch (error) {
                     return new Alert(error.message);
                 }
@@ -135,6 +142,7 @@ export default class extends AbstractView {
             member.offset = 0;
             member.scroll = 0;
             member.profile = profile;
+            member.fetching = true;
 
             this.members.push(member);
             this.i = this.members.length - 1;
@@ -148,6 +156,7 @@ export default class extends AbstractView {
                     replies: false,
                     shared: true
                 });
+                if (posts.length <= 0) this.members[this.i].fetching = false;
             } catch (error) {
                 return new Alert(error.message);
             }

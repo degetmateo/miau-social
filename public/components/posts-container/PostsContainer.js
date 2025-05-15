@@ -23,17 +23,17 @@ class PostsContainer extends Component {
     renderPosts = (posts) => {
         for (const p of posts) {
             this.container.append(new Post(p, { expanded: false }).render());
-            this.container.append(new Separator().render());
+            // this.container.append(new Separator().render());
         }
     }
 
     append (post) {
         this.container.append(new Post(post, { expanded: false }).render());
-        this.container.append(new Separator().render());
+        // this.container.append(new Separator().render());
     }
 
     prepend (post) {
-        this.container.prepend(new Separator().render());
+        // this.container.prepend(new Separator().render());
         this.container.prepend(new Post(post, { expanded: false }).render());
     }
 }

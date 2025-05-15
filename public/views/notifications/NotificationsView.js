@@ -67,7 +67,7 @@ export default class NotificationsView extends AbstractView {
                     const notification = new Notification(n);
                     this.notifications.push(notification);
                     this.notificationsContainer.append(notification);
-                    this.notificationsContainer.append(new Separator().render());
+                    // this.notificationsContainer.append(new Separator().render());
                 }
                 this.spinner.remove();
                 this.fetching = false;
@@ -107,7 +107,7 @@ export default class NotificationsView extends AbstractView {
             const notification = new Notification(n);
             this.notifications.push(notification);
             this.notificationsContainer.append(notification);
-            this.notificationsContainer.append(new Separator().render());
+            // this.notificationsContainer.append(new Separator().render());
         }
         this.spinner.remove();
         this.read();
@@ -123,7 +123,7 @@ export default class NotificationsView extends AbstractView {
             const notification = new Notification(n);
             if (this.notifications.find(n => n.getID() === notification.getID())) return;
             this.notifications.push(notification);
-            this.notificationsContainer.prepend(new Separator().render());
+            // this.notificationsContainer.prepend(new Separator().render());
             this.notificationsContainer.prepend(notification);
         }
     }
