@@ -6,7 +6,6 @@
     grid-template-columns: 1fr 700px 1fr;
     grid-template-rows: auto;
     grid-template-areas: "nav main aside";
-
     overflow-y: scroll;
 }
 

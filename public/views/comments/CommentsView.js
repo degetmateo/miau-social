@@ -80,12 +80,25 @@ export default class CommentsView extends AbstractView {
         this.repliesPosts.innerHTML = '';
 
         if (found) {
-            const post = this.posts[this.i];
+            let post = this.posts[this.i];
             this.repliedPosts.append(post.thread.container.render());
-            this.mainPostContainer.append(post.element);
             this.repliesPosts.append(post.replies.container.render());
             this.main.scrollTop = post.scroll;
             this.loadReplies();
+
+            if (!this.posts[this.i].cooldown) {
+                this.posts[this.i].cooldown = true;
+                console.log('updating post');
+                const updatedPost = await postService.getById({ id: this.params.id_post });
+                PostsHandler.add(post);
+                post.element = new Post(updatedPost, { expanded: false, date: 'exact' }).render();
+                let pIndex = this.i;
+                setTimeout(() => {
+                    this.posts[pIndex].cooldown = false;
+                }, 60000);
+            };
+
+            this.mainPostContainer.append(post.element);
         } else {
             const mainLoader = new SpinnerLoader({ size: 'medium' });
             this.mainPostContainer.append(mainLoader.render());
@@ -103,7 +116,7 @@ export default class CommentsView extends AbstractView {
                 PostsHandler.add(post);
             }
 
-            const mainPostElement = new Post(post, { expanded: false }).render();
+            const mainPostElement = new Post(post, { expanded: false, date: 'exact' }).render();
             this.mainPostContainer.append(mainPostElement);
             
             mainLoader.remove();

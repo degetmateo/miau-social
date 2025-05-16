@@ -1,5 +1,5 @@
 import {URL_NO_IMAGE} from "../../consts.js";
-import {formatContent, getTimeElapsedSince, importCSS} from "../../helpers.js";
+import {formatContent, getTimeElapsedSince, importCSS, moreThanAYear} from "../../helpers.js";
 import PostsHandler from "../../modules/PostsHandler.js";
 import router from "../../router.js";
 import {postService} from "../../services/postService.js";
@@ -50,7 +50,8 @@ export default class Post {
         expanded: false,
         onReply: () => {},
         onQuote: () => {},
-        onUpvote: () => {}
+        onUpvote: () => {},
+        date: 'relative'
     }) {
         this.data = data;
         this.meta = data;
@@ -251,13 +252,32 @@ export default class Post {
 
         this.exactDate = document.createElement('span');
         this.exactDate.classList.add('post-footer-exact-date');
-        this.exactDate.textContent = new Date(this.data.date).toLocaleString('es-ES');
-        // this.dateContainer.append(this.exactDate);
+
+        const date = new Date(this.data.date);
+        const dateText = moreThanAYear(date) ?
+            date.toLocaleDateString('es-AR', {
+                weekday: 'short',
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            }) :
+            date.toLocaleDateString('es-AR', {
+                weekday: 'short',
+                day: '2-digit',
+                month: 'short'
+            });
+        const timeText = date.toLocaleTimeString('es-AR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        });
+        this.exactDate.textContent = `${dateText}, ${timeText}`;
+        if (this.options.date === 'exact') this.dateContainer.append(this.exactDate);
 
         this.relativeDate = document.createElement('span');
         this.relativeDate.classList.add('post-footer-relative-date');
         this.relativeDate.textContent = `${getTimeElapsedSince(new Date(this.data.date))}`;
-        this.dateContainer.append(this.relativeDate);
+        if (this.options.date != 'exact') this.dateContainer.append(this.relativeDate);
 
         this.isSelectingText = false;
         this.post.onmousedown = () => {

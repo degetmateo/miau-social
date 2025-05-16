@@ -236,3 +236,7 @@
     color: var(--font-color-light);
     font-size: 14px;
 }
+
+.post-footer-exact-date {
+    text-align: end;
+}
