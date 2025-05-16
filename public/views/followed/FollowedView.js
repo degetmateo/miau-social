@@ -29,7 +29,7 @@ export default class extends AbstractView {
         });
         this.header.onclick = (e) => {
             e.stopPropagation();
-            this.main.scrollTo({ top: 0, behavior: 'instant' });
+            this.view.scrollTo({ top: 0, behavior: 'instant' });
         };
         this.main.append(this.header);
 

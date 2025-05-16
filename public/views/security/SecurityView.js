@@ -25,6 +25,10 @@ export default class SecurityView extends AbstractView {
         this.header = new Header({
             text: "Seguridad"
         });
+        this.header.onclick = (e) => {
+            e.stopPropagation();
+            this.view.scrollTo({ top: 0, behavior: 'instant' });
+        };
         this.main.append(this.header);
 
         this.main.append(new Tab({

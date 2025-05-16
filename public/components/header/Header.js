@@ -11,7 +11,10 @@ class Header extends HTMLElement {
         this.classList.add('header');
         
         this.button = new BackButton();
-        this.button.onclick = () => router.goBack();
+        this.button.onclick = (e) => {
+            e.stopPropagation();
+            router.goBack();
+        };
         this.append(this.button);
 
         this.text = document.createElement('span');
