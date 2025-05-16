@@ -88,7 +88,6 @@ export default class CommentsView extends AbstractView {
 
             if (!this.posts[this.i].cooldown) {
                 this.posts[this.i].cooldown = true;
-                console.log('updating post');
                 const updatedPost = await postService.getById({ id: this.params.id_post });
                 PostsHandler.add(post);
                 post.element = new Post(updatedPost, { expanded: false, date: 'exact' }).render();
