@@ -116,7 +116,7 @@ export default class extends AbstractView {
 
     setScroll (scroll) {
         if (this.members[this.i]) this.members[this.i].scroll = scroll;
-        this.main.scrollTop = scroll;
+        this.view.scrollTop = scroll;
     }
 }
 

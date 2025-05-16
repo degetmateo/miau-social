@@ -83,7 +83,8 @@ export default class CommentsView extends AbstractView {
             let post = this.posts[this.i];
             this.repliedPosts.append(post.thread.container.render());
             this.repliesPosts.append(post.replies.container.render());
-            this.main.scrollTop = post.scroll;
+            this.setScroll(post.scroll);
+            this.mainPostContainer.append(post.element);
             this.loadReplies();
 
             if (!this.posts[this.i].cooldown) {
@@ -97,6 +98,7 @@ export default class CommentsView extends AbstractView {
                 }, 60000);
             };
 
+            this.mainPostContainer.innerHTML = '';
             this.mainPostContainer.append(post.element);
         } else {
             const mainLoader = new SpinnerLoader({ size: 'medium' });
@@ -153,9 +155,9 @@ export default class CommentsView extends AbstractView {
             this.mainPostContainer.scrollIntoView({ block: 'center' });
 
             this.posts.push({
+                ...post,
                 id: post.id,
                 element: mainPostElement,
-                data: post,
                 scroll: this.main.scrollTop,
                 thread: {
                     container: threadContainer,
@@ -172,8 +174,8 @@ export default class CommentsView extends AbstractView {
 
         this.creator = new PostCreator({
             alert: '¡Respuesta enviada!',
-            target_id: this.posts[this.i].data.id,
-            title: `Responder a @${this.posts[this.i].data.creator.username}`,
+            target_id: this.posts[this.i].id,
+            title: `Responder a @${this.posts[this.i].creator.username}`,
             type: 'reply'
         });
 

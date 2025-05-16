@@ -213,6 +213,10 @@ export function moreThanAYear (date) {
     return years >= 1;
 };
 
+export function isNotThisYear (date) {
+    return new Date().getFullYear() != date.getFullYear();
+}
+
 export function getTimeElapsedSince (date) {
     const now = new Date();
     const dif = now - date;
@@ -223,21 +227,13 @@ export function getTimeElapsedSince (date) {
     const months = Math.floor(days / 30);
     const years = Math.floor(days / 365);
 
-    // if (years > 0) return `hace ${years} ${years === 1 ? 'año' : 'años'}`;
-    // if (months > 0) return `hace ${months} ${months === 1 ? 'mes' : 'meses'}`;
-    // if (days > 0) return `hace ${days} ${days === 1 ? 'día' : 'días'}`;
-    // if (hours > 0) return `hace ${hours} ${hours === 1 ? 'hora' : 'horas'}`;
-    // if (minutes > 0) return `hace ${minutes} ${minutes === 1 ? 'minuto' : 'minutos'}`;
-    // if (seconds <= 30) return `ahora`;
-    // return `hace ${seconds} ${seconds === 1 ? 'segundo' : 'segundos'}`;
-
-    if (years > 0) return `${years}a`;
-    if (months > 0) return `${months}m`;
-    if (days > 0) return `${days}d`;
-    if (hours > 0) return `${hours}h`;
-    if (minutes > 0) return `${minutes}min`;
+    if (years > 0) return `hace ${years} ${years === 1 ? 'año' : 'años'}`;
+    if (months > 0) return `hace ${months} ${months === 1 ? 'mes' : 'meses'}`;
+    if (days > 0) return `hace ${days} ${days === 1 ? 'día' : 'días'}`;
+    if (hours > 0) return `hace ${hours} ${hours === 1 ? 'hora' : 'horas'}`;
+    if (minutes > 0) return `hace ${minutes} ${minutes === 1 ? 'minuto' : 'minutos'}`;
     if (seconds <= 30) return `ahora`;
-    return `${seconds}s`;
+    return `hace ${seconds} ${seconds === 1 ? 'segundo' : 'segundos'}`;
 }
 
 export function sleep (ms) {
