@@ -3,9 +3,8 @@ import EventsHandler from "./modules/EventsHandler.js";
 import router from "./router.js";
 import ScreenSpinner from "./components/screen-spinner/ScreenSpinner.js";
 import {authenticationService} from "./services/authenticationService.js";
-import Alert from "./components/alert/alert.js";
-import {sleep} from "./helpers.js";
 import Nav from "./components/nav/Nav.js";
+import PostsManager from "./modules/PostsManager.js";
 
 window.addEventListener("popstate", () => {
     router.resolve();
@@ -55,7 +54,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 export const init = () => {
     router.reset();
-    
+    PostsManager.Clear();
     EventsHandler.addObserver(Nav);
     Nav.set(window.app.member);
     EventsHandler.addObserver(Notifier);

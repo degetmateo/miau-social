@@ -201,7 +201,7 @@
 .post-footer-interactions {
     display: flex;
     flex-direction: row;
-    gap: 10px;
+    gap: 15px;
 }
 
 .post-footer-interaction-container {

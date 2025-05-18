@@ -5,10 +5,9 @@ import {postService} from "../../services/postService.js";
 import AbstractView from "../AbstractView.js";
 import PostsContainer from "../../components/posts-container/PostsContainer.js";
 import PostCreator from "../../components/post-creator/PostCreator.js";
-import PostsHandler from "../../modules/PostsHandler.js";
-import Separator from "../../components/separator/Separator.js";
 import Header from "../../components/header/Header.js";
 import Nav from "../../components/nav/Nav.js";
+import PostsManager from "../../modules/PostsManager.js";
 
 importCSS('/public/views/comments/styles/comments.css');
 
@@ -90,16 +89,12 @@ export default class CommentsView extends AbstractView {
             if (!this.posts[this.i].cooldown) {
                 this.posts[this.i].cooldown = true;
                 const updatedPost = await postService.getById({ id: this.params.id_post });
-                PostsHandler.add(post);
-                post.element = new Post(updatedPost, { expanded: false, date: 'exact' }).render();
+                PostsManager.Update(updatedPost);
                 let pIndex = this.i;
                 setTimeout(() => {
                     this.posts[pIndex].cooldown = false;
                 }, 60000);
             };
-
-            this.mainPostContainer.innerHTML = '';
-            this.mainPostContainer.append(post.element);
         } else {
             const mainLoader = new SpinnerLoader({ size: 'medium' });
             this.mainPostContainer.append(mainLoader.render());
@@ -110,14 +105,15 @@ export default class CommentsView extends AbstractView {
             const repliedLoader = new SpinnerLoader({ size: 'medium' });
             this.repliedPosts.append(repliedLoader.render());
 
-            let post = PostsHandler.find(this.params.id_post);
+            let post = PostsManager.FindById(this.params.id_post);
 
             if (!post) {
                 post = await postService.getById({ id: this.params.id_post });
-                PostsHandler.add(post);
-            }
+            } else {
+                post = post.data;
+            };
 
-            const mainPostElement = new Post(post, { expanded: false, date: 'exact' }).render();
+            const mainPostElement = PostsManager.Create(post);
             this.mainPostContainer.append(mainPostElement);
             
             mainLoader.remove();
@@ -126,14 +122,16 @@ export default class CommentsView extends AbstractView {
 
             let thread = [];
             if (post.target_post_id && post.type === 'reply') {
-                thread = PostsHandler.getThread(post);
+                const px = new Post(post);
+                thread = PostsManager.GetThread(px);
 
                 if (thread.length <= 0) {
                     thread = await postService.getThread({ id: this.params.id_post, offset: 0 });
+                } else {
+                    thread = thread.map(pi => pi.data);
                 }
 
                 for (const pt of thread) {
-                    PostsHandler.add(pt);
                     threadContainer.prepend(pt);
                 }
             }
@@ -145,7 +143,6 @@ export default class CommentsView extends AbstractView {
 
             const replies = await postService.getReplies({ id: this.params.id_post, offset: 0 });
             for (const pr of replies) {
-                PostsHandler.add(pr);
                 repliesContainer.append(pr);
             }
     

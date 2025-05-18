@@ -1,13 +1,11 @@
 import Alert from "../../components/alert/alert.js";
 import Nav from "../../components/nav/Nav.js";
 import PostCreator from "../../components/post-creator/PostCreator.js";
-import Post from "../../components/post/Post.js";
-import Separator from "../../components/separator/Separator.js";
 import Spinner from "../../components/spinner/Spinner.js";
 import {URL_NO_IMAGE} from "../../consts.js";
 import { importCSS, Scroll } from "../../helpers.js";
 import EventsHandler from "../../modules/EventsHandler.js";
-import PostsHandler from "../../modules/PostsHandler.js";
+import PostsManager from "../../modules/PostsManager.js";
 import router from "../../router.js";
 import {postService} from "../../services/postService.js";
 import AbstractView from "../AbstractView.js";
@@ -66,8 +64,7 @@ export default class extends AbstractView {
 
         this.creator.onSuccess((post) => {
             if (this.timelineMode === 'global') {
-                this.timeline.prepend(new Separator().render());
-                this.timeline.prepend(new Post(post, { expanded: false }).render());
+                this.timeline.prepend(PostsManager.Create(post));
             }
             
             this.posts.unshift(post);
@@ -96,10 +93,6 @@ export default class extends AbstractView {
                     await postService.getFollowing({ offset: this.offset });
     
                 this.spinner.remove();
-
-                for (const p of posts) {
-                    PostsHandler.add(p);
-                }
 
                 this.drawPosts(posts);
                 this.posts = [...this.posts, ...posts];
@@ -164,10 +157,6 @@ export default class extends AbstractView {
         
         this.spinner.remove();
 
-        for (const p of posts) {
-            PostsHandler.add(p);
-        }
-
         this.drawPosts(posts);
         this.firstTime = false;
 
@@ -176,8 +165,8 @@ export default class extends AbstractView {
 
     drawPosts (posts) {
         for (const post of posts) {
-            this.timeline.append(new Post(post, { expanded: false }).render());
-            // this.timeline.append(new Separator().render());
+            const p = PostsManager.Create(post);
+            this.timeline.append(p);
         }
     }
 
@@ -204,10 +193,6 @@ export default class extends AbstractView {
         const posts = this.timelineMode === 'global' ? 
             await postService.get({ offset: this.offset }) :
             await postService.getFollowing({ offset: this.offset });
-
-        for (const p of posts) {
-            PostsHandler.add(p);
-        }
 
         if (posts.find(post => post.id > this.posts[0].id && post.type != 'reply')) {
             new Alert('Hay nuevas publicaciones.', {

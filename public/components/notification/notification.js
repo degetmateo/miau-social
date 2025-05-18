@@ -1,5 +1,6 @@
 import {URL_NO_IMAGE} from "../../consts.js";
 import {formatContent, importCSS} from "../../helpers.js";
+import PostsManager from "../../modules/PostsManager.js";
 import router from "../../router.js";
 import Post from "../post/Post.js";
 
@@ -52,7 +53,7 @@ class Notification extends HTMLElement {
             this.body.classList.add('notification-body');
             this.append(this.body);
 
-            this.post = new Post(this.data.target_post);
+            this.post = PostsManager.Create(this.data.target_post);
             this.body.append(this.post.render());
             this.body.onmousemove = () => {
                 this.classList.remove('notification-pending');
@@ -69,7 +70,7 @@ class Notification extends HTMLElement {
             this.body.classList.add('notification-body');
             this.append(this.body);
 
-            this.post = new Post(this.data.target_post);
+            this.post = PostsManager.Create(this.data.target_post);
             this.body.append(this.post.render());
             this.body.onmousemove = () => {
                 this.classList.remove('notification-pending');
@@ -114,8 +115,6 @@ class Notification extends HTMLElement {
             this.body = document.createElement('div');
             this.body.classList.add('notification-body');
             this.append(this.body);
-
-            console.log(this.data.target_post.target_post);
 
             if (this.data.target_post.target_post.content) {
                 this.content = document.createElement('span');

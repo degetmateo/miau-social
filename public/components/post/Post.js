@@ -1,6 +1,6 @@
 import {URL_NO_IMAGE} from "../../consts.js";
-import {formatContent, getTimeElapsedSince, importCSS, isNotThisYear, moreThanAYear} from "../../helpers.js";
-import PostsHandler from "../../modules/PostsHandler.js";
+import {formatContent, getTimeElapsedSince, importCSS, isNotThisYear } from "../../helpers.js";
+import PostsManager from "../../modules/PostsManager.js";
 import router from "../../router.js";
 import {postService} from "../../services/postService.js";
 import {shareService} from "../../services/shareService.js";
@@ -45,7 +45,7 @@ IMAGE_POST_COMMENTS.classList.add('post-footer-interactions-icon');
 
 importCSS('/public/components/post/post.css');
 
-export default class Post {
+class Post extends HTMLElement {
     constructor (data, options = {
         expanded: false,
         onReply: () => {},
@@ -53,6 +53,7 @@ export default class Post {
         onUpvote: () => {},
         date: 'relative'
     }) {
+        super();
         this.data = data;
         this.meta = data;
         if (this.data.type === 'shared') this.data = this.data.target_post;
@@ -60,6 +61,7 @@ export default class Post {
 
         this.post = document.createElement('div');
         this.post.classList.add('post');
+        this.append(this.post);
 
         this.post.get = () => {
             return this;
@@ -118,10 +120,10 @@ export default class Post {
         this.name.onclick = (e) => this.onName(e);
         this.signatureTopLeft.append(this.name);
 
-        this.role = document.createElement('span');
-        this.role.classList.add('post-header-signature-top-role', 'role--'+this.data.creator.role || 'member');
-        this.role.textContent = this.data.creator.role;
-        this.signatureTopLeft.append(this.role);
+        this.roleC = document.createElement('span');
+        this.roleC.classList.add('post-header-signature-top-role', 'role--'+this.data.creator.role || 'member');
+        this.roleC.textContent = this.data.creator.role;
+        this.signatureTopLeft.append(this.roleC);
 
         this.buttonContainer = document.createElement('div');
         this.buttonContainer.classList.add('post-header-button-container');
@@ -321,12 +323,9 @@ export default class Post {
     
     async upvote () {
         this.data.is_upvoted = true;
-        const i = PostsHandler.findIndex(this.data.id);
-        if (i > -1) {
-            PostsHandler.posts[i].is_upvoted = true;
-        }
         this.setUpvoteIcon('on');
         this.increaseUpvotesCount();
+        PostsManager.Update(this.data);
 
         try {
             upvoteService.upvote({ id: this.data.id });
@@ -339,12 +338,9 @@ export default class Post {
     
     async downvote () {
         this.data.is_upvoted = false;
-        const i = PostsHandler.findIndex(this.data.id);
-        if (i > -1) {
-            PostsHandler.posts[i].is_upvoted = false;
-        }
         this.setUpvoteIcon('off');
         this.decreaseUpvotesCount();
+        PostsManager.Update(this.data);
 
         try {
             upvoteService.downvote({ id: this.data.id });
@@ -388,12 +384,9 @@ export default class Post {
 
     async share () {
         this.data.is_shared = true;
-        const i = PostsHandler.findIndex(this.data.id);
-        if (i > -1) {
-            PostsHandler.posts[i].is_shared = true;
-        }
         this.setSharedIcon();
         this.increaseSharesCount();
+        PostsManager.Update(this.data);
 
         try {
             await shareService.share({ id: this.data.id });
@@ -406,12 +399,9 @@ export default class Post {
 
     async unshare () {
         this.data.is_shared = false;
-        const i = PostsHandler.findIndex(this.data.id);
-        if (i > -1) {
-            PostsHandler.posts[i].is_shared = false;
-        }
         this.setUnsharedIcon();
         this.decreaseSharesCount();
+        PostsManager.Update(this.data);
 
         if (this.meta.type == 'shared' && this.meta.creator.id == window.app.member.id) {
             this.remove();
@@ -459,6 +449,7 @@ export default class Post {
             onSuccess: (post) => {
                 this.increaseQuotesCount();
                 this.setQuoteIcon('on');
+                PostsManager.Update(this.data);
                 if (this.options.onQuote) this.options.onQuote(post);
             }
         });
@@ -564,4 +555,30 @@ export default class Post {
     copy () {
         return this.post.cloneNode(true);
     }
-}
+
+    update (data) {
+        this.relativeDate.textContent = `(${getTimeElapsedSince(new Date(this.data.date))})`;
+        if (!data) return;
+        this.data = data;
+
+        this.upvoteCount.textContent = this.data.upvotes_count || 0;
+        this.shareCount.textContent = this.data.shared_count || 0;
+        this.quoteCount.textContent = this.data.quotes_count || 0;
+        this.repliesCount.textContent = this.data.comments_count || 0;
+
+        this.data.is_upvoted ?
+            this.setUpvoteIcon('on') :
+            this.setUpvoteIcon('off');
+        
+        this.data.is_shared ?
+            this.setSharedIcon() :
+            this.setUnsharedIcon();
+
+        this.data.is_quoted ?
+            this.setQuoteIcon('on') :
+            this.setQuoteIcon('off');
+    };
+};
+
+customElements.define('app-post', Post);
+export default Post;

@@ -2,6 +2,7 @@ import Component from "../Component.js";
 import {importCSS} from "../../helpers.js";
 import Post from "../post/Post.js";
 import Separator from "../separator/Separator.js";
+import PostsManager from "../../modules/PostsManager.js";
 
 importCSS('/public/components/posts-container/posts-container.css');
 
@@ -22,19 +23,18 @@ class PostsContainer extends Component {
 
     renderPosts = (posts) => {
         for (const p of posts) {
-            this.container.append(new Post(p, { expanded: false }).render());
-            // this.container.append(new Separator().render());
+            this.container.append(PostsManager.Create(p));
         }
     }
 
     append (post) {
-        this.container.append(new Post(post, { expanded: false }).render());
+        this.container.append(PostsManager.Create(post));
         // this.container.append(new Separator().render());
     }
 
     prepend (post) {
         // this.container.prepend(new Separator().render());
-        this.container.prepend(new Post(post, { expanded: false }).render());
+        this.container.prepend(PostsManager.Create(post));
     }
 }
 
