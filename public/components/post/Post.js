@@ -541,6 +541,11 @@ class Post extends HTMLElement {
         }
     }
 
+    increaseRepliesCount () {
+        this.data.comments_count = parseInt(this.data.comments_count || 0) + 1;
+        this.repliesCount.textContent = this.data.comments_count;
+    };
+
     onRemove () {};
 
     remove () {

@@ -1,5 +1,6 @@
 import Post from "../components/post/Post.js";
 import Observer from "../interfaces/Observer.js";
+import {postService} from "../services/postService.js";
 import EventsHandler from "./EventsHandler.js";
 
 class PostsManager extends Observer {
@@ -17,6 +18,17 @@ class PostsManager extends Observer {
             };
         };
     };
+
+    // async Update (id) {
+    //     if (!this.FindById(id)) return;
+    //     try {
+    //         const data = await postService.getById({ id: id });
+    //         this.Update(data);
+    //     } catch (error) {
+    //         console.error(error);
+    //         return;
+    //     };
+    // };
 
     Create (data, options = {
         expanded: false,

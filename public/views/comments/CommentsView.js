@@ -180,11 +180,13 @@ export default class CommentsView extends AbstractView {
         this.creator.updateIcon(window.app.member.icon_url);
         
         this.creator.onSuccess((response) => {
+            this.posts[this.i].element.increaseRepliesCount();
+            this.posts[this.i].comments_count = parseInt(this.posts[this.i].comments_count) + 1;
+            PostsManager.Update(this.posts[this.i]);
             this.posts[this.i].replies.offset += 1;
             this.posts[this.i].replies.container.prepend(response);
         });
 
-        // this.replyCreatorContainer.append(new Separator().render());
         this.creator.render(this.replyCreatorContainer);
 
         Scroll({
