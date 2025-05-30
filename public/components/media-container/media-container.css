@@ -5,7 +5,7 @@
     overflow: hidden;
     max-width: 100%;
 
-    border: 2px solid #FFF;
+    /* border: 2px solid #FFF; */
 }
 
 .media-container--1 {
@@ -14,7 +14,8 @@
 }
 
 .media-container--1 .media-container-image {
-    width: 100%;
+    max-width: 100%;
+    max-height: 400px;
 }
 
 .media-container--2 {

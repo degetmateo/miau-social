@@ -321,7 +321,7 @@ class Post extends HTMLElement {
             if (e.target.closest('.post-footer-interaction-container')) return;
             if (e.target.closest('.quote')) return;
             if (e.target.closest('.link')) return;
-            if (e.target.closest('.media-container')) return;
+            if (e.target.closest('.media-container-image')) return;
             if (!this.isSelectingText) return router.navigateTo('/post/'+this.data.id+'/comments');
         }
     }
