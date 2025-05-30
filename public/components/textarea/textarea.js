@@ -9,7 +9,8 @@ export default class Textarea extends Component {
         max: 16,
         min: 0,
         expand: false,
-        onPaste: () => {}
+        onPaste: () => {},
+        onInput: () => {}
     }) {
         super();
         this.options = options;
@@ -71,6 +72,8 @@ export default class Textarea extends Component {
             this.textarea.style.height = 'auto';
             this.textarea.style.height = `${this.textarea.scrollHeight}px`;
         }
+
+        if (this.options.onInput) this.options.onInput(this.value);
     }
 
     render = () => {

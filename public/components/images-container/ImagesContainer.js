@@ -7,7 +7,8 @@ importCSS('/public/components/images-container/styles/images-container.css');
 export default class ImagesContainer {
     constructor (data = {
         editable: false,
-        maxHeight: 500
+        maxHeight: 500,
+        onRemove: () => {}
     }) {
         this.data = data;
         this.container = document.createElement('div');
@@ -44,7 +45,9 @@ export default class ImagesContainer {
                 this.images = this.images.filter(i => i !== data);
                 imageContainer.remove();
                 this.updateLayout();
+
                 if (this.images.length === 0) this.hide();
+                if (this.data.onRemove) this.data.onRemove(this.images);
             };
             imageContainer.append(deleteButton);
         }

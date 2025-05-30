@@ -187,7 +187,7 @@ export default class CommentsView extends AbstractView {
             this.posts[this.i].replies.container.prepend(response);
         });
 
-        this.creator.render(this.replyCreatorContainer);
+        this.replyCreatorContainer.append(this.creator);
 
         Scroll({
             element: this.view,

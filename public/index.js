@@ -59,4 +59,10 @@ export const init = () => {
     Nav.set(window.app.member);
     EventsHandler.addObserver(Notifier);
     Notifier.initialize();
-}
+
+    window.dispatchEvent(new CustomEvent('app-initialized', {
+        detail: {
+            member: window.app.member
+        }
+    }));
+};

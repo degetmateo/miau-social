@@ -43,6 +43,14 @@ const IMAGE_POST_COMMENTS = new Image();
 IMAGE_POST_COMMENTS.src = '/public/components/post/svg/comments.svg';
 IMAGE_POST_COMMENTS.classList.add('post-footer-interactions-icon');
 
+const BOOKMARK_ON = new Image();
+BOOKMARK_ON.src = '/public/components/post/svg/bookmark-on.png';
+BOOKMARK_ON.classList.add('post-footer-interactions-icon');
+
+const BOOKMARK_OFF = new Image();
+BOOKMARK_OFF.src = '/public/components/post/svg/bookmark-off.png';
+BOOKMARK_OFF.classList.add('post-footer-interactions-icon');
+
 importCSS('/public/components/post/post.css');
 
 class Post extends HTMLElement {
@@ -246,6 +254,20 @@ class Post extends HTMLElement {
         this.repliesCount.classList.add('post-footer-interaction-count');
         this.repliesCount.textContent = this.data.comments_count || 0;
         this.repliesContainer.append(this.repliesCount);
+
+        this.bookmark = document.createElement('div');
+        this.bookmark.classList.add('post-footer-interaction-container');
+        // this.interactions.append(this.bookmark);
+
+        this.bookmarkIcon = this.data.is_bookmarked ?
+            BOOKMARK_ON.cloneNode(true) :
+            BOOKMARK_OFF.cloneNode(true);
+        this.bookmark.append(this.bookmarkIcon);
+
+        this.bookmarkCount = document.createElement('span');
+        this.bookmarkCount.classList.add('post-footer-interaction-count');
+        this.bookmarkCount.textContent = this.data.bookmarks_count || 0;
+        this.bookmark.append(this.bookmarkCount);
 
         this.dateContainer = document.createElement('div');
         this.dateContainer.classList.add('post-footer-date-container');

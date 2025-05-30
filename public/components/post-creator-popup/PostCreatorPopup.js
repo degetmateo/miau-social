@@ -62,7 +62,7 @@ export default class PostCreatorPopup extends Observer {
             if (this.data.onSuccess) this.data.onSuccess(post);
             this.remove();
         });
-        this.creator.render(this.container);
+        this.container.append(this.creator);
     }
 
     onEscape () {

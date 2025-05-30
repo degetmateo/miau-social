@@ -9,6 +9,7 @@ import Alert from '../../components/alert/alert.js';
 import EventsHandler from '../../modules/EventsHandler.js';
 import Tab from '../../components/tab/Tab.js';
 import Nav from '../../components/nav/Nav.js';
+import ConfirmPopup from '../../components/confirm-popup/ConfirmPopup.js';
 
 importCSS('/public/views/settings/styles/settings.css');
 
@@ -55,22 +56,31 @@ export default class extends AbstractView {
 
         this.main.append(new Tab({
             text: 'Cerrar sesión',
-            onClick: async (e) => {
-                const loader = new ScreenSpinner({ opaque: true });
-                e.stopPropagation();
-                localStorage.removeItem('token');
-                window.app.logged = false;
-                window.app = {};
-                router.navigateTo('/');
-                EventsHandler.clear();
-                new Alert("Cerraste sesión.", { error: false });
-                try {
-                    await authenticationService.logout();
-                } catch (error) {
-                    console.error(error);
-                };
-    
-                loader.remove();
+            onClick: (e) => {
+                new ConfirmPopup({
+                    title: '¿Querés cerrar la sesión?',
+                    description: 'Saldrás de tu cuenta y tendrás que volver a iniciar sesión con tus datos.',
+                    confirmText: 'Cerrar sesión',
+                    cancelText: 'Cancelar',
+                    onConfirm: async () => {
+                        const loader = new ScreenSpinner({ opaque: true });
+                        e.stopPropagation();
+                        localStorage.removeItem('token');
+                        window.app.logged = false;
+                        window.app = {};
+                        router.navigateTo('/');
+                        EventsHandler.clear();
+                        new Alert("Cerraste sesión.", { error: false });
+                        try {
+                            await authenticationService.logout();
+                        } catch (error) {
+                            console.error(error);
+                        };
+            
+                        loader.remove();
+                    },
+                    onCancel: null
+                });
             }
         }));
 

@@ -1,3 +1,4 @@
+import {URL_NO_IMAGE} from "../../consts.js";
 import {importCSS} from "../../helpers.js";
 import router from "../../router.js";
 import {postService} from "../../services/postService.js";
@@ -10,21 +11,26 @@ import Textarea from "../textarea/textarea.js";
 
 importCSS('/public/components/post-creator/styles/post-creator.css');
 
-class PostCreator {
+class PostCreator extends HTMLElement {
     constructor (data = {
         target_id: null,
         title: '¿Qué pensás?',
         type: 'default',
         alert: '¡Publicación enviada!'
     }) {
+        super();
         this.data = data;
+
+        this.has_text = false;
+        this.has_images = false;
+        this.has_video = false;
+
         this.onSubmit = () => {};
-        this.container = document.createElement('div');
-        this.container.classList.add('post-creator-container');
+        this.classList.add('post-creator-container');
 
         this.iconContainer = document.createElement('div');
         this.iconContainer.classList.add('post-creator-icon-container');
-        this.container.append(this.iconContainer);
+        this.append(this.iconContainer);
 
         this.icon = document.createElement('div');
         this.icon.classList.add('post-creator-icon');
@@ -32,7 +38,7 @@ class PostCreator {
 
         this.editor = document.createElement('div');
         this.editor.classList.add('post-creator-editor');
-        this.container.append(this.editor);
+        this.append(this.editor);
 
         this.memberName = document.createElement('span');
         this.memberName.classList.add('post-creator-member-name');
@@ -44,14 +50,28 @@ class PostCreator {
             title: this.data.title || '¿Qué pensás?',
             expand: true,
             onPaste: (file) => {
-                this.imagesContainer.show();
-                this.imagesContainer.addImage({ src: URL.createObjectURL(file), type: 'user' });
+                try {
+                    this.imagesContainer.show();
+                    this.imagesContainer.addImage({ src: URL.createObjectURL(file), type: 'user' });
+                    this.has_images = true;
+                } catch (error) {
+                    this.imagesContainer.hide();
+                    this.has_images = false;
+                };
+            },
+            onInput: (value) => {
+                this.has_text = value.length > 0;
             }
         });
 
         this.editor.append(this.textarea.render());
 
-        this.imagesContainer = new ImagesContainer({ editable: true });
+        this.imagesContainer = new ImagesContainer({
+            editable: true,
+            onRemove: (images) => {
+                this.has_images = images.length > 0;
+            }
+        });
         this.imagesContainer.hide();
         this.editor.append(this.imagesContainer.render());
         
@@ -77,9 +97,11 @@ class PostCreator {
                 return;
             }
 
+            this.has_images = true;
+
             this.imagesContainer.show();
             this.imagesContainer.addImages(this.inputImages.files);
-        }
+        };
 
         this.imageButton = new Button({
             appearance: 'default',
@@ -101,6 +123,43 @@ class PostCreator {
 
         this.editorButtonsContainer.append(this.gifButton.render());
 
+        this.inputVideo = document.createElement('input');
+        this.inputVideo.type = 'file';
+        this.inputVideo.accept = 'video/*';
+        this.inputVideo.style.display = 'none';
+
+        this.inputVideo.onchange = () => {
+            if (this.inputImages.files.length > 1) {
+                // new Alert('Elige hasta un máximo de 4 imágenes o GIFs.', { error: true });
+                this.inputImages.value = '';
+                this.inputImages.files = null;
+                return;
+            };
+
+            // video size mayor a 100mb
+            if (this.inputVideo.files[0].size > 100 * 1024 * 1024) {
+                new Alert('Elige un video de hasta 100mb.', { error: true });
+                this.inputVideo.value = '';
+                this.inputVideo.files = null;
+                return;
+            };
+
+            this.has_video = true;
+
+            // this.imagesContainer.show();
+            // this.imagesContainer.addImages(this.inputImages.files);
+        };
+
+        this.videoButton = new Button({
+            appearance: 'default',
+            text: 'VID',
+            onClick: () => {
+                this.inputVideo.click();
+            }
+        });
+
+        // this.editorButtonsContainer.append(this.videoButton.render());
+
         this.postButtonContainer = document.createElement('div');
         this.postButtonContainer.classList.add('post-creator-post-button-container');
         this.buttonsContainer.append(this.postButtonContainer);
@@ -112,10 +171,11 @@ class PostCreator {
         });
 
         this.postButtonContainer.append(this.postButton.render());
-    }
 
-    render (element) {
-        element.append(this.container);
+        window.addEventListener('app-initialized', () => {
+            this.icon.style.backgroundImage = `url(${window.app.member.icon_url || URL_NO_IMAGE})`;
+            this.memberName.textContent = window.app.member.name;
+        });
     }
 
     updateIcon (url) {
@@ -152,14 +212,26 @@ class PostCreator {
                 content: content, 
                 images: imagesData, 
                 type: this.data.type,
-                target_id: this.data.target_id
+                target_id: this.data.target_id,
+
+                has_images: this.has_images,
+                has_video: this.has_video,
+                has_text: this.has_text
             });
             this.response = response;
         } catch (error) {
             loader.remove();
+
+            this.has_images = false;
+            this.has_video = false;
+            this.has_text = false;
+
             return new Alert(error.message, { error: true });
         }
 
+        this.has_images = false;
+        this.has_video = false;
+        this.has_text = false;
         loader.remove();
         if (this.onsuccess) this.onsuccess();
         return new Alert(this.data.alert || '¡Publicación enviada!', { 
@@ -177,4 +249,5 @@ class PostCreator {
     }
 }
 
+customElements.define('app-post-creator', PostCreator);
 export default PostCreator;
