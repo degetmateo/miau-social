@@ -58,7 +58,7 @@ class Router {
         this.router
             .on("/", () => this.views.landing.init())
             .on("/home", () => this.views.home.init())
-            .on("/explore", () => this.views.explore.init())
+            .on("/explore", ({ data, params }) => this.views.explore.init(data, params))
             .on("/settings", () => this.views.settings.init())
             .on("/settings/account", () => this.views.account.init())
             .on("/settings/account/username", () => this.views.username.init())

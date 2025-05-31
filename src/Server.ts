@@ -12,6 +12,7 @@ import adminRouter from "./routes/adminRouter";
 import tenorRouter from "./routes/tenorRouter";
 import sessionRouter from './routes/sessionRouter';
 import shareRouter from './routes/shareRouter';
+import auxRouter from './routes/auxRouter';
 
 const requestIp = require('request-ip');
 const cookieParser = require('cookie-parser');
@@ -69,7 +70,8 @@ export default class Server {
         follow: '/api/follow',
         tenor: '/api/tenor',
         session: '/api/session',
-        share: '/api/share'
+        share: '/api/share',
+        aux: '/api/aux'
     }
 
     constructor (port: number) {
@@ -131,6 +133,7 @@ export default class Server {
         this.app.use(this.paths.tenor, tenorRouter);
         this.app.use(this.paths.session, sessionRouter);
         this.app.use(this.paths.share, shareRouter);
+        this.app.use(this.paths.aux, auxRouter);
         this.app.use(this.paths.docs, swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
         this.app.use('*', (_, res) => {

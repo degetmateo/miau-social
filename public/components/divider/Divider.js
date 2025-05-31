@@ -5,6 +5,7 @@ importCSS('/public/components/divider/divider.css');
 class Divider extends HTMLElement {
     constructor () {
         super();
+        this.classList.add('app-divider');
     };
 };
 

@@ -1,0 +1,24 @@
+.app-tab-list {
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.app-tab {
+    box-sizing: border-box;
+    padding: 20px;
+    width: 100%;
+    cursor: pointer;
+    display: inline-block;
+    text-align: center;
+}
+
+.app-tab:hover {
+    background-color: var(--hover-color);
+}
+
+.app-tab-active {
+    color: var(--font-color);
+    font-weight: bold;
+    border-bottom: 2px solid var(--font-color);
+}

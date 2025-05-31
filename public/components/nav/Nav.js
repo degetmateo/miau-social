@@ -26,7 +26,7 @@ class Nav extends HTMLElement {
             icon_on: '/public/assets/nav/explore-on.png',
             icon_off: '/public/assets/nav/explore-off.png',
         });
-        // this.buttons.append(this.buttonExplore);
+        this.buttons.append(this.buttonExplore);
 
         this.buttonProfile = new NavButton({
             pathname: '/member',
