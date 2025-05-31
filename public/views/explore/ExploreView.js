@@ -26,6 +26,10 @@ export default class ExploreView extends AbstractView {
         this.view.append(this.main);
 
         this.header = new Header({ text: 'Explorar' });
+        this.header.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.setScroll(0);
+        });
         this.main.append(this.header);
 
         this.form = document.createElement('form');
