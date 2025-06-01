@@ -4,7 +4,7 @@ import Input from "../../components/input/input.js";
 import Nav from "../../components/nav/Nav.js";
 import Spinner from "../../components/spinner/Spinner.js";
 import View from "../../components/view/View.js";
-import {formatContent, importCSS, Scroll} from "../../helpers.js";
+import {importCSS, Scroll} from "../../helpers.js";
 import PostsManager from "../../modules/PostsManager.js";
 import Service from "../../modules/Service.js";
 import router from "../../router.js";
@@ -49,32 +49,24 @@ export default class ExploreView extends AbstractView {
 
         this.form.addEventListener('submit', (e) => {
             e.preventDefault();
-            router.navigateTo(`/explore?query=${encodeURIComponent(this.input.value.trim())}`);
+            router.navigateTo(`/explore?search=${encodeURIComponent(this.input.value.trim())}`);
         });
 
-        this.results = document.createElement('div');
-        this.results.classList.add('explore-results');
-        this.main.append(this.results);
+        this.resultsContainer = document.createElement('div');
+        this.resultsContainer.classList.add('explore-results');
+        this.main.append(this.resultsContainer);
 
-
-        this.stop = false;
         this.fetching = false;
-        this.scroll = 0;
-        this.params = null;
-        this.previous = null;
-        this.offset = 0;
-
+        this.queries = new Array();
+        this.i = 0;
+        
         Scroll({
             element: this.view,
             scroll: (s) => {
-                this.scroll = s;
+                this.queries[this.i].scroll = s;
             },
-            bottom: async () => {
-                console.log('test');
-                if (this.fetching || this.stop) return;
-                this.fetching = true;
-                await this.search();
-                this.fetching = false;
+            bottom: () => {
+                this.search();
             }
         });
     };
@@ -83,50 +75,72 @@ export default class ExploreView extends AbstractView {
         this.setTitle("Explorar");
         this.setView(this.view)
         this.nav.append(Nav);
-        this.setScroll(this.scroll);
 
-        this.params = params;
         this.fetching = false;
-        this.stop = false;
+        if (!params || !params.search) return;
+        this.input.set(params.search);
+        this.resultsContainer.innerHTML = '';
 
-        if (params && params.query) {
-            this.input.set(params.query);
-
-            if (this.previous && this.previous.query === params.query) {
-                return;
+        let found = false;
+        this.i = 0;
+        while (this.i < this.queries.length) {
+            if (this.queries[this.i].search === params.search) {
+                found = true;
+                break;
             };
+            this.i++;
+        };
 
-            this.previous = params.query;
-            this.results.innerHTML = '';
-            this.offset = 0;
-            await this.search();
+        if (found) {
+            this.resultsContainer.append(this.queries[this.i].results);
+            this.setScroll(this.queries[this.i].scroll);
+        } else {
+            this.setScroll(this.scroll);
+
+            const results = document.createElement('div');
+            results.classList.add('explore-results');
+
+            this.queries.push({
+                search: params.search,
+                results: results,
+                offset: 0,
+                stop: false,
+                scroll: 0
+            });
+
+            this.i = this.queries.length - 1;
+            this.resultsContainer.append(this.queries[this.i].results);
+            this.search();
         };
     };
 
     async search () {
-        if (!this.params || !this.params.query) return;
+        if (this.fetching || this.queries[this.i].stop) return;
+        this.fetching = true;
 
         const loader = new Spinner();
-        this.results.append(loader);
+        this.resultsContainer.append(loader);
 
         try {
-            const res = await Service.Fetch(`/api/aux/search?query=${this.params.query}&offset=${this.offset}`, { method: "GET" });
+            const res = await Service.Fetch(`/api/aux/search?search=${this.queries[this.i].search}&offset=${this.queries[this.i].offset}`, { method: "GET" });
             if (res.length <= 0) throw new Error("No hay más resultados.");
 
             for (const r of res) {
-                this.results.append(PostsManager.Create(r));
+                this.queries[this.i].results.append(PostsManager.Create(r));
             };
 
-            this.offset += res.length;
+            this.queries[this.i].offset += res.length;
         } catch (error) {
             new Alert(error.message, { error: true });
-            this.stop = true;
+            this.queries[this.i].stop = true;
         };
 
+        this.fetching = false;
         loader.remove();
     };
 
     setScroll (scroll) {
         this.view.scrollTop = scroll;
+        if (this.queries[this.i]) this.queries[this.i].scroll = scroll;
     };
 };

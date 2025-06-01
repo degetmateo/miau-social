@@ -7,7 +7,7 @@ const get = async (req: Request, res: Response) => {
     try {
         const data = await auxService.get({
             member: req.member,
-            query: req.query.query as string,
+            query: req.query.search as string,
             offset: parseInt(req.query.offset as string) || 0
         });
 
