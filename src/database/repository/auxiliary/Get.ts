@@ -146,7 +146,9 @@ export default async function Get (data: {
         LEFT JOIN
             image media ON media.post_id = p.id_post AND media.type = 'media'
         WHERE
-            p.content_post ILIKE '%' || ${data.query} || '%'
+            p.content_post ILIKE '%' || ${data.query} || '%' OR
+            m.name_member ILIKE '%' || ${data.query} || '%' OR
+            m.username_member ILIKE '%' || ${data.query} || '%'
         GROUP BY
             p.id_post,
             p.content_post,
