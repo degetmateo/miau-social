@@ -133,6 +133,11 @@ class Post extends HTMLElement {
         this.roleC.textContent = this.data.creator.role;
         this.signatureTopLeft.append(this.roleC);
 
+        if (this.data.creator.id == 158) {
+            this.roleC.textContent = 'Golden Witch';
+            this.roleC.classList.add('role-golden-witch');
+        };
+
         this.buttonContainer = document.createElement('div');
         this.buttonContainer.classList.add('post-header-button-container');
         this.signatureTop.append(this.buttonContainer);
