@@ -91,3 +91,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.followed-bio-container {
+    grid-area: bio;
+}

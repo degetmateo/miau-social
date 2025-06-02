@@ -11,6 +11,7 @@
     cursor: pointer;
     display: inline-block;
     text-align: center;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .app-tab:hover {

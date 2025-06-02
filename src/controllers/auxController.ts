@@ -8,6 +8,7 @@ const get = async (req: Request, res: Response) => {
         const data = await auxService.get({
             member: req.member,
             query: req.query.search as string,
+            filter: req.query.filter ? req.query.filter as any : 'posts',
             offset: parseInt(req.query.offset as string) || 0
         });
 

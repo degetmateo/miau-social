@@ -6,28 +6,40 @@ class TabList extends HTMLElement {
     constructor () {
         super();
         this.tabs = [];
+        this.selected = null;
         this.classList.add('app-tab-list');
     };
 
-    add (tab = {
+    add (data = {
         name: '',
+        value: '',
         onClick: () => {}
     }) {
-        const T = document.createElement('div');
-        T.classList.add('app-tab');
-        T.textContent = tab.name;
-        T.onclick = (e) => {
-            e.preventDefault();
-            e.stopPropagation();
+        const tab = document.createElement('div');
+        tab.classList.add('app-tab');
+        tab.value = data.value;
+        this.append(tab);
+
+        const text = document.createElement('span');
+        text.classList.add('tab-text');
+        text.textContent = data.name;
+        tab.append(text);
+
+        tab.select = () => {
             this.tabs.forEach(t => t.classList.remove('app-tab-active'));
-            T.classList.add('app-tab-active');
-            tab.onClick();
+            tab.classList.add('app-tab-active');
+            this.selected = tab;
         };
-        this.append(T);
-        this.tabs.push(T);
-        if (this.tabs.length === 1) {
-            T.classList.add('app-tab-active');
-        };
+
+        tab.addEventListener('click', (e) => {
+            tab.select();
+            data.onClick(e);
+        });
+
+        if (!this.selected) tab.select();
+
+        this.tabs.push(tab);
+        return tab;
     };
 };
 

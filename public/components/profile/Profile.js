@@ -1,5 +1,5 @@
 import {URL_NO_IMAGE} from "../../consts.js";
-import {importCSS, shortenLink} from "../../helpers.js";
+import {importCSS, loadImage, shortenLink} from "../../helpers.js";
 import router from "../../router.js";
 import {followService} from "../../services/followService.js";
 import Alert from "../alert/alert.js";
@@ -200,6 +200,11 @@ export default class Profile {
         this.followersContainer.onclick = () => {
             router.navigateTo(`/member/${this.member.username}/followers`);
         }
+
+        loadImage(this.member.icon_url)
+            .catch(() => {
+                this.icon.src = URL_NO_IMAGE;
+            });
     }
 
     update (member) {

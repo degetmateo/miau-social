@@ -1,6 +1,6 @@
 import Postgres from "../../Postgres";
 
-export default async function Get (data: {
+export default async function GetPosts (data: {
     member: any;
     query: string;
     offset: number;

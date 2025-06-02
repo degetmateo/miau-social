@@ -3,8 +3,10 @@ import Header from "../../components/header/Header.js";
 import Input from "../../components/input/input.js";
 import Nav from "../../components/nav/Nav.js";
 import Spinner from "../../components/spinner/Spinner.js";
+import TabList from "../../components/tab-list/TabList.js";
 import View from "../../components/view/View.js";
-import {importCSS, Scroll} from "../../helpers.js";
+import {URL_NO_IMAGE} from "../../consts.js";
+import {formatContent, importCSS, loadImage, Scroll} from "../../helpers.js";
 import PostsManager from "../../modules/PostsManager.js";
 import Service from "../../modules/Service.js";
 import router from "../../router.js";
@@ -49,7 +51,38 @@ export default class ExploreView extends AbstractView {
 
         this.form.addEventListener('submit', (e) => {
             e.preventDefault();
-            router.navigateTo(`/explore?search=${encodeURIComponent(this.input.value.trim())}`);
+            router.navigateTo(`/explore?search=${encodeURIComponent(this.input.value.trim())}&filter=${this.queries[this.i]?.filter || 'posts'}`);
+        });
+
+        this.tablist = new TabList();
+        this.main.append(this.tablist);
+
+        this.tablist.add({
+            name: 'Publicaciones',
+            value: 'posts',
+            onClick: () => {
+                window.dispatchEvent(new CustomEvent('explore-tablist-changed', {
+                    detail: {
+                        filter: 'posts'
+                    }
+                }));
+            }
+        });
+
+        this.tablist.add({
+            name: 'Miembros',
+            value: 'members',
+            onClick: () => {
+                window.dispatchEvent(new CustomEvent('explore-tablist-changed', {
+                    detail: {
+                        filter: 'members'
+                    }
+                }));
+            }
+        });
+
+        window.addEventListener('explore-tablist-changed', (e) => {
+            router.navigateTo(`/explore?search=${encodeURIComponent(this.input.value.trim())}&filter=${e.detail.filter}`);
         });
 
         this.resultsContainer = document.createElement('div');
@@ -77,14 +110,21 @@ export default class ExploreView extends AbstractView {
         this.nav.append(Nav);
 
         this.fetching = false;
-        if (!params || !params.search) return;
-        this.input.set(params.search);
         this.resultsContainer.innerHTML = '';
+
+        if (!params || !params.search) {
+            this.tablist.style.display = 'none';
+            return;
+        } else {
+            this.tablist.style.display = 'flex';
+        };
+
+        this.input.set(params.search);
 
         let found = false;
         this.i = 0;
         while (this.i < this.queries.length) {
-            if (this.queries[this.i].search === params.search) {
+            if (this.queries[this.i].search === params.search && this.queries[this.i].filter === (params.filter || 'posts')) {
                 found = true;
                 break;
             };
@@ -93,6 +133,7 @@ export default class ExploreView extends AbstractView {
 
         if (found) {
             this.resultsContainer.append(this.queries[this.i].results);
+            this.tablist.tabs.find(t => t.value === this.queries[this.i].filter)?.select();
             this.setScroll(this.queries[this.i].scroll);
         } else {
             this.setScroll(this.scroll);
@@ -102,6 +143,7 @@ export default class ExploreView extends AbstractView {
 
             this.queries.push({
                 search: params.search,
+                filter: params.filter || 'posts',
                 results: results,
                 offset: 0,
                 stop: false,
@@ -109,6 +151,7 @@ export default class ExploreView extends AbstractView {
             });
 
             this.i = this.queries.length - 1;
+            this.tablist.tabs.find(t => t.value === this.queries[this.i].filter)?.select();
             this.resultsContainer.append(this.queries[this.i].results);
             this.search();
         };
@@ -122,11 +165,54 @@ export default class ExploreView extends AbstractView {
         this.resultsContainer.append(loader);
 
         try {
-            const res = await Service.Fetch(`/api/aux/search?search=${this.queries[this.i].search}&offset=${this.queries[this.i].offset}`, { method: "GET" });
+            const res = await Service.Fetch(`/api/aux/search?search=${this.queries[this.i].search}&offset=${this.queries[this.i].offset}&filter=${this.queries[this.i].filter || 'posts'}`, { method: "GET" });
             if (res.length <= 0) throw new Error("No hay más resultados.");
 
-            for (const r of res) {
-                this.queries[this.i].results.append(PostsManager.Create(r));
+            if (this.queries[this.i].filter === 'members') {
+                for (const member of res) {
+                    const container = document.createElement('div');
+                    container.classList.add('followed-container');
+
+                    container.innerHTML = `
+                        <div class="followed-icon-container">
+                            <img src="${member.icon_url || URL_NO_IMAGE}" class="followed-icon" />
+                        </div>
+                        <div class="followed-signature-container">
+                            <span class="followed-signature-name">${member.name}</span>
+                            <span class="followed-signature-username">@${member.username}</span>
+                        </div>
+                        ${member.bio ? `
+                            <div class="followed-bio-container">
+                                <span class="followed-bio">${formatContent(member.bio).innerHTML}</span>
+                            </div>` : ''
+                        }
+                    `;
+
+                    container.isSelectingText = false;
+                    container.onmousedown = () => {
+                        container.isSelectingText = false;
+                    }
+                    container.onmousemove = () => {
+                        container.isSelectingText = true;
+                    }
+                    container.onmouseup = (e) => {
+                        if (!container.isSelectingText) return router.navigateTo(`/member/${member.username}`);
+                    }
+
+                    this.queries[this.i].results.append(container);
+
+                    loadImage(member.icon_url)
+                        .catch(() => {
+                            const img = container.querySelector('.followed-icon');
+                            img.src = URL_NO_IMAGE;
+                        });
+                };
+            };
+
+            if (this.queries[this.i].filter === 'posts') {
+                for (const r of res) {
+                    this.queries[this.i].results.append(PostsManager.Create(r));
+                };
             };
 
             this.queries[this.i].offset += res.length;
