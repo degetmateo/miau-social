@@ -1,6 +1,7 @@
 import Alert from "../../components/alert/alert.js";
 import Header from "../../components/header/Header.js";
 import Input from "../../components/input/input.js";
+import MemberCard from "../../components/member-card/MemberCard.js";
 import Nav from "../../components/nav/Nav.js";
 import Spinner from "../../components/spinner/Spinner.js";
 import TabList from "../../components/tab-list/TabList.js";
@@ -170,42 +171,7 @@ export default class ExploreView extends AbstractView {
 
             if (this.queries[this.i].filter === 'members') {
                 for (const member of res) {
-                    const container = document.createElement('div');
-                    container.classList.add('followed-container');
-
-                    container.innerHTML = `
-                        <div class="followed-icon-container">
-                            <img src="${member.icon_url || URL_NO_IMAGE}" class="followed-icon" />
-                        </div>
-                        <div class="followed-signature-container">
-                            <span class="followed-signature-name">${member.name}</span>
-                            <span class="followed-signature-username">@${member.username}</span>
-                        </div>
-                        ${member.bio ? `
-                            <div class="followed-bio-container">
-                                <span class="followed-bio">${formatContent(member.bio).innerHTML}</span>
-                            </div>` : ''
-                        }
-                    `;
-
-                    container.isSelectingText = false;
-                    container.onmousedown = () => {
-                        container.isSelectingText = false;
-                    }
-                    container.onmousemove = () => {
-                        container.isSelectingText = true;
-                    }
-                    container.onmouseup = (e) => {
-                        if (!container.isSelectingText) return router.navigateTo(`/member/${member.username}`);
-                    }
-
-                    this.queries[this.i].results.append(container);
-
-                    loadImage(member.icon_url)
-                        .catch(() => {
-                            const img = container.querySelector('.followed-icon');
-                            img.src = URL_NO_IMAGE;
-                        });
+                    this.queries[this.i].results.append(new MemberCard(member, { bio: member.bio }));
                 };
             };
 

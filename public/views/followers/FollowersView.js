@@ -1,5 +1,6 @@
 import Alert from "../../components/alert/alert.js";
 import Header from "../../components/header/Header.js";
+import MemberCard from "../../components/member-card/MemberCard.js";
 import Nav from "../../components/nav/Nav.js";
 import Spinner from "../../components/spinner/Spinner.js";
 import {URL_NO_IMAGE} from "../../consts.js";
@@ -127,38 +128,12 @@ class FollowsContainer {
 
     draw (follows) {
         for (const follow of follows) {
-            this.container.append(new Follower(follow).render());
+            this.container.append(new MemberCard(follow, { bio: follow.bio }));
         }
     }
 
     clear () {
         this.container.innerHTML = '';
-    }
-
-    render () {
-        return this.container;
-    }
-}
-
-class Follower {
-    constructor (member) {
-        this.member = member;
-        this.container = document.createElement('div');
-        this.container.classList.add('followed-container');
-        this.container.onclick = (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            router.navigateTo(`/member/${this.member.username}`);
-        };
-        this.container.innerHTML = `
-            <div class="followed-icon-container">
-                <img src="${this.member.icon_url || URL_NO_IMAGE}" class="followed-icon" />
-            </div>
-            <div class="followed-signature-container">
-                <span class="followed-signature-name">${this.member.name}</span>
-                <span class="followed-signature-username">@${this.member.username}</span>
-            </div>
-        `;
     }
 
     render () {
