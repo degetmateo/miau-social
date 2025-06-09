@@ -7,6 +7,7 @@ import {shareService} from "../../services/shareService.js";
 import {upvoteService} from "../../services/upvoteService.js";
 import Alert from "../alert/alert.js";
 import MediaContainer from "../media-container/MediaContainer.js";
+import MemberRole from "../member-role/MemberRole.js";
 import Popup from "../popup/Popup.js";
 import PostCreatorPopup from "../post-creator-popup/PostCreatorPopup.js";
 import Quote from "../quote/Quote.js";
@@ -127,16 +128,14 @@ class Post extends HTMLElement {
         this.name.textContent = this.data.creator.name;
         this.name.onclick = (e) => this.onName(e);
         this.signatureTopLeft.append(this.name);
-
-        this.roleC = document.createElement('span');
-        this.roleC.classList.add('post-header-signature-top-role', 'role--'+this.data.creator.role || 'member');
-        this.roleC.textContent = this.data.creator.role;
+        
+        this.roleC = new MemberRole({ role: this.data.creator.role, text: this.data.creator.role });
         this.signatureTopLeft.append(this.roleC);
 
-        if (this.data.creator.id == 158) {
-            this.roleC.textContent = 'Golden Witch';
-            this.roleC.classList.add('role-golden-witch');
-        };
+        // if (this.data.creator.id == 158) {
+        //     this.roleC.textContent = 'Golden Witch';
+        //     this.roleC.classList.add('role-golden-witch');
+        // };
 
         this.buttonContainer = document.createElement('div');
         this.buttonContainer.classList.add('post-header-button-container');

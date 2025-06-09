@@ -1,6 +1,7 @@
 import {URL_NO_IMAGE} from "../../consts.js";
 import { formatContent, importCSS, loadImage } from "../../helpers.js";
 import router from "../../router.js";
+import MemberRole from "../member-role/MemberRole.js";
 importCSS('/public/components/member-card/member-card.css');
 
 class MemberCard extends HTMLElement {
@@ -35,6 +36,9 @@ class MemberCard extends HTMLElement {
         this.memberName.classList.add('member-card-name');
         this.memberName.textContent = this.data.name;
         this.nameContainer.append(this.memberName);
+
+        this.memberRole = new MemberRole({ role: this.data.role, text: this.data.role });
+        this.nameContainer.append(this.memberRole);
 
         this.usernameContainer = document.createElement('div');
         this.usernameContainer.classList.add('member-card-username-container');

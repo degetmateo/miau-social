@@ -2,6 +2,7 @@ import {URL_NO_IMAGE} from "../../consts.js";
 import {formatContent, importCSS} from "../../helpers.js";
 import router from "../../router.js";
 import MediaContainer from "../media-container/MediaContainer.js";
+import MemberRole from "../member-role/MemberRole.js";
 
 importCSS('/public/components/quote/quote.css');
 
@@ -40,10 +41,7 @@ class Quote extends HTMLElement {
         this.username.classList.add('quote-username');
         this.header.append(this.username);
 
-        this.roleInfo = document.createElement('span');
-        this.roleInfo.textContent = this.data.creator.role;
-        this.roleInfo.classList.add('post-header-signature-top-role', 'role--'+this.data.creator.role);
-        this.header.append(this.roleInfo);
+        this.header.append(new MemberRole({ role: this.data.creator.role, text: this.data.creator.role }));
 
         this.body = document.createElement('div');
         this.body.classList.add('quote-body');

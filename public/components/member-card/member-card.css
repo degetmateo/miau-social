@@ -41,6 +41,13 @@
     justify-content: center;
 }
 
+.member-card-name-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 5px;
+}
+
 .member-card-name {
     font-family: "JetBrainsMono-Bold", sans-serif;
     text-wrap: nowrap;
