@@ -103,25 +103,19 @@ class PostCreator extends HTMLElement {
             this.imagesContainer.addImages(this.inputImages.files);
         };
 
-        this.imageButton = new Button({
-            appearance: 'default',
-            text: 'IMG',
-            onClick: () => {
-                this.inputImages.click();
-            }
-        });
+        this.imgButton = document.createElement('button');
+        this.imgButton.classList.add('post-creator-button');
+        this.imgButton.type = 'button';
+        this.imgButton.textContent = 'IMG';
+        this.imgButton.addEventListener('click', () => this.inputImages.click());
+        this.editorButtonsContainer.append(this.imgButton);
 
-        this.editorButtonsContainer.append(this.imageButton.render());
-
-        this.gifButton = new Button({
-            appearance: 'default',
-            text: 'GIF',
-            onClick: () => {
-                this.onTenor();
-            }
-        });
-
-        this.editorButtonsContainer.append(this.gifButton.render());
+        this.gifButton = document.createElement('button');
+        this.gifButton.classList.add('post-creator-button');
+        this.gifButton.type = 'button';
+        this.gifButton.textContent = 'GIF';
+        this.gifButton.addEventListener('click', () => this.onTenor());
+        this.editorButtonsContainer.append(this.gifButton);
 
         this.inputVideo = document.createElement('input');
         this.inputVideo.type = 'file';
@@ -164,13 +158,12 @@ class PostCreator extends HTMLElement {
         this.postButtonContainer.classList.add('post-creator-post-button-container');
         this.buttonsContainer.append(this.postButtonContainer);
 
-        this.postButton = new Button({
-            appearance: 'default',
-            text: 'Publicar',
-            onClick: () => this.submit()
-        });
-
-        this.postButtonContainer.append(this.postButton.render());
+        this.postButton = document.createElement('button');
+        this.postButton.classList.add('post-creator-button', 'post-creator-button-post');
+        this.postButton.type = 'button';
+        this.postButton.textContent = 'Publicar';
+        this.postButton.addEventListener('click', () => this.submit());
+        this.postButtonContainer.append(this.postButton);
 
         window.addEventListener('app-initialized', () => {
             this.icon.style.backgroundImage = `url(${window.app.member.icon_url || URL_NO_IMAGE})`;

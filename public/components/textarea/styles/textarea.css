@@ -1,5 +1,5 @@
 .textarea-container {
-    border: 2px solid #FFF;
+    border: 2px solid var(--font-color);
 
     display: flex;
     flex-direction: column;

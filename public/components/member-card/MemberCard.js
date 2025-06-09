@@ -37,8 +37,8 @@ class MemberCard extends HTMLElement {
         this.memberName.textContent = this.data.name;
         this.nameContainer.append(this.memberName);
 
-        this.memberRole = new MemberRole({ role: this.data.role, text: this.data.role });
-        this.nameContainer.append(this.memberRole);
+        // this.memberRole = new MemberRole({ role: this.data.role, text: this.data.role });
+        // this.nameContainer.append(this.memberRole);
 
         this.usernameContainer = document.createElement('div');
         this.usernameContainer.classList.add('member-card-username-container');

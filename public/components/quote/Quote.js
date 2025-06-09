@@ -41,7 +41,7 @@ class Quote extends HTMLElement {
         this.username.classList.add('quote-username');
         this.header.append(this.username);
 
-        this.header.append(new MemberRole({ role: this.data.creator.role, text: this.data.creator.role }));
+        // this.header.append(new MemberRole({ role: this.data.creator.role, text: this.data.creator.role }));
 
         this.body = document.createElement('div');
         this.body.classList.add('quote-body');

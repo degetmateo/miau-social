@@ -43,6 +43,27 @@
     gap: 10px;
 }
 
+.post-creator-button {
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+
+    font-size: 14px;
+    padding: 6px;
+    border: 1px solid var(--font-color);
+    background-color: var(--primary-color);
+    color: var(--font-color);
+    cursor: pointer;
+}
+
+.post-creator-button-post {
+    padding: 6px 10px;
+}
+
+.post-creator-button:hover {
+    background-color: var(--hover-color);
+}
+
 .post-creator-post-button-container {
     display: flex;
     gap: 10px;
