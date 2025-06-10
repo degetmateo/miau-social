@@ -129,8 +129,8 @@ class Post extends HTMLElement {
         this.name.onclick = (e) => this.onName(e);
         this.signatureTopLeft.append(this.name);
         
-        // this.roleC = new MemberRole({ role: this.data.creator.role, text: this.data.creator.role });
-        // this.signatureTopLeft.append(this.roleC);
+        this.roleC = new MemberRole({ role: this.data.creator.role, text: this.data.creator.role });
+        this.signatureTopLeft.append(this.roleC);
 
         // if (this.data.creator.id == 158) {
         //     this.roleC.textContent = 'Golden Witch';

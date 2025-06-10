@@ -18,11 +18,18 @@ export default async function GetMembers (data: {
         LEFT JOIN
             image icon ON icon.member_id = m.id_member AND icon.type = 'icon'
         WHERE
-            m.username_member ILIKE '%' || ${data.query} || '%' OR
             m.name_member ILIKE '%' || ${data.query} || '%' OR
+            m.username_member ILIKE '%' || ${data.query} || '%' OR
             m.bio_member ILIKE '%' || ${data.query} || '%' OR
             m.location ILIKE '%' || ${data.query} || '%'
         ORDER BY
+            CASE
+                WHEN m.name_member ILIKE '%' || ${data.query} || '%' THEN 1
+                WHEN m.username_member ILIKE '%' || ${data.query} || '%' THEN 2
+                WHEN m.bio_member ILIKE '%' || ${data.query} || '%' THEN 3
+                WHEN m.location ILIKE '%' || ${data.query} || '%' THEN 4
+                ELSE 5
+            END,
             m.name_member ASC
         OFFSET
             ${data.offset}

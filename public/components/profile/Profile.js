@@ -240,7 +240,7 @@ export default class Profile {
     }
 
     setUsername (username) {
-        this.username.textContent = username;
+        this.username.textContent = '@' + username;
     }
 
     setBio (bio) {

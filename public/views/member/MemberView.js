@@ -66,8 +66,10 @@ export default class extends AbstractView {
                     });
                     if (posts.length <= 0) this.members[this.i].fetching = false;
                 } catch (error) {
+                    this.spinner.remove();
+                    this.fetching = false;
                     return new Alert(error.message);
-                }
+                };
                 this.members[this.i].posts.renderPosts(posts);
                 this.spinner.remove();
                 this.fetching = false;
@@ -86,6 +88,7 @@ export default class extends AbstractView {
         this.posts.innerHTML = '';
 
         this.main.append(this.spinner);
+
         this.i = 0;
         let found = false;
         for (this.i = 0; this.i < this.members.length; this.i++) {
@@ -96,35 +99,37 @@ export default class extends AbstractView {
         }
 
         if (found) {
+            this.spinner.remove();
+            
             this.header.text.textContent = this.members[this.i].username;
             this.profile.append(this.members[this.i].profile.render());
             this.posts.append(this.members[this.i].posts.render());
             this.setScroll(this.members[this.i].scroll);
 
-            if (this.cooldown) return;
-            else {
-                let member;
-                try {
-                    member = await memberService.getByUsername({ username: this.params.username });
-                } catch (error) {
-                    return new Alert(error.message);
-                }
+            if (this.members[this.i].cooldown) return;
 
-                this.members[this.i] = {
-                    ...member,
-                    offset: this.members[this.i].offset,
-                    scroll: this.members[this.i].scroll,
-                    posts: this.members[this.i].posts,
-                    profile: this.members[this.i].profile
-                }
-
-                this.members[this.i].profile.update(member);
-
-                this.cooldown = true;
-                setTimeout(() => {
-                    this.cooldown = false;
-                }, 10000);
+            let member;
+            try {
+                member = await memberService.getByUsername({ username: this.params.username });
+            } catch (error) {
+                return new Alert(error.message);
             }
+
+            this.members[this.i] = {
+                ...member,
+                cooldown: false,
+                offset: this.members[this.i].offset,
+                scroll: this.members[this.i].scroll,
+                posts: this.members[this.i].posts,
+                profile: this.members[this.i].profile
+            }
+
+            this.members[this.i].profile.update(member);
+            this.members[this.i].cooldown = true;
+            const auxIndex = this.i;
+            setTimeout(() => {
+                this.members[auxIndex].cooldown = false;
+            }, 10000);
         } else {
             this.setScroll(0);
 
@@ -132,6 +137,7 @@ export default class extends AbstractView {
             try {
                 member = await memberService.getByUsername({ username: this.params.username });
             } catch (error) {
+                this.spinner.remove();
                 return new Alert(error.message);
             }
 
@@ -143,6 +149,7 @@ export default class extends AbstractView {
             member.scroll = 0;
             member.profile = profile;
             member.fetching = true;
+            member.cooldown = false;
 
             this.members.push(member);
             this.i = this.members.length - 1;
@@ -158,11 +165,13 @@ export default class extends AbstractView {
                 });
                 if (posts.length <= 0) this.members[this.i].fetching = false;
             } catch (error) {
+                this.spinner.remove();
                 return new Alert(error.message);
             }
             this.spinner.remove();
             this.members[this.i].posts.renderPosts(posts);
             this.posts.append(this.members[this.i].posts.render());
+            this.members[this.i].fetching = false;
         }
     }
 
