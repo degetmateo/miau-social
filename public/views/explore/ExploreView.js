@@ -6,8 +6,7 @@ import Nav from "../../components/nav/Nav.js";
 import Spinner from "../../components/spinner/Spinner.js";
 import TabList from "../../components/tab-list/TabList.js";
 import View from "../../components/view/View.js";
-import {URL_NO_IMAGE} from "../../consts.js";
-import {formatContent, importCSS, loadImage, Scroll} from "../../helpers.js";
+import {importCSS, Scroll} from "../../helpers.js";
 import PostsManager from "../../modules/PostsManager.js";
 import Service from "../../modules/Service.js";
 import router from "../../router.js";
@@ -58,38 +57,42 @@ export default class ExploreView extends AbstractView {
         this.tablist = new TabList();
         this.main.append(this.tablist);
 
-        this.tablist.add({
+        const postsTab = this.tablist.add({
             name: 'Publicaciones',
-            value: 'posts',
-            onClick: () => {
-                window.dispatchEvent(new CustomEvent('explore-tablist-changed', {
-                    detail: {
-                        filter: 'posts'
-                    }
-                }));
-            }
+            value: 'posts'
         });
 
-        this.tablist.add({
+        postsTab.addEventListener('click', () => {
+            window.dispatchEvent(new CustomEvent('explore-tablist-changed', {
+                detail: {
+                    filter: 'posts'
+                }
+            }));
+        });
+
+        const membersTab = this.tablist.add({
             name: 'Miembros',
-            value: 'members',
-            onClick: () => {
-                window.dispatchEvent(new CustomEvent('explore-tablist-changed', {
-                    detail: {
-                        filter: 'members'
-                    }
-                }));
-            }
+            value: 'members'
         });
 
+        membersTab.addEventListener('click', () => {
+            window.dispatchEvent(new CustomEvent('explore-tablist-changed', {
+                detail: {
+                    filter: 'members'
+                }
+            }));
+        });
+        
         window.addEventListener('explore-tablist-changed', (e) => {
-            router.navigateTo(`/explore?search=${encodeURIComponent(this.input.value.trim())}&filter=${e.detail.filter}`);
+            const URL = `/explore?search=${encodeURIComponent(this.params.search)}&filter=${e.detail.filter}`;
+            router.navigateTo(URL);
         });
 
         this.resultsContainer = document.createElement('div');
         this.resultsContainer.classList.add('explore-results');
         this.main.append(this.resultsContainer);
 
+        this.params = null;
         this.fetching = false;
         this.queries = new Array();
         this.i = 0;
@@ -105,11 +108,19 @@ export default class ExploreView extends AbstractView {
         });
     };
 
+    reset () {
+        this.params = null;
+        this.fetching = false;
+        this.queries = new Array();
+        this.i = 0;
+    }
+
     async init (_, params) {
         this.setTitle("Explorar");
         this.setView(this.view)
         this.nav.append(Nav);
 
+        this.params = params;
         this.fetching = false;
         this.resultsContainer.innerHTML = '';
 
@@ -136,8 +147,23 @@ export default class ExploreView extends AbstractView {
             this.resultsContainer.append(this.queries[this.i].results);
             this.tablist.tabs.find(t => t.value === this.queries[this.i].filter)?.select();
             this.setScroll(this.queries[this.i].scroll);
+
+            if (this.queries[this.i].cooldown) return;
+
+            this.queries[this.i].cooldown = true;
+            this.queries[this.i].offset = 0;
+            this.queries[this.i].stop = false;
+            this.queries[this.i].scroll = 0;
+            this.queries[this.i].results.innerHTML = '';
+
+            this.search();
+
+            const qIndex = this.i;
+            setTimeout(() => {
+                this.queries[qIndex].cooldown = false;
+            }, 5000);
         } else {
-            this.setScroll(this.scroll);
+            this.setScroll(0);
 
             const results = document.createElement('div');
             results.classList.add('explore-results');
@@ -148,7 +174,8 @@ export default class ExploreView extends AbstractView {
                 results: results,
                 offset: 0,
                 stop: false,
-                scroll: 0
+                scroll: 0,
+                cooldown: false
             });
 
             this.i = this.queries.length - 1;

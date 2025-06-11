@@ -12,6 +12,8 @@ export default class extends Observer {
         this.app.append(view);
     }
 
+    reset () {};
+
     clear () {
         this.appContainer.innerHTML = '';
     }

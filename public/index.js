@@ -53,7 +53,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 export const init = () => {
-    router.reset();
     PostsManager.Clear();
     EventsHandler.addObserver(Nav);
     Nav.set(window.app.member);

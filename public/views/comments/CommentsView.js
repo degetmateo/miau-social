@@ -8,6 +8,7 @@ import PostCreator from "../../components/post-creator/PostCreator.js";
 import Header from "../../components/header/Header.js";
 import Nav from "../../components/nav/Nav.js";
 import PostsManager from "../../modules/PostsManager.js";
+import Spinner from "../../components/spinner/Spinner.js";
 
 importCSS('/public/views/comments/styles/comments.css');
 
@@ -58,6 +59,11 @@ export default class CommentsView extends AbstractView {
         this.cooldown = false;
     }
 
+    reset () {
+        this.posts = [];
+        this.cooldown = false;
+    }
+
     async init (params) {
         this.params = params;
         this.setTitle("Respuestas");
@@ -84,7 +90,22 @@ export default class CommentsView extends AbstractView {
             this.repliesPosts.append(post.replies.container.render());
             this.setScroll(post.scroll);
             this.mainPostContainer.append(post.element);
-            this.loadReplies();
+
+            if (!this.posts[this.i].replies.cooldown) {
+                this.posts[this.i].replies.cooldown = true;
+                const replies = await postService.getReplies({ id: this.posts[this.i].id, offset: 0 });
+                this.posts[this.i].replies.container.clear();
+                for (const pr of replies) {
+                    this.posts[this.i].replies.container.append(pr);
+                };
+                this.posts[this.i].replies.offset = replies.length;
+                this.repliesPosts.append(this.posts[this.i].replies.container.render());
+
+                const pIndex = this.i;
+                setTimeout(() => {
+                    this.posts[pIndex].replies.cooldown = false;
+                }, 5000);
+            };
 
             if (!this.posts[this.i].cooldown) {
                 this.posts[this.i].cooldown = true;
@@ -96,14 +117,14 @@ export default class CommentsView extends AbstractView {
                 }, 60000);
             };
         } else {
-            const mainLoader = new SpinnerLoader({ size: 'medium' });
-            this.mainPostContainer.append(mainLoader.render());
+            const mainLoader = new Spinner();
+            this.mainPostContainer.append(mainLoader);
             
-            const repliesLoader = new SpinnerLoader({ size: 'medium' });
-            this.repliesPosts.append(repliesLoader.render());
+            const repliesLoader = new Spinner();
+            this.repliesPosts.append(repliesLoader);
     
-            const repliedLoader = new SpinnerLoader({ size: 'medium' });
-            this.repliedPosts.append(repliedLoader.render());
+            const repliedLoader = new Spinner();
+            this.repliedPosts.append(repliedLoader);
 
             let post = PostsManager.FindById(this.params.id_post);
 
@@ -162,7 +183,8 @@ export default class CommentsView extends AbstractView {
                 },
                 replies: {
                     container: repliesContainer,
-                    offset: replies.length
+                    offset: replies.length,
+                    cooldown: false
                 }
             });
 
@@ -178,7 +200,9 @@ export default class CommentsView extends AbstractView {
 
         this.creator.updateName(window.app.member.name);
         this.creator.updateIcon(window.app.member.icon_url);
-        
+
+        this.replyCreatorContainer.append(this.creator);
+
         this.creator.onSuccess((response) => {
             this.posts[this.i].element.increaseRepliesCount();
             this.posts[this.i].comments_count = parseInt(this.posts[this.i].comments_count) + 1;
@@ -186,8 +210,6 @@ export default class CommentsView extends AbstractView {
             this.posts[this.i].replies.offset += 1;
             this.posts[this.i].replies.container.prepend(response);
         });
-
-        this.replyCreatorContainer.append(this.creator);
 
         Scroll({
             element: this.view,

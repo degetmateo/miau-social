@@ -4,7 +4,6 @@ import PostCreator from "../../components/post-creator/PostCreator.js";
 import Spinner from "../../components/spinner/Spinner.js";
 import {URL_NO_IMAGE} from "../../consts.js";
 import { importCSS, Scroll } from "../../helpers.js";
-import EventsHandler from "../../modules/EventsHandler.js";
 import PostsManager from "../../modules/PostsManager.js";
 import router from "../../router.js";
 import {postService} from "../../services/postService.js";
@@ -99,7 +98,34 @@ export default class extends AbstractView {
                 this.fetching = false;
             }
         });
-    }
+        
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState != 'visible') return;
+            if (window.location.pathname != '/home') return;
+            if (this.cooldown) return;
+            this.activateCooldown();
+            this.updateTimeline();
+        });
+    };
+
+    reset () {
+        this.cooldown = false;
+        this.limit = 20;
+        this.offset = 0;
+        this.observerId = 'home';
+        this.firstTime = true;
+        this.scroll = 0;
+        this.posts = [];
+        this.fetching = false;
+
+        this.timelineMode = localStorage.getItem('timelime-mode');
+        if (!this.timelineMode) {
+            localStorage.setItem('timelime-mode', 'global');
+            this.timelineMode = 'global';
+        };
+
+        this.timeline.innerHTML = '';
+    };
 
     async init (params) {
         this.params = params;
@@ -107,7 +133,6 @@ export default class extends AbstractView {
         this.setView(this.view)
         this.nav.append(Nav);
 
-        EventsHandler.addObserver(this);
 
         this.creator.updateIcon(window.app.member.icon_url || URL_NO_IMAGE);
         this.creator.updateName(window.app.member.name);
@@ -168,14 +193,6 @@ export default class extends AbstractView {
             const p = PostsManager.Create(post);
             this.timeline.append(p);
         }
-    }
-
-    onVisibilityChange () {
-        if (document.visibilityState != 'visible') return;
-        if (window.location.pathname != '/home') return;
-        if (this.cooldown) return;
-        this.activateCooldown();
-        this.updateTimeline();
     }
 
     activateCooldown () {

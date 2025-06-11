@@ -597,6 +597,10 @@ class Post extends HTMLElement {
         this.quoteCount.textContent = this.data.quotes_count || 0;
         this.repliesCount.textContent = this.data.comments_count || 0;
 
+        this.name.textContent = this.data.creator.name;
+        this.username.textContent = '@' + this.data.creator.username;
+        this.icon.src = this.data.creator.icon_url || URL_NO_IMAGE;
+
         this.data.is_upvoted ?
             this.setUpvoteIcon('on') :
             this.setUpvoteIcon('off');

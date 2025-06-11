@@ -76,6 +76,13 @@ export default class extends AbstractView {
             }
         });
     }
+
+    reset () {
+        this.members = [];
+        this.cooldown = true;
+        this.fetching = false;
+        this.spinner = new Spinner();
+    };
     
     async init (params) {
         this.params = params;

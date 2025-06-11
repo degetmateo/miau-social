@@ -2,10 +2,7 @@ import Alert from "../../components/alert/alert.js";
 import Header from "../../components/header/Header.js";
 import MemberCard from "../../components/member-card/MemberCard.js";
 import Nav from "../../components/nav/Nav.js";
-import Spinner from "../../components/spinner/Spinner.js";
-import {URL_NO_IMAGE} from "../../consts.js";
 import {importCSS, Scroll} from "../../helpers.js";
-import router from "../../router.js";
 import {followService} from "../../services/followService.js";
 import AbstractView from "../AbstractView.js";
 
@@ -15,6 +12,7 @@ export default class extends AbstractView {
     constructor () {
         super();
         this.fetching = false;
+        this.members = [];
 
         this.view = document.createElement('div');
         this.view.classList.add('view', 'view-followed');
@@ -38,8 +36,6 @@ export default class extends AbstractView {
         this.content = document.createElement('div');
         this.content.classList.add('followers-main-content');
         this.main.append(this.content);
-
-        this.members = [];
 
         Scroll({
             element: this.view,
@@ -67,6 +63,11 @@ export default class extends AbstractView {
                 this.fetching = false;
             }
         });
+    }
+
+    reset () {
+        this.fetching = false;
+        this.members = [];
     }
 
     async init (params) {

@@ -12,8 +12,7 @@ class TabList extends HTMLElement {
 
     add (data = {
         name: '',
-        value: '',
-        onClick: () => {}
+        value: ''
     }) {
         const tab = document.createElement('div');
         tab.classList.add('app-tab');
@@ -30,11 +29,6 @@ class TabList extends HTMLElement {
             tab.classList.add('app-tab-active');
             this.selected = tab;
         };
-
-        tab.addEventListener('click', (e) => {
-            tab.select();
-            data.onClick(e);
-        });
 
         if (!this.selected) tab.select();
 

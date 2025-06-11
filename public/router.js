@@ -22,6 +22,7 @@ import UsernameView from "./views/username/UsernameView.js";
 import PasswordView from "./views/password/PasswordView.js";
 import SessionsView from "./views/sessions/SessionsView.js";
 import ExploreView from "./views/explore/ExploreView.js";
+import Notifier from "./modules/Notifier.js";
 
 class Router {
     constructor () {
@@ -83,32 +84,11 @@ class Router {
     }
 
     reset = () => {
-        this.views = {
-            error: new ErrorView(),
-            landing: new LandingView(),
-            verify: new VerifyView(),
-            home: new HomeView(),
-            settings: new SettingsView(),
-            notifications: new NotificationsView(),
-            messages: new MessagesView(),
-            member: new MemberView(),
-            followed: new FollowedView(),
-            followers: new FollowersView(),
-            admin: new AdminView(),
-            post: new CommentsView(),
-            signup: new SignupView(),
-            signin: new SigninView(),
-            activate: new ActivateView(),
-            recoverPassword: new RecoverPasswordView(),
-            recoverUsername: new RecoverUsernameView(),
-            resetPassword: new ResetPasswordView(),
-            account: new AccountView(),
-            security: new SecurityView(),
-            username: new UsernameView(),
-            password: new PasswordView(),
-            sessions: new SessionsView(),
-            explore: new ExploreView()
+        for (const view in this.views) {
+            this.views[view].reset();
         };
+
+        Notifier.clear();
     };
 
     resolve = () => {

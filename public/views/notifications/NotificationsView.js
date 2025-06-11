@@ -75,6 +75,20 @@ export default class NotificationsView extends AbstractView {
         });
     }
 
+    reset () {
+        this.offset = 0;
+        this.scroll = 0;
+        this.limit = 20;
+        this.firstLoad = true;
+        this.notifications = [];
+        this.observerId = 'notificationsView';
+        this.unread = [];
+        this.flag = false;
+        this.fetching = false;
+        this.spinner = new Spinner();
+        this.notificationsContainer.innerHTML = '';
+    };
+
     async init (params) {
         this.params = params;
         this.setTitle("Notificaciones");

@@ -70,6 +70,7 @@ export default class extends AbstractView {
                         window.app = {};
                         router.navigateTo('/');
                         EventsHandler.clear();
+                        router.reset();
                         new Alert("Cerraste sesión.", { error: false });
                         try {
                             await authenticationService.logout();
