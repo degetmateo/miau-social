@@ -54,7 +54,7 @@ class Notification extends HTMLElement {
             this.append(this.body);
 
             this.post = PostsManager.Create(this.data.target_post);
-            this.body.append(this.post.render());
+            this.body.append(this.post);
             this.body.onmousemove = () => {
                 this.classList.remove('notification-pending');
             }
@@ -71,7 +71,7 @@ class Notification extends HTMLElement {
             this.append(this.body);
 
             this.post = PostsManager.Create(this.data.target_post);
-            this.body.append(this.post.render());
+            this.body.append(this.post);
             this.body.onmousemove = () => {
                 this.classList.remove('notification-pending');
             }
