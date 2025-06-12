@@ -161,7 +161,7 @@ export default class ExploreView extends AbstractView {
             const qIndex = this.i;
             setTimeout(() => {
                 this.queries[qIndex].cooldown = false;
-            }, 5000);
+            }, 30000);
         } else {
             this.setScroll(0);
 

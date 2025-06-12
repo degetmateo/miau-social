@@ -204,7 +204,7 @@ export default class CommentsView extends AbstractView {
         this.replyCreatorContainer.append(this.creator);
 
         this.creator.onSuccess((response) => {
-            this.posts[this.i].element.increaseRepliesCount();
+            this.posts[this.i].element.footer.increaseRepliesCount();
             this.posts[this.i].comments_count = parseInt(this.posts[this.i].comments_count) + 1;
             PostsManager.Update(this.posts[this.i]);
             this.posts[this.i].replies.offset += 1;
@@ -256,8 +256,12 @@ export default class CommentsView extends AbstractView {
     async loadReplies () {
         if (this.cooldown) return;
         this.activateCooldown();
+        const spinner = new Spinner();
+        this.repliesPosts.append(spinner);
 
         const replies = await postService.getReplies({ id: this.params.id_post, offset: this.posts[this.i].replies.offset });
+        
+        spinner.remove();
 
         if (this.posts[this.i]) this.posts[this.i].replies.offset += 10;
         
