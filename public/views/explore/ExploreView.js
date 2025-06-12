@@ -175,10 +175,16 @@ export default class ExploreView extends AbstractView {
                 offset: 0,
                 stop: false,
                 scroll: 0,
-                cooldown: false
+                cooldown: true
             });
 
             this.i = this.queries.length - 1;
+
+            const qIndex = this.i;
+            setTimeout(() => {
+                this.queries[qIndex].cooldown = false;
+            }, 30000);
+
             this.tablist.tabs.find(t => t.value === this.queries[this.i].filter)?.select();
             this.resultsContainer.append(this.queries[this.i].results);
             this.search();

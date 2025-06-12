@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import path from 'path';
 import cors from 'cors';
 import Postgres from "./database/Postgres";
@@ -13,6 +13,9 @@ import tenorRouter from "./routes/tenorRouter";
 import sessionRouter from './routes/sessionRouter';
 import shareRouter from './routes/shareRouter';
 import auxRouter from './routes/auxRouter';
+import http from 'http';
+import * as Socket from "socket.io";
+import JWT from "./helpers/JWT";
 
 const requestIp = require('request-ip');
 const cookieParser = require('cookie-parser');
@@ -58,6 +61,7 @@ export default class Server {
     private readonly port: number;
     public readonly app: express.Express;
     public readonly router: express.Router;
+    private users: any[];
 
     private readonly paths = {
         docs: '/api/docs',
@@ -75,6 +79,7 @@ export default class Server {
     }
 
     constructor (port: number) {
+        this.users = [];
         try {
             this.port = port as number;
             this.app = express();
@@ -142,7 +147,55 @@ export default class Server {
     }
 
     private listen = () =>  {
-        this.app.listen(this.port, () => {
+        const server = http.createServer(this.app);
+        const io = new Socket.Server(server);
+
+        this.users = [];
+
+        io.on('connection', (socket) => {
+          socket.on('register', async (token) => {
+            const member = await JWT.Validate(token);
+            
+            this.users[member.id] = {
+              id: socket.id,
+              username: member.username
+            };
+
+            socket.broadcast.emit('user-connect', {
+                username: member.username
+            });
+          });
+
+          socket.on('chat-message', async (message) => {
+            if (!message) return;
+            if (!message.token) return;
+            if (!message.content) return;
+
+            try {
+              const member = await JWT.Validate(message.token);
+
+              io.emit('chat-message', {
+                  creator: {
+                    username: member.username
+                  },
+                  content: message.content
+              });
+            } catch (error) {
+              io.to(socket.id).emit('unauthorized', {
+                code: 401,
+                content: message.content
+              });
+            };
+          });
+
+          socket.on('disconnect', () => {
+              socket.broadcast.emit('user-disconnect', {
+                  username: this.users.find(u => u?.id === socket.id)?.username
+              });
+          });
+        });
+
+        server.listen(this.port, () => {
             console.log(`🟩 | Servidor escuchando en el Puerto: ${this.port}`);
         });
     }

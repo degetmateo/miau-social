@@ -28,7 +28,7 @@ export default class Input extends Component {
         this.title = document.createElement('span');
         this.title.classList.add('input-title');
         this.title.innerText = options.title;
-        this.container.appendChild(this.title);
+        if (options.title) this.container.appendChild(this.title);
 
         this.inputContainer = document.createElement('div');
         this.inputContainer.classList.add('input-input-container');

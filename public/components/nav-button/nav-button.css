@@ -39,8 +39,10 @@
     top: -8px;
     right: 8px;
 
-    width: 16px;
-    height: 16px;
+    min-width: 16px;
+    min-height: 16px;
+    padding: 1px;
+    border-radius: 2px;
 }
 
 .nav-button-counter-active {
@@ -54,7 +56,13 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 14px;
+    font-size: 12px;
+    font-weight: bolder;
+    /* text-shadow:
+        -1px -1px 0 black,
+        1px -1px 0 black,
+        -1px  1px 0 black,
+        1px  1px 0 black; */
 }
 
 .nav-button-text-active {

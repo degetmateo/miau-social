@@ -9,6 +9,12 @@ class MemberCard extends HTMLElement {
         super();
         this.data = data;
         this.options = options;
+        
+        if (!this.options) this.options = {
+            bio: null,
+            onClick: null
+        };
+
         this.classList.add('member-card');
 
         this.iconContainer = document.createElement('div');
@@ -67,6 +73,10 @@ class MemberCard extends HTMLElement {
             this.isSelectingText = true;
         };
         this.onmouseup = () => {
+            if (this.options.onClick) {
+                return this.options.onClick();
+            };
+
             if (!this.isSelectingText) return router.navigateTo(`/member/${this.data.username}`);
         };
     };

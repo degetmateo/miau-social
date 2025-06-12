@@ -52,7 +52,7 @@ class NavButton extends HTMLElement {
     };
 
     update () {
-        window.location.pathname === this.data.pathname ? this.on() : this.off();
+        window.location.pathname.startsWith(this.data.pathname) ? this.on() : this.off();
     };
 
     on () {

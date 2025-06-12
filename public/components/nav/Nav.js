@@ -1,4 +1,5 @@
 import {importCSS} from "../../helpers.js";
+import MemberRole from "../member-role/MemberRole.js";
 import NavButton from "../nav-button/NavButton.js";
 
 importCSS('/public/components/nav/nav.css');
@@ -53,7 +54,10 @@ class Nav extends HTMLElement {
             icon_on: '/public/assets/nav/messages-on.svg',
             icon_off: '/public/assets/nav/messages-off.svg'
         });
-        // this.buttons.append(this.buttonMessages);
+        this.buttons.append(this.buttonMessages);
+        const roleM = new MemberRole({ role: 'tester', text: 'BETA' });
+        roleM.classList.add('button-messages-role');
+        this.buttonMessages.append(roleM);
 
         this.buttonSettings = new NavButton({
             pathname: '/settings',
