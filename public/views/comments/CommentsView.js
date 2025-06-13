@@ -91,6 +91,26 @@ export default class CommentsView extends AbstractView {
             this.setScroll(post.scroll);
             this.mainPostContainer.append(post.element);
 
+            this.creator = new PostCreator({
+                alert: '¡Respuesta enviada!',
+                target_id: this.posts[this.i].id,
+                title: `Responder a @${this.posts[this.i].creator.username}`,
+                type: 'reply'
+            });
+
+            this.creator.updateName(window.app.member.name);
+            this.creator.updateIcon(window.app.member.icon_url);
+
+            this.replyCreatorContainer.append(this.creator);
+
+            this.creator.onSuccess((response) => {
+                this.posts[this.i].element.footer.increaseRepliesCount();
+                this.posts[this.i].comments_count = parseInt(this.posts[this.i].comments_count) + 1;
+                PostsManager.Update(this.posts[this.i]);
+                this.posts[this.i].replies.offset += 1;
+                this.posts[this.i].replies.container.prepend(response);
+            });
+
             if (!this.posts[this.i].replies.cooldown) {
                 this.posts[this.i].replies.cooldown = true;
                 const replies = await postService.getReplies({ id: this.posts[this.i].id, offset: 0 });
@@ -189,27 +209,27 @@ export default class CommentsView extends AbstractView {
             });
 
             this.i = this.posts.length - 1;
+
+            this.creator = new PostCreator({
+                alert: '¡Respuesta enviada!',
+                target_id: this.posts[this.i].id,
+                title: `Responder a @${this.posts[this.i].creator.username}`,
+                type: 'reply'
+            });
+
+            this.creator.updateName(window.app.member.name);
+            this.creator.updateIcon(window.app.member.icon_url);
+
+            this.replyCreatorContainer.append(this.creator);
+
+            this.creator.onSuccess((response) => {
+                this.posts[this.i].element.footer.increaseRepliesCount();
+                this.posts[this.i].comments_count = parseInt(this.posts[this.i].comments_count) + 1;
+                PostsManager.Update(this.posts[this.i]);
+                this.posts[this.i].replies.offset += 1;
+                this.posts[this.i].replies.container.prepend(response);
+            });
         }
-
-        this.creator = new PostCreator({
-            alert: '¡Respuesta enviada!',
-            target_id: this.posts[this.i].id,
-            title: `Responder a @${this.posts[this.i].creator.username}`,
-            type: 'reply'
-        });
-
-        this.creator.updateName(window.app.member.name);
-        this.creator.updateIcon(window.app.member.icon_url);
-
-        this.replyCreatorContainer.append(this.creator);
-
-        this.creator.onSuccess((response) => {
-            this.posts[this.i].element.footer.increaseRepliesCount();
-            this.posts[this.i].comments_count = parseInt(this.posts[this.i].comments_count) + 1;
-            PostsManager.Update(this.posts[this.i]);
-            this.posts[this.i].replies.offset += 1;
-            this.posts[this.i].replies.container.prepend(response);
-        });
 
         Scroll({
             element: this.view,

@@ -110,13 +110,21 @@ export default class MessagesView extends AbstractView {
                 this.messages.scrollTop = this.messages.scrollHeight;
             });
 
-            this.socket.on('unauthorized', (message) => {
+            this.socket.on('unauthorized', (res) => {
                 Service.Refresh({
                     callback: async () => {
-                        this.socket.emit('chat-message', {
-                            token: localStorage.getItem('token'),
-                            content: message.content 
-                        });
+                        if (res.code === 'register') {
+                            this.socket.on('connect', () => {
+                                this.socket.emit('register', localStorage.getItem('token'));
+                            });
+                        };
+
+                        if (res.code === 'message') {
+                            this.socket.emit('chat-message', {
+                                token: localStorage.getItem('token'),
+                                content: message.content 
+                            });
+                        };
                     }
                 });
             });

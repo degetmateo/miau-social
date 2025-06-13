@@ -133,7 +133,7 @@ class PostHeader extends HTMLElement {
                         return new Alert(error.message, { error: true });  
                     };
 
-                    return new Alert("Publicación eliminada.", { error: false });
+                    return new Alert("¡Publicación eliminada!", { error: false });
                 });
                 popupConfirmation.CreateButton('No, no quiero.', () => {
                     popupConfirmation.delete();
@@ -157,7 +157,7 @@ class PostHeader extends HTMLElement {
                     };
 
                     this.remove();
-                    return new Alert("Publicación eliminada.", { error: false });
+                    return new Alert("¡Publicación eliminada!", { error: false });
                 });
     
                 btn.innerHTML = `

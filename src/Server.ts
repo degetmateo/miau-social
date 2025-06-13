@@ -158,16 +158,22 @@ export default class Server {
 
         this.io.on('connection', (socket) => {
           socket.on('register', async (token) => {
-            const member = await JWT.Validate(token);
-            
-            this.users[member.id] = {
-              id: socket.id,
-              username: member.username
-            };
-
-            socket.broadcast.emit('user-connect', {
-                username: member.username
-            });
+            try {
+                const member = await JWT.Validate(token);
+              
+                this.users[member.id] = {
+                  id: socket.id,
+                  username: member.username
+                };
+    
+                socket.broadcast.emit('user-connect', {
+                    username: member.username
+                });
+            } catch (error) {
+                socket.emit('unauthorized', {
+                  code: 'register'
+                });
+            }
           });
 
           socket.on('chat-message', async (message) => {
@@ -185,10 +191,11 @@ export default class Server {
                   content: message.content
               });
             } catch (error) {
-              socket.emit('unauthorized', {
-                code: 401,
-                content: message.content
-              });
+              console.log(error);
+                socket.emit('unauthorized', {
+                  code: 'message',
+                  content: message.content
+                });
             };
           });
 
