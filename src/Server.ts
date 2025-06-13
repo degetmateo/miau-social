@@ -61,6 +61,9 @@ export default class Server {
     private readonly port: number;
     public readonly app: express.Express;
     public readonly router: express.Router;
+    public readonly server: http.Server;
+    public readonly io: Socket.Server;
+
     private users: any[];
 
     private readonly paths = {
@@ -88,6 +91,10 @@ export default class Server {
             this.middlewares();
             this.database();
             this.routes();
+
+            this.server = http.createServer(this.app);
+            this.io = new Socket.Server(this.server);
+
             this.listen();
         } catch (error) {
             console.error(error);
@@ -116,7 +123,7 @@ export default class Server {
                 "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
                 "font-src 'self' https://fonts.gstatic.com http://localhost:4000; " +
                 "img-src 'self' https://www.gstatic.com https://i.ibb.co https://media.tenor.com https://animesher.com https://pbs.twimg.com https://social-miau.onrender.com http://localhost:4000 blob: data:; " +
-                "connect-src 'self' https://www.google.com blob: data:; " +
+                "connect-src 'self' https://open.spotify.com/ https://www.google.com blob: data:; " +
                 "frame-src https://www.google.com;"
               );
             next();
@@ -147,12 +154,9 @@ export default class Server {
     }
 
     private listen = () =>  {
-        const server = http.createServer(this.app);
-        const io = new Socket.Server(server);
-
         this.users = [];
 
-        io.on('connection', (socket) => {
+        this.io.on('connection', (socket) => {
           socket.on('register', async (token) => {
             const member = await JWT.Validate(token);
             
@@ -174,28 +178,28 @@ export default class Server {
             try {
               const member = await JWT.Validate(message.token);
 
-              io.emit('chat-message', {
+              this.io.emit('chat-message', {
                   creator: {
                     username: member.username
                   },
                   content: message.content
               });
             } catch (error) {
-              io.to(socket.id).emit('unauthorized', {
+              socket.emit('unauthorized', {
                 code: 401,
                 content: message.content
               });
             };
           });
 
-          socket.on('disconnect', () => {
-              socket.broadcast.emit('user-disconnect', {
-                  username: this.users.find(u => u?.id === socket.id)?.username
-              });
-          });
+          // socket.on('disconnect', () => {
+          //     socket.broadcast.emit('user-disconnect', {
+          //         username: this.users.find(u => u?.id === socket.id)?.username
+          //     });
+          // });
         });
 
-        server.listen(this.port, () => {
+        this.server.listen(this.port, () => {
             console.log(`🟩 | Servidor escuchando en el Puerto: ${this.port}`);
         });
     }

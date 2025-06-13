@@ -194,7 +194,7 @@ class PostCreator extends HTMLElement {
         if (content) content = content.trim();
         if ((!content || content.length <= 0) && imagesData.length === 0) return new Alert('No puedes enviar una publicación vacía.', { error: true, timeout: 4000 });
 
-        const loader = new ScreenSpinner();
+        new Alert('Enviando...', { error: false, timeout: null });
         this.imagesContainer.clear();
         this.imagesContainer.hide();
         this.textarea.set('');
@@ -213,8 +213,6 @@ class PostCreator extends HTMLElement {
             });
             this.response = response;
         } catch (error) {
-            loader.remove();
-
             this.has_images = false;
             this.has_video = false;
             this.has_text = false;
@@ -225,7 +223,6 @@ class PostCreator extends HTMLElement {
         this.has_images = false;
         this.has_video = false;
         this.has_text = false;
-        loader.remove();
         if (this.onsuccess) this.onsuccess();
         return new Alert(this.data.alert || '¡Publicación enviada!', { 
             error: false,

@@ -77,16 +77,16 @@ export default class MessagesView extends AbstractView {
                 this.messages.scrollTop = this.messages.scrollHeight;
             });
 
-            this.socket.on('user-disconnect', (user) => {
-                const messageContainer = document.createElement('div');
-                messageContainer.classList.add('message-container');
-                const message = document.createElement('span');
-                message.classList.add('message-content');
-                message.textContent = user.username + ' se desconectó.';
-                messageContainer.append(message);
-                this.messages.append(messageContainer);
-                this.messages.scrollTop = this.messages.scrollHeight;
-            });
+            // this.socket.on('user-disconnect', (user) => {
+            //     const messageContainer = document.createElement('div');
+            //     messageContainer.classList.add('message-container');
+            //     const message = document.createElement('span');
+            //     message.classList.add('message-content');
+            //     message.textContent = user.username + ' se desconectó.';
+            //     messageContainer.append(message);
+            //     this.messages.append(messageContainer);
+            //     this.messages.scrollTop = this.messages.scrollHeight;
+            // });
 
             this.socket.on('chat-message', (message) => {
                 this.counter++;
@@ -132,6 +132,12 @@ export default class MessagesView extends AbstractView {
         this.messages.scrollTop = this.messages.scrollHeight;
         this.counter = 0;
         Nav.buttonMessages.setNumber(this.counter);
+
+        fetch('https://open.spotify.com/oembed?url=https://open.spotify.com/track/6rqhFgbbKwnb9MLmUQDhG6', {
+            method: "GET"
+        })
+        .then((res) => res.json())
+        .then((data) => console.log(data));
     };
 
     isActive () {
