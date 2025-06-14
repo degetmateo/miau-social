@@ -49,7 +49,9 @@ export default async function UpdateUsername (data: {
 
             const ACCESS_TOKEN = await JWT.Generate({
                 id: member.id,
+                name: member.name,
                 username: member.username,
+                icon_url: member.icon_url,
                 role: member.role,
                 email: member.email
             }, "15m");

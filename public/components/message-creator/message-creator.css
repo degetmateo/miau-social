@@ -1,0 +1,32 @@
+.message-creator {
+    box-sizing: border-box;
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.message-creator-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+    border: 1px solid var(--font-color);
+    padding: 10px;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.message-creator-button {
+    border: none;
+    outline: none;
+    border: 1px solid var(--font-color);
+    color: var(--font-color);
+    cursor: pointer;
+    background-color: var(--primary-color);
+    padding: 10px;
+}
+
+.message-creator-button:hover {
+    background-color: var(--hover-color);
+}

@@ -3,83 +3,54 @@
     border-right: 1px solid var(--border-color);
     border-left: 1px solid var(--border-color);
 
-    height: 100vh;
-    max-height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
+    max-height: calc(var(--vh, 1vh) * 100);
     display: flex;
     flex-direction: column;
-}
-
-.form-container {
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    height: calc(100% - 50px);
-    max-height: calc(100% - 50px);
+    padding-bottom: 50px;
 }
 
 .messages-container {
+    grid-area: messages;
     box-sizing: border-box;
     flex: 1;
     padding: 20px;
     box-sizing: border-box;
     overflow-y: scroll; 
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     gap: 20px;
 }
 
-.messages-form {
-    border-top: 1px solid var(--border-color);
+.messages-writing-container {
     box-sizing: border-box;
-    padding: 20px;
-
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    width: 100%;
+    padding: 0 10px;
+    height: 15px;
 }
 
-.messages-input {
-    flex: 1;
+.messages-writing {
+    color: var(--font-color-light);
+    font-size: 12px;
 }
 
-.messages-button {
-    box-sizing: border-box;
-    padding: 10px;
-
-    border: none;
-    outline: none;
-    color: var(--font-color);
-    border: 1px solid var(--font-color);
-    cursor: pointer;
-    background-color: var(--primary-color);
+.dots::after {
+  content: '';
+  display: inline-block;
+  width: 1em;
+  text-align: left;
+  animation: dots 0.7s steps(3, end) infinite;
 }
 
-.messages-button:hover {
-    background-color: var(--hover-color);
+@keyframes dots {
+  0%   { content: ''; }
+  33%  { content: '.'; }
+  66%  { content: '..'; }
+  100% { content: '...'; }
 }
-
-/* .message-container {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-} */
-
-/* .message-username {
-    color: var(--font-color);
-    font-size: 14px;
-    font-weight: bolder;
-} */
 
 @media (max-width: 900px) {
     .messages-main {
         border: none;
-        padding-bottom: 50px;
-    }
-
-    .form-container {
-        height: calc(100% - 50px);
-        max-height: calc(100% - 50px);
     }
 
     .button-messages-role {

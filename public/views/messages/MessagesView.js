@@ -1,6 +1,7 @@
 import Divider from "../../components/divider/Divider.js";
 import Header from "../../components/header/Header.js";
 import Input from "../../components/input/input.js";
+import MessageCreator from "../../components/message-creator/MessageCreator.js";
 import Nav from "../../components/nav/Nav.js";
 import Textarea from "../../components/textarea/textarea.js";
 import View from "../../components/view/View.js";
@@ -32,57 +33,50 @@ export default class MessagesView extends AbstractView {
         });
         this.main.append(this.header);
 
-        this.formContainer = document.createElement('div');
-        this.formContainer.classList.add('form-container');
-        this.main.append(this.formContainer);
-
         this.messages = document.createElement('div');
         this.messages.classList.add('messages-container');
-        this.formContainer.append(this.messages);
+        this.main.append(this.messages);
 
-        this.form = document.createElement('form');
-        this.form.classList.add('messages-form');
-        this.form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.send();
-        });
-        this.formContainer.append(this.form);
+        this.whoIsWritingContainer = document.createElement('div');
+        this.whoIsWritingContainer.classList.add('messages-writing-container');
+        this.main.append(this.whoIsWritingContainer);
 
-        this.input = new Textarea({
-            title: null,
-            autocomplete: 'off',
-            placeholder: 'Escribí tu mensaje',
-            min: 0,
-            max: 512,
-            type: 'text',
-            length: false,
-            onInput: () => {
+        this.whoIsWriting = document.createElement('span');
+        this.whoIsWriting.classList.add('messages-writing');
 
-            },
-            onStop: () => {
+        this.whoIsWritingUsername = document.createElement('span');
+        this.whoIsWriting.append(this.whoIsWritingUsername);
 
-            },
-            onSubmit: () => {
-                this.send();
-            }
-        });
+        this.whoIsWritingDots = document.createElement('span');
+        this.whoIsWritingDots.classList.add('dots');
+        this.whoIsWriting.append(this.whoIsWritingDots);
 
-        this.input.container.classList.add('messages-input');
-
-        this.form.append(this.input.render());
-
-        this.button = document.createElement('button');
-        this.button.type = 'submit';
-        this.button.textContent = '›';
-        this.button.classList.add('messages-button');
-        this.form.append(this.button);
+        this.creatorContainer = document.createElement('div');
+        this.creatorContainer.classList.add('messages-creator-container');
+        this.main.append(this.creatorContainer);
 
         this.socket = null;
         window.addEventListener('app-initialized', () => {
-            this.socket = io();
+            window.app.socket = io();
+
+            this.creator = new MessageCreator();
+            this.creator.classList.add('message-creator-border');
+            this.creatorContainer.append(this.creator);
+
+            this.socket = window.app.socket;
 
             this.socket.on('connect', () => {
                 this.socket.emit('register', localStorage.getItem('token'));
+            });
+
+            const s = []
+            this.socket.on('messages', (messages) => {
+                console.log(messages);
+                for (const message of messages) {
+                    this.messages.prepend(new Message(message));
+                };
+
+                this.messages.scrollTop = this.messages.scrollHeight;
             });
 
             this.socket.on('user-connect', (user) => {
@@ -92,7 +86,7 @@ export default class MessagesView extends AbstractView {
                 message.classList.add('message-content');
                 message.textContent = user.username + ' se conectó.';
                 messageContainer.append(message);
-                this.messages.append(messageContainer);
+                this.messages.prepend(messageContainer);
                 this.messages.scrollTop = this.messages.scrollHeight;
             });
 
@@ -103,7 +97,7 @@ export default class MessagesView extends AbstractView {
                 message.classList.add('message-content');
                 message.textContent = user.username + ' se desconectó.';
                 messageContainer.append(message);
-                this.messages.append(messageContainer);
+                this.messages.prepend(messageContainer);
                 this.messages.scrollTop = this.messages.scrollHeight;
             });
 
@@ -115,20 +109,37 @@ export default class MessagesView extends AbstractView {
                     this.counter = 0;
                 };
     
-                this.messages.append(new Message(message));
+                this.messages.prepend(new Message(message));
                 this.messages.scrollTop = this.messages.scrollHeight;
             });
 
-            this.socket.on('unauthorized', (res) => {
+            this.writingTimeout = null;
+            this.socket.on('writing', (data) => {
+                this.whoIsWritingUsername.textContent = data.creator.username + ' está escribiendo';
+                this.whoIsWritingContainer.append(this.whoIsWriting);
+                
+                if (this.writingTimeout) {
+                    this.whoIsWritingUsername.textContent = data.creator.username + ' está escribiendo';
+                    clearTimeout(this.writingTimeout);
+                    this.writingTimeout = null;
+                };
+                
+                this.writingTimeout = setTimeout(() => {
+                    this.whoIsWriting.remove();
+                    this.writingTimeout = null;
+                }, 5000);
+            });
+
+            this.socket.on('unauthorized', (data) => {
                 Service.Refresh({
                     callback: async () => {
-                        if (res.code === 'register') {
+                        if (data.code === 'register') {
                             this.socket.on('connect', () => {
                                 this.socket.emit('register', localStorage.getItem('token'));
                             });
                         };
 
-                        if (res.code === 'message') {
+                        if (data.code === 'message') {
                             this.socket.emit('chat-message', {
                                 token: localStorage.getItem('token'),
                                 content: res.content 
@@ -160,17 +171,6 @@ export default class MessagesView extends AbstractView {
     isActive () {
         return router.getPathname().startsWith('/messages');
     }
-
-    async send () {
-        if (!this.input.value) return;
-
-        this.socket.emit('chat-message', {
-            token: localStorage.getItem('token'),
-            content: this.input.value 
-        });
-
-        this.input.set('');
-    };
 
     setScroll (scroll) {
         this.view.scrollTop = scroll;

@@ -25,11 +25,25 @@ export default async function message (
                 },
                 content: message.content
             });
+
+            ws.messages.push({
+                creator: {
+                    name: member.name,
+                    username: member.username,
+                    icon_url: member.icon_url,
+                    role: member.role
+                },
+                content: message.content
+            });
+
+            if (ws.messages.length > 50) {
+                ws.messages.shift();
+            };
         } catch (error) {
             socket.emit('unauthorized', {
                 code: 'message',
                 content: message.content
             });
         };
-    });
+    }); 
 };

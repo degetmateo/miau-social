@@ -1,7 +1,5 @@
 import Component from "../Component.js";
 import {importCSS} from "../../helpers.js";
-import Post from "../post/Post.js";
-import Separator from "../separator/Separator.js";
 import PostsManager from "../../modules/PostsManager.js";
 
 importCSS('/public/components/posts-container/posts-container.css');

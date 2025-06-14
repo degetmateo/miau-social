@@ -22,6 +22,8 @@ export default async function register (
             socket.broadcast.emit('user-connect', {
                 username: member.username
             });
+
+            socket.emit('messages', ws.messages);
         } catch (error) {
             socket.emit('unauthorized', {
                 code: 'register'
