@@ -2,12 +2,14 @@ import Divider from "../../components/divider/Divider.js";
 import Header from "../../components/header/Header.js";
 import Input from "../../components/input/input.js";
 import Nav from "../../components/nav/Nav.js";
+import Textarea from "../../components/textarea/textarea.js";
 import View from "../../components/view/View.js";
 import Helper from "../../Helper.js";
 import {importCSS} from "../../helpers.js";
 import Service from "../../modules/Service.js";
 import router from "../../router.js";
 import AbstractView from "../AbstractView.js";
+import Message from "./Message.js";
 
 importCSS('/public/views/messages/styles/messages.css');
 
@@ -46,17 +48,34 @@ export default class MessagesView extends AbstractView {
         });
         this.formContainer.append(this.form);
 
-        this.input = new Input({
+        this.input = new Textarea({
             title: null,
             autocomplete: 'off',
             placeholder: 'Escribí tu mensaje',
             min: 0,
             max: 512,
             type: 'text',
-            length: false
+            length: false,
+            onInput: () => {
+
+            },
+            onStop: () => {
+
+            },
+            onSubmit: () => {
+                this.send();
+            }
         });
-        this.form.append(new Divider());
+
+        this.input.container.classList.add('messages-input');
+
         this.form.append(this.input.render());
+
+        this.button = document.createElement('button');
+        this.button.type = 'submit';
+        this.button.textContent = '›';
+        this.button.classList.add('messages-button');
+        this.form.append(this.button);
 
         this.socket = null;
         window.addEventListener('app-initialized', () => {
@@ -77,16 +96,16 @@ export default class MessagesView extends AbstractView {
                 this.messages.scrollTop = this.messages.scrollHeight;
             });
 
-            // this.socket.on('user-disconnect', (user) => {
-            //     const messageContainer = document.createElement('div');
-            //     messageContainer.classList.add('message-container');
-            //     const message = document.createElement('span');
-            //     message.classList.add('message-content');
-            //     message.textContent = user.username + ' se desconectó.';
-            //     messageContainer.append(message);
-            //     this.messages.append(messageContainer);
-            //     this.messages.scrollTop = this.messages.scrollHeight;
-            // });
+            this.socket.on('user-disconnect', (user) => {
+                const messageContainer = document.createElement('div');
+                messageContainer.classList.add('message-container');
+                const message = document.createElement('span');
+                message.classList.add('message-content');
+                message.textContent = user.username + ' se desconectó.';
+                messageContainer.append(message);
+                this.messages.append(messageContainer);
+                this.messages.scrollTop = this.messages.scrollHeight;
+            });
 
             this.socket.on('chat-message', (message) => {
                 this.counter++;
@@ -95,18 +114,8 @@ export default class MessagesView extends AbstractView {
                 } else {
                     this.counter = 0;
                 };
-                const messageContainer = document.createElement('div');
-                messageContainer.classList.add('message-container');
-                const messageUsername = document.createElement('span');
-                messageUsername.classList.add('message-username');
-                messageUsername.textContent = message.creator.username;
-                const messageContent = Helper.Format(message.content);
-                messageContent.classList.add('message-content');
     
-                messageContainer.append(messageUsername);
-                messageContainer.append(messageContent);
-    
-                this.messages.append(messageContainer);
+                this.messages.append(new Message(message));
                 this.messages.scrollTop = this.messages.scrollHeight;
             });
 
@@ -122,7 +131,7 @@ export default class MessagesView extends AbstractView {
                         if (res.code === 'message') {
                             this.socket.emit('chat-message', {
                                 token: localStorage.getItem('token'),
-                                content: message.content 
+                                content: res.content 
                             });
                         };
                     }
@@ -141,11 +150,11 @@ export default class MessagesView extends AbstractView {
         this.counter = 0;
         Nav.buttonMessages.setNumber(this.counter);
 
-        fetch('https://open.spotify.com/oembed?url=https://open.spotify.com/track/6rqhFgbbKwnb9MLmUQDhG6', {
-            method: "GET"
-        })
-        .then((res) => res.json())
-        .then((data) => console.log(data));
+        // fetch('https://open.spotify.com/oembed?url=https://open.spotify.com/track/6rqhFgbbKwnb9MLmUQDhG6', {
+        //     method: "GET"
+        // })
+        // .then((res) => res.json())
+        // .then((data) => console.log(data));
     };
 
     isActive () {

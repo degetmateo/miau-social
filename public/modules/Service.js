@@ -1,4 +1,5 @@
 import Alert from "../components/alert/alert.js";
+import router from "../router.js";
 
 class Service {
     Fetch = async (url, options = {}) => {

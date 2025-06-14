@@ -90,10 +90,12 @@ export default async function Verify (data: {
 
             const ACCESS_TOKEN = await JWT.Generate({
                 id: member.id,
+                name: member.name,
                 username: member.username,
+                icon_url: member.icon_url,
                 role: member.role,
                 email: member.email
-            }, '15m');
+            }, "15m");
 
             response = member;
             response.token = ACCESS_TOKEN;

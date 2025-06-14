@@ -32,19 +32,44 @@
     border-top: 1px solid var(--border-color);
     box-sizing: border-box;
     padding: 20px;
+
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    width: 100%;
 }
 
-.message-container {
+.messages-input {
+    flex: 1;
+}
+
+.messages-button {
+    box-sizing: border-box;
+    padding: 10px;
+
+    border: none;
+    outline: none;
+    color: var(--font-color);
+    border: 1px solid var(--font-color);
+    cursor: pointer;
+    background-color: var(--primary-color);
+}
+
+.messages-button:hover {
+    background-color: var(--hover-color);
+}
+
+/* .message-container {
     display: flex;
     flex-direction: column;
     gap: 5px;
-}
+} */
 
-.message-username {
+/* .message-username {
     color: var(--font-color);
     font-size: 14px;
     font-weight: bolder;
-}
+} */
 
 @media (max-width: 900px) {
     .messages-main {

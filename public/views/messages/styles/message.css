@@ -1,0 +1,32 @@
+.message {
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+
+
+}
+
+.message-icon {
+    width: 45px;
+    height: 45px;
+    border: 1px solid var(--font-color);
+}
+
+.message-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.message-username {
+    font-weight: bolder;
+    font-size: 14px;
+    color: var(--font-color);
+}
+
+.message-content {
+    color: var(--font-color);
+    font-family: 'Inter-Regular', Courier, monospace;
+}

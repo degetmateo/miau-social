@@ -10,7 +10,12 @@ export default class Textarea extends Component {
         min: 0,
         expand: false,
         onPaste: () => {},
-        onInput: () => {}
+        onInput: () => {},
+
+        onWriting: () => {},
+        onStop: () => {},
+        onSubmit: () => {},
+        length: true
     }) {
         super();
         this.options = options;
@@ -40,6 +45,9 @@ export default class Textarea extends Component {
         this.length.classList.add('textarea-length');
         this.length.innerText = `${this.min}/${this.max}`;
         this.container.appendChild(this.length);
+        if (options.length === false) {
+            this.length.remove();
+        }
 
         this.container.onmousedown = (e) => {
             if (e.target !== this.textarea) e.preventDefault();
@@ -56,6 +64,16 @@ export default class Textarea extends Component {
 
         this.textarea.oninput = this.onInput;
         this.textarea.onpaste = this.onPaste;
+
+        this.textarea.addEventListener('keydown', (e) => {
+            const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+            if (isMobile) return;
+            
+            if (e.key === 'Enter' && !e.shiftKey && options.onSubmit) {
+                e.preventDefault();
+                options.onSubmit(e);
+            }
+        });
     }
 
     isValid = () => {
@@ -91,5 +109,13 @@ export default class Textarea extends Component {
             e.preventDefault();
             if (this.options.onPaste) this.options.onPaste(e.clipboardData.files[0]);
         }
+    }
+
+    onWriting (e) {
+
+    }
+
+    onStop (e) {
+
     }
 }

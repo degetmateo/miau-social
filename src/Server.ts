@@ -14,8 +14,7 @@ import sessionRouter from './routes/sessionRouter';
 import shareRouter from './routes/shareRouter';
 import auxRouter from './routes/auxRouter';
 import http from 'http';
-import * as Socket from "socket.io";
-import JWT from "./helpers/JWT";
+import WebSocket from "./socket/WebSocket";
 
 const requestIp = require('request-ip');
 const cookieParser = require('cookie-parser');
@@ -62,9 +61,7 @@ export default class Server {
     public readonly app: express.Express;
     public readonly router: express.Router;
     public readonly server: http.Server;
-    public readonly io: Socket.Server;
-
-    private users: any[];
+    public readonly io: WebSocket;
 
     private readonly paths = {
         docs: '/api/docs',
@@ -82,19 +79,17 @@ export default class Server {
     }
 
     constructor (port: number) {
-        this.users = [];
         try {
             this.port = port as number;
             this.app = express();
             this.app.set('port', this.port);
             
+            this.server = http.createServer(this.app);
+            this.io = new WebSocket(this.server);
+            
             this.middlewares();
             this.database();
             this.routes();
-
-            this.server = http.createServer(this.app);
-            this.io = new Socket.Server(this.server);
-
             this.listen();
         } catch (error) {
             console.error(error);
@@ -154,58 +149,6 @@ export default class Server {
     }
 
     private listen = () =>  {
-        this.users = [];
-
-        this.io.on('connection', (socket) => {
-          socket.on('register', async (token) => {
-            try {
-                const member = await JWT.Validate(token);
-              
-                this.users[member.id] = {
-                  id: socket.id,
-                  username: member.username
-                };
-    
-                socket.broadcast.emit('user-connect', {
-                    username: member.username
-                });
-            } catch (error) {
-                socket.emit('unauthorized', {
-                  code: 'register'
-                });
-            }
-          });
-
-          socket.on('chat-message', async (message) => {
-            if (!message) return;
-            if (!message.token) return;
-            if (!message.content) return;
-
-            try {
-              const member = await JWT.Validate(message.token);
-
-              this.io.emit('chat-message', {
-                  creator: {
-                    username: member.username
-                  },
-                  content: message.content
-              });
-            } catch (error) {
-              console.log(error);
-                socket.emit('unauthorized', {
-                  code: 'message',
-                  content: message.content
-                });
-            };
-          });
-
-          // socket.on('disconnect', () => {
-          //     socket.broadcast.emit('user-disconnect', {
-          //         username: this.users.find(u => u?.id === socket.id)?.username
-          //     });
-          // });
-        });
-
         this.server.listen(this.port, () => {
             console.log(`🟩 | Servidor escuchando en el Puerto: ${this.port}`);
         });
