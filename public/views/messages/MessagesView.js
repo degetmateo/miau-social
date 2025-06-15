@@ -71,7 +71,6 @@ export default class MessagesView extends AbstractView {
 
             const s = []
             this.socket.on('messages', (messages) => {
-                console.log(messages);
                 for (const message of messages) {
                     this.messages.prepend(new Message(message));
                 };
@@ -142,7 +141,7 @@ export default class MessagesView extends AbstractView {
                         if (data.code === 'message') {
                             this.socket.emit('chat-message', {
                                 token: localStorage.getItem('token'),
-                                content: res.content 
+                                content: data.content 
                             });
                         };
                     }
@@ -178,5 +177,6 @@ export default class MessagesView extends AbstractView {
 
     reset () {
         this.socket = null;
+        this.creator.remove();
     };
 };

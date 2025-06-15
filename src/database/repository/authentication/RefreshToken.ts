@@ -23,23 +23,33 @@ export default async function RefreshToken (data: {
 
             const session = (await transaction`
                 SELECT
-                    *
+                    s.id as session_id,
+                    m.id_member as id,
+                    m.name_member as name,
+                    m.username_member as username,
+                    m.role_member as role,
+                    m.email as email,
+                    icon.url as icon_url
                 FROM
-                    session
+                    session s
+                LEFT JOIN
+                    member m ON m.id_member = s.member_id
+                LEFT JOIN
+                    image icon ON icon.type = 'icon' AND icon.member_id = m.id_member
                 WHERE
-                    member_id = ${member.id} AND
-                    token = ${data.token};
+                    s.member_id = ${member.id} AND
+                    s.token = ${data.token};
             `)[0];
 
-            if (!session) throw new UnauthorizedError("Expiró la sesión.", "EXPIRED_SESSION_rf");
+            if (!session || !session.session_id) throw new UnauthorizedError("Expiró la sesión.", "EXPIRED_SESSION_rf");
 
             const ACCESS_TOKEN = await JWT.Generate({
-                id: member.id,
-                name: member.name,
-                username: member.username,
-                icon_url: member.icon_url,
-                role: member.role,
-                email: member.email
+                id: session.id,
+                name: session.name,
+                username: session.username,
+                icon_url: session.icon_url,
+                role: session.role,
+                email: session.email
             }, "15m");
 
             response = ACCESS_TOKEN;

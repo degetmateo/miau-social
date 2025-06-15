@@ -1,6 +1,7 @@
 import { DefaultEventsMap, Server, Socket } from "socket.io";
 import JWT from "../../helpers/JWT";
 import WebSocket from "../WebSocket";
+import UnauthorizedError from "../../errors/UnauthorizedError";
 
 export default async function message (
     ws: WebSocket,

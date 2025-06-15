@@ -12,7 +12,6 @@ class Message extends HTMLElement {
         this.icon = document.createElement('img');
         this.icon.classList.add('message-icon');
         this.icon.src = data.creator.icon_url || URL_NO_IMAGE;
-        this.icon.onerror = () => this.icon.src = URL_NO_IMAGE;
         this.append(this.icon);
 
         this.container = document.createElement('div');

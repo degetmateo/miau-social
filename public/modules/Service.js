@@ -1,5 +1,7 @@
 import Alert from "../components/alert/alert.js";
 import router from "../router.js";
+import {authenticationService} from "../services/authenticationService.js";
+import EventsHandler from "./EventsHandler.js";
 
 class Service {
     Fetch = async (url, options = {}) => {
@@ -41,8 +43,17 @@ class Service {
         } catch (error) {
             console.error("Error al refrescar token:", error);
             localStorage.removeItem("token");
-            new Alert("La sesión expiró, por favor vuelve a iniciar sesión.", { error: true });
+            window.app.logged = false;
+            window.app = {};
             router.navigateTo("/signin");
+            EventsHandler.clear();
+            router.reset();
+            new Alert("La sesión expiró, por favor vuelve a iniciar sesión.", { error: true });
+            try {
+                authenticationService.logout();
+            } catch (error) {
+                console.error(error);                
+            }
         }
     };
 

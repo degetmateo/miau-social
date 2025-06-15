@@ -84,6 +84,9 @@ class Router {
     }
 
     reset = () => {
+        window.app.socket.disconnect();
+        window.app.socket = null;
+
         for (const view in this.views) {
             this.views[view].reset();
         };

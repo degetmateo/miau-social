@@ -66,11 +66,11 @@ export default class extends AbstractView {
                         const loader = new ScreenSpinner({ opaque: true });
                         e.stopPropagation();
                         localStorage.removeItem('token');
-                        window.app.logged = false;
-                        window.app = {};
-                        router.navigateTo('/');
                         EventsHandler.clear();
                         router.reset();
+                        window.app.logged = false;
+                        window.app = {};
+                        router.navigateTo('/signin');
                         new Alert("Cerraste sesión.", { error: false });
                         try {
                             await authenticationService.logout();
