@@ -1,0 +1,9 @@
+.text-container {
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+    
+    border: 1px solid var(--font-color);
+    padding: 10px;
+    overflow-y: auto;
+}

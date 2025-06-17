@@ -59,6 +59,7 @@ export default class extends AbstractView {
         this.updateTimelineButtons();
 
         this.creator = new PostCreator({ title: "¿Qué pensás?", target_id: null, type: 'default' });
+
         this.main.append(this.creator);
 
         this.creator.onSuccess((post) => {

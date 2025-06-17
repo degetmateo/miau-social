@@ -1,15 +1,13 @@
 import {URL_NO_IMAGE} from "../../consts.js";
-import {importCSS} from "../../helpers.js";
+import Helper from "../../Helper.js";
 import router from "../../router.js";
 import {postService} from "../../services/postService.js";
 import Alert from "../alert/alert.js";
-import Button from "../button/Button.js";
 import ImagesContainer from "../images-container/ImagesContainer.js";
-import ScreenSpinner from "../screen-spinner/ScreenSpinner.js";
 import TenorSelector from "../tenor-selector/TenorSelector.js";
 import Textarea from "../textarea/textarea.js";
 
-importCSS('/public/components/post-creator/styles/post-creator.css');
+Helper.ImportCSS('/public/components/post-creator/post-creator.css');
 
 class PostCreator extends HTMLElement {
     constructor (data = {
@@ -20,10 +18,6 @@ class PostCreator extends HTMLElement {
     }) {
         super();
         this.data = data;
-
-        this.has_text = false;
-        this.has_images = false;
-        this.has_video = false;
 
         this.onSubmit = () => {};
         this.classList.add('post-creator-container');
@@ -93,11 +87,8 @@ class PostCreator extends HTMLElement {
             if (this.inputImages.files.length > 4) {
                 new Alert('Elige hasta un máximo de 4 imágenes o GIFs.', { error: true });
                 this.inputImages.value = '';
-                this.inputImages.files = null;
                 return;
             }
-
-            this.has_images = true;
 
             this.imagesContainer.show();
             this.imagesContainer.addImages(this.inputImages.files);
@@ -117,49 +108,12 @@ class PostCreator extends HTMLElement {
         this.gifButton.addEventListener('click', () => this.onTenor());
         this.editorButtonsContainer.append(this.gifButton);
 
-        this.inputVideo = document.createElement('input');
-        this.inputVideo.type = 'file';
-        this.inputVideo.accept = 'video/*';
-        this.inputVideo.style.display = 'none';
-
-        this.inputVideo.onchange = () => {
-            if (this.inputImages.files.length > 1) {
-                // new Alert('Elige hasta un máximo de 4 imágenes o GIFs.', { error: true });
-                this.inputImages.value = '';
-                this.inputImages.files = null;
-                return;
-            };
-
-            // video size mayor a 100mb
-            if (this.inputVideo.files[0].size > 100 * 1024 * 1024) {
-                new Alert('Elige un video de hasta 100mb.', { error: true });
-                this.inputVideo.value = '';
-                this.inputVideo.files = null;
-                return;
-            };
-
-            this.has_video = true;
-
-            // this.imagesContainer.show();
-            // this.imagesContainer.addImages(this.inputImages.files);
-        };
-
-        this.videoButton = new Button({
-            appearance: 'default',
-            text: 'VID',
-            onClick: () => {
-                this.inputVideo.click();
-            }
-        });
-
-        // this.editorButtonsContainer.append(this.videoButton.render());
-
         this.postButtonContainer = document.createElement('div');
         this.postButtonContainer.classList.add('post-creator-post-button-container');
         this.buttonsContainer.append(this.postButtonContainer);
 
         this.postButton = document.createElement('button');
-        this.postButton.classList.add('post-creator-button', 'post-creator-button-post');
+        this.postButton.classList.add('post-creator-button-post');
         this.postButton.type = 'button';
         this.postButton.textContent = 'Publicar';
         this.postButton.addEventListener('click', () => this.submit());
@@ -205,11 +159,7 @@ class PostCreator extends HTMLElement {
                 content: content, 
                 images: imagesData, 
                 type: this.data.type,
-                target_id: this.data.target_id,
-
-                has_images: this.has_images,
-                has_video: this.has_video,
-                has_text: this.has_text
+                target_id: this.data.target_id
             });
             this.response = response;
         } catch (error) {

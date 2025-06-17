@@ -164,6 +164,6 @@ export default class SigninView extends AbstractView {
 
         loader.remove();
         router.navigateTo('/home');
-        new Alert("Iniciaste sesión.", { error: false, timeout: 2000 });
+        new Alert("¡Iniciaste sesión!", { error: false, timeout: 2000 });
     };
 };

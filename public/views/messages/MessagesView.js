@@ -1,11 +1,7 @@
-import Divider from "../../components/divider/Divider.js";
 import Header from "../../components/header/Header.js";
-import Input from "../../components/input/input.js";
 import MessageCreator from "../../components/message-creator/MessageCreator.js";
 import Nav from "../../components/nav/Nav.js";
-import Textarea from "../../components/textarea/textarea.js";
 import View from "../../components/view/View.js";
-import Helper from "../../Helper.js";
 import {importCSS} from "../../helpers.js";
 import Service from "../../modules/Service.js";
 import router from "../../router.js";
@@ -55,48 +51,24 @@ export default class MessagesView extends AbstractView {
         this.creatorContainer.classList.add('messages-creator-container');
         this.main.append(this.creatorContainer);
 
+        this.creator = new MessageCreator();
+        this.creator.classList.add('message-creator-border');
+        this.creatorContainer.append(this.creator);
+
         this.socket = null;
         window.addEventListener('app-initialized', () => {
             window.app.socket = io();
-
-            this.creator = new MessageCreator();
-            this.creator.classList.add('message-creator-border');
-            this.creatorContainer.append(this.creator);
-
             this.socket = window.app.socket;
 
             this.socket.on('connect', () => {
                 this.socket.emit('register', localStorage.getItem('token'));
             });
 
-            const s = []
             this.socket.on('messages', (messages) => {
                 for (const message of messages) {
                     this.messages.prepend(new Message(message));
                 };
 
-                this.messages.scrollTop = this.messages.scrollHeight;
-            });
-
-            this.socket.on('user-connect', (user) => {
-                const messageContainer = document.createElement('div');
-                messageContainer.classList.add('message-container');
-                const message = document.createElement('span');
-                message.classList.add('message-content');
-                message.textContent = user.username + ' se conectó.';
-                messageContainer.append(message);
-                this.messages.prepend(messageContainer);
-                this.messages.scrollTop = this.messages.scrollHeight;
-            });
-
-            this.socket.on('user-disconnect', (user) => {
-                const messageContainer = document.createElement('div');
-                messageContainer.classList.add('message-container');
-                const message = document.createElement('span');
-                message.classList.add('message-content');
-                message.textContent = user.username + ' se desconectó.';
-                messageContainer.append(message);
-                this.messages.prepend(messageContainer);
                 this.messages.scrollTop = this.messages.scrollHeight;
             });
 
@@ -177,6 +149,6 @@ export default class MessagesView extends AbstractView {
 
     reset () {
         this.socket = null;
-        this.creator.remove();
+        this.messages.innerHTML = '';
     };
 };

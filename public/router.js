@@ -22,7 +22,6 @@ import UsernameView from "./views/username/UsernameView.js";
 import PasswordView from "./views/password/PasswordView.js";
 import SessionsView from "./views/sessions/SessionsView.js";
 import ExploreView from "./views/explore/ExploreView.js";
-import Notifier from "./modules/Notifier.js";
 
 class Router {
     constructor () {
@@ -84,14 +83,9 @@ class Router {
     }
 
     reset = () => {
-        window.app.socket.disconnect();
-        window.app.socket = null;
-
         for (const view in this.views) {
             this.views[view].reset();
         };
-
-        Notifier.clear();
     };
 
     resolve = () => {

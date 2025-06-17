@@ -34,7 +34,9 @@ class MessageCreator extends HTMLElement {
             if (!this.typing) {
                 this.typing = true;
 
-                window.app.socket.emit('writing', localStorage.getItem('token'));
+                if (window.app?.socket) {
+                    window.app.socket.emit('writing', localStorage.getItem('token'));
+                };
 
                 setTimeout(() => {
                     this.typing = false;
@@ -52,6 +54,7 @@ class MessageCreator extends HTMLElement {
     };
 
     async submit () {
+        if (!window.app?.socket) return;
         if (!this.input.innerText) return;
         if (!this.input.innerText.trim()) return;
         if (this.input.innerText.length > 512) return;

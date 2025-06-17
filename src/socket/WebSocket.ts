@@ -10,7 +10,21 @@ export default class WebSocket {
     public users: any[];
     public messages: any[];
 
+    public members: Map<string, Map<string, {
+      name: string;
+      username: string;
+      icon_url: string;
+      role: string;
+    }>>;
+
     constructor (server: http.Server) {
+        this.members = new Map<string, Map<string, {
+          name: string;
+          username: string;
+          icon_url: string;
+          role: string;
+        }>>();
+
         this.io = new Server(server, {
           cors: {
             origin: process.env.FRONTEND_URL,
@@ -18,7 +32,6 @@ export default class WebSocket {
           }
         });
 
-        this.users = new Array<any>();
         this.messages = new Array<any>();
 
         this.io.on('connection', (socket) => {

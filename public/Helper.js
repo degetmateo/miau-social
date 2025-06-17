@@ -1,3 +1,5 @@
+import router from "./router.js";
+
 class Helper {
     ImportCSS (href) {
         const link = document.createElement('link');

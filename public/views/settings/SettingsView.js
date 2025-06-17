@@ -2,14 +2,11 @@ import AbstractView from '../AbstractView.js';
 import {importCSS} from '../../helpers.js';
 import Header from '../../components/header/Header.js';
 import Separator from '../../components/separator/Separator.js';
-import router from '../../router.js';
-import ScreenSpinner from '../../components/screen-spinner/ScreenSpinner.js';
-import {authenticationService} from '../../services/authenticationService.js';
 import Alert from '../../components/alert/alert.js';
-import EventsHandler from '../../modules/EventsHandler.js';
 import Tab from '../../components/tab/Tab.js';
 import Nav from '../../components/nav/Nav.js';
 import ConfirmPopup from '../../components/confirm-popup/ConfirmPopup.js';
+import Service from '../../modules/Service.js';
 
 importCSS('/public/views/settings/styles/settings.css');
 
@@ -63,22 +60,9 @@ export default class extends AbstractView {
                     confirmText: 'Cerrar sesión',
                     cancelText: 'Cancelar',
                     onConfirm: async () => {
-                        const loader = new ScreenSpinner({ opaque: true });
                         e.stopPropagation();
-                        localStorage.removeItem('token');
-                        EventsHandler.clear();
-                        router.reset();
-                        window.app.logged = false;
-                        window.app = {};
-                        router.navigateTo('/signin');
-                        new Alert("Cerraste sesión.", { error: false });
-                        try {
-                            await authenticationService.logout();
-                        } catch (error) {
-                            console.error(error);
-                        };
-            
-                        loader.remove();
+                        new Alert("¡Cerraste la sesión!", { error: false });
+                        Service.SignOut();
                     },
                     onCancel: null
                 });

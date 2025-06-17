@@ -11,16 +11,22 @@ export default async function register (
         try {
             const member = await JWT.Validate(token);
             
-            ws.users[Number(member.id)] = {
-                id: socket.id,
+            if (!ws.members.has(member.id)) ws.members.set(member.id, new Map());
+            
+            ws.members.get(member.id).set(socket.id, {
                 name: member.name,
                 username: member.username,
                 icon_url: member.icon_url,
                 role: member.role
-            };
+            });
 
-            socket.broadcast.emit('user-connect', {
-                username: member.username
+            socket.on('disconnect', () => {
+                const sockets = ws.members.get(member.id);
+
+                if (sockets) {
+                    sockets.delete(socket.id);
+                    if (sockets.size === 0) ws.members.delete(member.id);
+                };
             });
 
             socket.emit('messages', ws.messages);
