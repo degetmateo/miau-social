@@ -18,20 +18,21 @@ export default async function Share (data: {
                 target_post_id = ${data.id};        
         `)[0];
         
-        if (qShared) throw new InvalidArgumentError("Ya has compartido esta publicación.");
+        if (qShared) throw new InvalidArgumentError("Ya compartiste esta publicación.");
 
-        const qExists = (await transaction`
+        const post = (await transaction`
             SELECT
-                id_post
+                id_post,
+                id_member
             FROM
                 post
             WHERE
                 id_post = ${data.id};
         `)[0];
 
-        if (!qExists) throw new NotFoundError("No existe tal publicación.");
+        if (!post) throw new NotFoundError("No existe esa publicación.");
 
-        const INSERT: Array<{ id_post: number }> = await transaction`
+        const INSERT = (await transaction`
             INSERT INTO
                 post (id_member, content_post, date_post, type, target_post_id)
             VALUES (
@@ -41,7 +42,28 @@ export default async function Share (data: {
                 'shared',
                 ${data.id}
             )
-            RETURNING id_post;
-        `;
+            RETURNING 
+                id_post;
+        `)[0];
+
+        if (data.member.id == post.id_member) return;
+
+        (await transaction`
+            INSERT INTO 
+                notification (
+                    id_member,
+                    date_notification,
+                    type_notification,
+                    id_post_target_notification,
+                    id_member_target_notification
+                )
+                VALUES (
+                    ${post.id_member},
+                    NOW(),
+                    'shared',
+                    ${INSERT.id_post},
+                    ${data.member.id}
+                );
+        `);
     });
 };

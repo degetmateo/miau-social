@@ -3,11 +3,13 @@ import GenericError from "../../errors/GenericError";
 import NotFoundError from "../../errors/NotFoundError";
 import UnauthorizedError from "../../errors/UnauthorizedError";
 import Postgres from "../Postgres";
+import Delete from "./post/Delete";
 import Get from "./post/Get";
 import GetById from "./post/GetById";
 import GetComments from "./post/GetComments";
 import GetFollowing from "./post/GetFollowing";
 import GetThread from "./post/GetThread";
+import ModeratorDelete from "./post/ModeratorDelete";
 import Post from "./post/Post";
 
 const get = async (data: {
@@ -114,43 +116,7 @@ const remove = async (data: {
     id_post: number;
 }) => {
     try {
-        const response = await Postgres.query().begin(async transaction => {
-            await transaction`
-                DELETE FROM 
-                    upvote
-                WHERE
-                    id_post = ${data.id_post};
-            `;
-
-            await transaction`
-                DELETE FROM 
-                    image
-                WHERE
-                    post_id = ${data.id_post}
-                RETURNING *;
-            `;
-
-            await transaction`
-                DELETE FROM
-                    post
-                WHERE
-                    target_post_id = ${data.id_post} AND
-                    type = 'shared';
-            `;
-
-            const qDelete = await transaction`
-                DELETE FROM
-                    post
-                WHERE
-                    id_post = ${data.id_post} AND
-                    id_member = ${data.id_member}
-                RETURNING *;
-            `;
-
-            if (!qDelete[0]) throw new UnauthorizedError("Error de autentificación.");
-        });
-
-        return response;
+        return await Delete(data);
     } catch (error) {
         if (error instanceof GenericError) throw error;
         else {
@@ -164,33 +130,7 @@ const removeAdmin = async (data: {
     id_post: number;
 }) => {
     try {
-        const response = await Postgres.query().begin(async transaction => {
-            await transaction`
-                DELETE FROM 
-                    upvote
-                WHERE
-                    id_post = ${data.id_post};
-            `;
-
-            await transaction`
-                DELETE FROM
-                    image
-                WHERE
-                    post_id = ${data.id_post};
-            `;
-
-            const qDelete = await transaction`
-                DELETE FROM
-                    post
-                WHERE
-                    id_post = ${data.id_post}
-                RETURNING *;
-            `;
-
-            if (!qDelete[0]) throw new DatabaseError("Ha ocurrido un error inesperado.");
-        });
-
-        return response;
+        return await ModeratorDelete(data);
     } catch (error) {
         if (error instanceof GenericError) throw error;
         else {

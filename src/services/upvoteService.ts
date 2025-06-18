@@ -1,7 +1,7 @@
 import { upvoteRepository } from "../database/repository/upvoteRepository";
 import InvalidArgumentError from "../errors/InvalidArgumentError";
 
-const post = async (data: {
+const upvote = async (data: {
     id_member: number;
     id_post: number;
 }) => {
@@ -9,11 +9,11 @@ const post = async (data: {
     if (isNaN(data.id_post)) throw new InvalidArgumentError("La ID del post debe ser un numero.");
     if (data.id_post <= 0) throw new InvalidArgumentError("La ID del post debe ser positiva.");
 
-    const response = await upvoteRepository.post(data);
+    const response = await upvoteRepository.Upvote(data);
     return response;
-}
+};
 
-const remove = async (data: {
+const downvote = async (data: {
     id_member: number;
     id_post: number;
 }) => {
@@ -21,11 +21,11 @@ const remove = async (data: {
     if (isNaN(data.id_post)) throw new InvalidArgumentError("La ID del post debe ser un numero.");
     if (data.id_post <= 0) throw new InvalidArgumentError("La ID del post debe ser positiva.");
 
-    const response = await upvoteRepository.remove(data);
+    const response = await upvoteRepository.Downvote(data);
     return response;
 }
 
 export const upvoteService = {
-    post,
-    remove
+    upvote,
+    downvote
 }

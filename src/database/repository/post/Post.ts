@@ -6,24 +6,27 @@ export default async function Post (data: {
     id_member: number;
     content: string;
     images: any[];
-    type: 'default' | 'reply' | 'quote';
+    type: 'default' | 'reply' | 'quote' | 'shared';
     target_id: number;
 }) {
     let response = null;
     await Postgres.query().begin(async transaction => {
         await transaction`SET TRANSACTION ISOLATION LEVEL READ COMMITTED;`;
 
+        let qTargetPost = null;
         if (data.target_id) {
-            const qRepliedPost = await transaction`
+            qTargetPost = (await transaction`
                 SELECT 
-                    id_post
+                    id_post,
+                    id_member
                 FROM
                     post
                 WHERE
                     id_post = ${data.target_id};
-            `;
-            if (!qRepliedPost[0]) throw new NotFoundError("No se ha encontrado el post objetivo.");
-        }
+            `)[0];
+
+            if (!qTargetPost) throw new NotFoundError("No se ha encontrado el post objetivo.");
+        };
 
         const qInsert: Array<{ id_post: number }> = await transaction`
             INSERT INTO
@@ -142,6 +145,28 @@ export default async function Post (data: {
                 m.id_member,
                 icon.url;
         `;
+
+        if (data.type != 'default' && qTargetPost) {
+            if (data.id_member == qTargetPost.id_member) return;
+
+            (await transaction`
+                INSERT INTO 
+                    notification (
+                        id_member,
+                        date_notification,
+                        type_notification,
+                        id_post_target_notification,
+                        id_member_target_notification
+                    )
+                    VALUES (
+                        ${qTargetPost.id_member},
+                        NOW(),
+                        ${data.type},
+                        ${IDPost},
+                        ${data.id_member}
+                    );
+            `);
+        };
     });
     return response[0];
 };

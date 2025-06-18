@@ -1,22 +1,15 @@
 import DatabaseError from "../../errors/DatabaseError";
 import GenericError from "../../errors/GenericError";
 import Postgres from "../Postgres";
+import Follow from "./follow/Follow";
+import Unfollow from "./follow/Unfollow";
 
 const follow = async (data: {
     id_member_follower: number;
     id_member_followed: number;
 }) => {
     try {
-        const response = await Postgres.query()`
-            INSERT INTO
-                follow
-            VALUES (
-                ${data.id_member_follower},
-                ${data.id_member_followed}
-            );
-        `;
-
-        return response;
+        return Follow(data);
     } catch (error) {
         if (error instanceof GenericError) throw error;
         else {
@@ -31,15 +24,7 @@ const unfollow = async (data: {
     id_member_followed: number;
 }) => {
     try {
-        const response = await Postgres.query()`
-            DELETE FROM
-                follow
-            WHERE
-                id_member_follower = ${data.id_member_follower} AND
-                id_member_followed = ${data.id_member_followed};
-        `;
-
-        return response;
+        return Unfollow(data);
     } catch (error) {
         if (error instanceof GenericError) throw error;
         else {

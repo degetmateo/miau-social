@@ -3,9 +3,9 @@ import { ResponseError, ResponseOk } from "../helpers/ControllerResponse";
 import { RESPONSES } from "../static/responses";
 import { upvoteService } from "../services/upvoteService";
 
-const post = async (req: Request, res: Response) => {
+const upvote = async (req: Request, res: Response) => {
     try {
-        const response = await upvoteService.post({
+        const response = await upvoteService.upvote({
             id_member: req.member.id,
             id_post: req.body.id_post
         });
@@ -17,9 +17,9 @@ const post = async (req: Request, res: Response) => {
     }
 }
 
-const remove = async (req: Request, res: Response) => {
+const downvote = async (req: Request, res: Response) => {
     try {
-        const response = await upvoteService.remove({
+        const response = await upvoteService.downvote({
             id_member: req.member.id,
             id_post: req.body.id_post
         });
@@ -32,6 +32,6 @@ const remove = async (req: Request, res: Response) => {
 }
 
 export const upvoteController = {
-    post,
-    remove
+    upvote,
+    downvote
 }
