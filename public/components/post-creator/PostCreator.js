@@ -185,8 +185,9 @@ class PostCreator extends HTMLElement {
     async submit () {
         const imagesData = this.imagesContainer.getImages();
         let content = this.textarea.value;
+        const spotifyValue = this.spotify_url;
         if (content) content = content.trim();
-        if ((!content || content.length <= 0) && imagesData.length === 0 && !this.spotify_url) return new Alert('No puedes enviar una publicación vacía.', { error: true, timeout: 4000 });
+        if ((!content || content.length <= 0) && imagesData.length === 0 && !spotifyValue) return new Alert('No puedes enviar una publicación vacía.', { error: true, timeout: 4000 });
 
         new Alert('Enviando...', { error: false, timeout: null });
         this.imagesContainer.clear();
@@ -203,7 +204,7 @@ class PostCreator extends HTMLElement {
                 images: imagesData, 
                 type: this.data.type,
                 target_id: this.data.target_id,
-                spotify_url: this.spotify_url
+                spotify_url: spotifyValue
             });
             this.response = response;
         } catch (error) {
