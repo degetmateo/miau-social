@@ -168,7 +168,7 @@ export default async function GetThread (data: {
                         'title', tspoty.title,
                         'iframe_url', tspoty.iframe_url,
                         'thumbnail_url', tspoty.thumbnail_url
-                    ),
+                    )
                 )
                 FROM post tp
                 LEFT JOIN member tm ON tp.id_member = tm.id_member
