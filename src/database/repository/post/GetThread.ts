@@ -197,7 +197,11 @@ export default async function GetThread (data: {
             th.quotes_count,
             th.is_quoted,
             th.shared_count,
-            th.is_shared
+            th.is_shared,
+            spotify.url,
+            spotify.title,
+            spotify.iframe_url,
+            spotify.thumbnail_url
         ORDER BY 
             th.date 
         DESC
