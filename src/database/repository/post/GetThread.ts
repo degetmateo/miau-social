@@ -181,7 +181,7 @@ export default async function GetThread (data: {
         LEFT JOIN 
             image media ON media.post_id = th.id AND media.type = 'media'
         LEFT JOIN
-            embed spotify ON spotify.post_id = th.id_post AND spotify.type = 'post'
+            embed spotify ON spotify.post_id = th.id AND spotify.type = 'post'
         WHERE
             th.id != ${data.id}
         GROUP BY 
