@@ -194,6 +194,7 @@ class PostCreator extends HTMLElement {
         this.textarea.set('');
         this.embeds.style.display = 'none';
         this.embeds.innerHTML = '';
+        this.spotify_url = null;
 
         let response;
         try {
