@@ -88,6 +88,7 @@ const post = async (data: {
     images: { buffer: Express.Multer.File['buffer'], index: number }[];
     type: 'default' | 'reply' | 'quote';
     target_id: number;
+    spotify_url: string;
 }) => {
     return await Post(data);
 };

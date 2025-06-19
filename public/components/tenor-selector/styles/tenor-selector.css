@@ -35,13 +35,24 @@
 }
 
 .tenor-selector-input {
+    box-sizing: border-box;
+    font-size: 16px;
+    color: var(--font-color);
     width: 100%;
+    border: 2px solid var(--font-color);
 }
 
 .tenor-selector-button-container {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.tenor-selector-button {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+    aspect-ratio: 1 / 1;
 }
 
 .tenor-selector-results-container {

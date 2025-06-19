@@ -30,6 +30,13 @@ export default async function ModeratorDelete (data: {
 
         (await transaction`
             DELETE FROM
+                embed
+            WHERE
+                post_id = ${data.id_post};
+        `);
+
+        (await transaction`
+            DELETE FROM
                 notification
             WHERE
                 id_post_target_notification = ${data.id_post};

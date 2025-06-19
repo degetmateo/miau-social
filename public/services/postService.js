@@ -33,13 +33,16 @@ const post = async (data = {
     content,
     images,
     type,
-    target_id
+    target_id,
+    spotify_url
 }) => {
     try {
         const form = new FormData();
 
         form.append('content', data.content);
         form.append('type', data.type);
+
+        if (data.spotify_url) form.append('spotify_url', data.spotify_url);
 
         for (let i = 0; i < data.images.length; i++) {
             const image = data.images[i];

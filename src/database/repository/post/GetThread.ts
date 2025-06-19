@@ -113,6 +113,12 @@ export default async function GetThread (data: {
                     WHERE media.post_id = th.id AND media.type = 'media'
                 ), '[]'::jsonb
             ) AS media,
+            jsonb_build_object (
+                'url', spotify.url,
+                'title', spotify.title,
+                'iframe_url', spotify.iframe_url,
+                'thumbnail_url', spotify.thumbnail_url
+            ) AS spotify,
             COALESCE((
                 SELECT jsonb_build_object(
                     'id', tp.id_post,
@@ -156,17 +162,26 @@ export default async function GetThread (data: {
                         SELECT jsonb_agg(tmedia.url ORDER BY tmedia.id ASC)
                         FROM image tmedia 
                         WHERE tmedia.post_id = tp.id_post AND tmedia.type = 'media'
-                    ), '[]'::jsonb)
+                    ), '[]'::jsonb),
+                    'spotify', jsonb_build_object(
+                        'id', tspoty.id,
+                        'title', tspoty.title,
+                        'iframe_url', tspoty.iframe_url,
+                        'thumbnail_url', tspoty.thumbnail_url
+                    ),
                 )
                 FROM post tp
                 LEFT JOIN member tm ON tp.id_member = tm.id_member
                 LEFT JOIN image ticon ON ticon.member_id = tm.id_member AND ticon.type = 'icon'
+                LEFT JOIN embed tspoty ON tspoty.post_id = tp.id_post AND tspoty.type = 'post'
                 WHERE tp.id_post = th.target_post_id
             ), 'null'::jsonb) AS target_post
         FROM 
             thread th
         LEFT JOIN 
             image media ON media.post_id = th.id AND media.type = 'media'
+        LEFT JOIN
+            embed spotify ON spotify.post_id = th.id_post AND spotify.type = 'post'
         WHERE
             th.id != ${data.id}
         GROUP BY 

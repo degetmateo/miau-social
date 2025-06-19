@@ -8,6 +8,12 @@ export default async function Post (data: {
     images: any[];
     type: 'default' | 'reply' | 'quote' | 'shared';
     target_id: number;
+    spotify: {
+        url: string;
+        iframe_url: string;
+        thumbnail_url: string;
+        title: string;
+    }
 }) {
     let response = null;
     await Postgres.query().begin(async transaction => {
@@ -64,6 +70,30 @@ export default async function Post (data: {
             `;
         }
 
+        if (data.spotify) {
+            (await transaction`
+                INSERT INTO
+                    embed (
+                        type,
+                        post_id,
+                        source,
+                        url,
+                        title,
+                        iframe_url,
+                        thumbnail_url
+                    )
+                    VALUES (
+                        'post',
+                        ${IDPost},
+                        'spotify',
+                        ${data.spotify.url},
+                        ${data.spotify.title},
+                        ${data.spotify.iframe_url},
+                        ${data.spotify.thumbnail_url}
+                    );
+            `);
+        };
+
         response = await transaction`
             SELECT 
                 p.id_post AS id,
@@ -94,6 +124,12 @@ export default async function Post (data: {
                         WHERE media.post_id = p.id_post AND media.type = 'media'
                     ), '[]'::jsonb
                 ) AS media,
+                jsonb_build_object (
+                    'url', spotify.url,
+                    'title', spotify.title,
+                    'iframe_url', spotify.iframe_url,
+                    'thumbnail_url', spotify.thumbnail_url
+                ) AS spotify,
                 COALESCE((
                     SELECT jsonb_build_object(
                         'id', tp.id_post,
@@ -134,6 +170,8 @@ export default async function Post (data: {
                 image icon ON icon.member_id = m.id_member AND icon.type = 'icon'
             LEFT JOIN
                 image media ON media.post_id = p.id_post AND media.type = 'media'
+            LEFT JOIN
+                embed spotify ON spotify.post_id = p.id_post AND spotify.type = 'post'
             WHERE
                 p.id_post = ${IDPost}
             GROUP BY
@@ -143,7 +181,11 @@ export default async function Post (data: {
                 p.type,
                 p.target_post_id,
                 m.id_member,
-                icon.url;
+                icon.url,
+                spotify.url,
+                spotify.title,
+                spotify.iframe_url,
+                spotify.thumbnail_url;
         `;
 
         if (data.type != 'default' && qTargetPost) {

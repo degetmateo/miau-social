@@ -36,6 +36,20 @@ class PostBody extends HTMLElement {
             this.quote = new Quote(this.data.target_post);
             this.append(this.quote);
         };
+
+        if (this.data.spotify && this.data.spotify.iframe_url) {
+            const iframe = document.createElement('iframe');
+            iframe.src = this.data.spotify.iframe_url;
+            iframe.classList.add('post-creator-iframe');
+            iframe.allow = 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';
+            iframe.loading = 'lazy';
+            iframe.style = 'border-radius: 12px; background-color: var(--border-color);'
+            iframe.width = '100%';
+            iframe.height = '152';
+            iframe.title = this.data.spotify.title;
+            iframe.frameBorder = "0";
+            this.append(iframe);
+        };
     };
 
     update (data) {

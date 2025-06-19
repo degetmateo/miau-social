@@ -99,6 +99,7 @@ const post = async (data: {
     images: any[];
     type: 'default' | 'reply' | 'quote';
     target_id: number;
+    spotify: any;
 }) => {
     try {
         return await Post(data);

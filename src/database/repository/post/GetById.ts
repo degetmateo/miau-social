@@ -53,6 +53,12 @@ export default async function GetById (data: {
                     WHERE media.post_id = p.id_post AND media.type = 'media'
                 ), '[]'::jsonb
             ) AS media,
+            jsonb_build_object (
+                'url', spotify.url,
+                'title', spotify.title,
+                'iframe_url', spotify.iframe_url,
+                'thumbnail_url', spotify.thumbnail_url
+            ) AS spotify,
             COALESCE((
                 SELECT jsonb_build_object(
                     'id', tp.id_post,
@@ -96,11 +102,18 @@ export default async function GetById (data: {
                         SELECT jsonb_agg(tmedia.url ORDER BY tmedia.id ASC)
                         FROM image tmedia 
                         WHERE tmedia.post_id = tp.id_post AND tmedia.type = 'media'
-                    ), '[]'::jsonb)
+                    ), '[]'::jsonb),
+                    'spotify', jsonb_build_object(
+                        'id', tspoty.id,
+                        'title', tspoty.title,
+                        'iframe_url', tspoty.iframe_url,
+                        'thumbnail_url', tspoty.thumbnail_url
+                    )
                 )
                 FROM post tp
                 LEFT JOIN member tm ON tp.id_member = tm.id_member
                 LEFT JOIN image ticon ON ticon.member_id = tm.id_member AND ticon.type = 'icon'
+                LEFT JOIN embed tspoty ON tspoty.post_id = tp.id_post AND tspoty.type = 'post'
                 WHERE tp.id_post = p.target_post_id
             ), 'null'::jsonb) AS target_post
         FROM
@@ -111,6 +124,8 @@ export default async function GetById (data: {
             image icon ON icon.member_id = m.id_member AND icon.type = 'icon'
         LEFT JOIN
             image media ON media.post_id = p.id_post AND media.type = 'media'
+        LEFT JOIN
+            embed spotify ON spotify.post_id = p.id_post AND spotify.type = 'post'
         WHERE
             p.id_post = ${data.id}
         GROUP BY
@@ -120,7 +135,11 @@ export default async function GetById (data: {
             p.type,
             p.target_post_id,
             m.id_member,
-            icon.url;
+            icon.url,
+            spotify.url,
+            spotify.title,
+            spotify.iframe_url,
+            spotify.thumbnail_url;
     `)[0];
 
     if (!response) throw new NotFoundError("No se ha encontrado la publicación especificada.");

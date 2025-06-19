@@ -131,12 +131,6 @@ export default class MessagesView extends AbstractView {
         this.messages.scrollTop = this.messages.scrollHeight;
         this.counter = 0;
         Nav.buttonMessages.setNumber(this.counter);
-
-        // fetch('https://open.spotify.com/oembed?url=https://open.spotify.com/track/6rqhFgbbKwnb9MLmUQDhG6', {
-        //     method: "GET"
-        // })
-        // .then((res) => res.json())
-        // .then((data) => console.log(data));
     };
 
     isActive () {

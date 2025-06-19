@@ -1,8 +1,7 @@
-import {importCSS, Scroll, ScrollBottom} from "../../helpers.js";
+import {importCSS, Scroll } from "../../helpers.js";
 import Observer from "../../interfaces/Observer.js";
 import EventsHandler from "../../modules/EventsHandler.js";
 import {tenorService} from "../../services/tenorService.js";
-import Button from "../button/Button.js";
 import CloseButton from "../close-button/CloseButton.js";
 import Input from "../input/input.js";
 
@@ -35,29 +34,50 @@ export default class TenorSelector extends Observer {
             e.stopPropagation();
         }
 
-        this.inputContainer = document.createElement('div');
-        this.inputContainer.classList.add('tenor-selector-input-container');
-        this.selector.append(this.inputContainer);
+        this.form = document.createElement('form');
+        this.form.classList.add('tenor-selector-input-container');
+        this.selector.append(this.form);
 
-        this.input = new Input({
-            min: 0, 
-            max: 128, 
-            title: 'Buscar GIF', 
-            type: 'text',
-            onStop: () => this.submit(),
-            length: false
+        this.form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.submit();
         });
 
-        this.input.container.classList.add('tenor-selector-input');
-        this.inputContainer.append(this.input.render());
+        // this.input = new Input({
+        //     min: 0, 
+        //     max: 128, 
+        //     title: 'Buscar GIF', 
+        //     type: 'text',
+        //     onStop: () => this.submit(),
+        //     length: false
+        // });
+
+        // this.input.container.classList.add('tenor-selector-input');
+        // this.inputContainer.append(this.input.render());
+
+        this.input = document.createElement('input');
+        this.input.type = 'text';
+        this.input.placeholder = 'Buscar GIF';
+        this.input.classList.add('tenor-selector-input');
+        this.form.append(this.input);
+
+        this.timeout = null;
+        this.cooldown = 2000;
+        this.input.addEventListener('input', () => {
+            clearTimeout(this.timeout);
+            this.timeout = setTimeout(() => {
+                this.submit();
+            }, this.cooldown);
+        });
 
         this.closeButtonContainer = document.createElement('div');
         this.closeButtonContainer.classList.add('tenor-selector-button-container');
-        this.inputContainer.append(this.closeButtonContainer);
+        this.form.append(this.closeButtonContainer);
 
         this.closeButton = new CloseButton({
             onClick: () => this.remove()
         });
+        this.closeButton.container.classList.add('tenor-selector-button');
         this.closeButtonContainer.append(this.closeButton.render());
 
         this.resultsContainer = document.createElement('div');

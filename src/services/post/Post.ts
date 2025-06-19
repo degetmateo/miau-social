@@ -1,6 +1,7 @@
 import { postRepository } from "../../database/repository/postRepository";
 import InvalidArgumentError from "../../errors/InvalidArgumentError";
 import ImgBB from "../../helpers/ImgBB";
+import Spotify from "../../helpers/Spotify";
 import { PARAMETERS } from "../../static/parameters";
 
 export default async function Post (data: {
@@ -10,9 +11,14 @@ export default async function Post (data: {
     images: { buffer: Express.Multer.File['buffer'], index: number }[];
     type: 'default' | 'reply' | 'quote';
     target_id: number;
+    spotify_url: string | null;
 }) {
     if (data.content) data.content = data.content.trim();
-    const isEmpty = (!data.content || data.content.length <= 0) && [...data.tenor, ...data.images].length <= 0;
+    const isEmpty = 
+    (!data.content || data.content.length <= 0) && 
+    [...data.tenor, ...data.images].length <= 0 &&
+    !data.spotify_url;
+    
     if (isEmpty) throw new InvalidArgumentError("No puedes enviar una publicación vacia.");
 
     if (data.content && data.content.length > 0) {
@@ -56,12 +62,19 @@ export default async function Post (data: {
 
     checkedImages = checkedImages.sort((a, b) => a.index - b.index);
 
+
+    let spotifyResponse = null;
+    if (data.spotify_url) {
+        spotifyResponse = await Spotify.Fetch(data.spotify_url);
+    };
+
     const response = await postRepository.post({
         id_member: data.id_member,
         content: data.content,
         images: checkedImages,
         type: data.type,
-        target_id: data.target_id
+        target_id: data.target_id,
+        spotify: spotifyResponse
     });
 
     return response;

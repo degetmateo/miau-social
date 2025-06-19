@@ -4,6 +4,7 @@ import router from "../../router.js";
 import {postService} from "../../services/postService.js";
 import Alert from "../alert/alert.js";
 import ImagesContainer from "../images-container/ImagesContainer.js";
+import SpotifyPopup from "../spotify-popup/SpotifyPopup.js";
 import TenorSelector from "../tenor-selector/TenorSelector.js";
 import Textarea from "../textarea/textarea.js";
 
@@ -18,6 +19,9 @@ class PostCreator extends HTMLElement {
     }) {
         super();
         this.data = data;
+        
+        this.has_spotify = false;
+        this.spotify_url = null;
 
         this.onSubmit = () => {};
         this.classList.add('post-creator-container');
@@ -69,6 +73,12 @@ class PostCreator extends HTMLElement {
         this.imagesContainer.hide();
         this.editor.append(this.imagesContainer.render());
         
+
+        this.embeds = document.createElement('div');
+        this.embeds.classList.add('post-creator-embeds');
+        this.editor.append(this.embeds);
+
+
         this.buttonsContainer = document.createElement('div');
         this.buttonsContainer.classList.add('post-creator-buttons-container');
         this.editor.append(this.buttonsContainer);
@@ -97,16 +107,24 @@ class PostCreator extends HTMLElement {
         this.imgButton = document.createElement('button');
         this.imgButton.classList.add('post-creator-button');
         this.imgButton.type = 'button';
-        this.imgButton.textContent = 'IMG';
+        // this.imgButton.textContent = 'IMG';
+        this.imgButton.innerHTML = '<i class="fa-solid fa-image"></i>';
         this.imgButton.addEventListener('click', () => this.inputImages.click());
         this.editorButtonsContainer.append(this.imgButton);
 
         this.gifButton = document.createElement('button');
-        this.gifButton.classList.add('post-creator-button');
+        this.gifButton.classList.add('post-creator-button', 'post-creator-button-gif');
         this.gifButton.type = 'button';
         this.gifButton.textContent = 'GIF';
         this.gifButton.addEventListener('click', () => this.onTenor());
         this.editorButtonsContainer.append(this.gifButton);
+
+        this.spotifyButton = document.createElement('button');
+        this.spotifyButton.classList.add('post-creator-button');
+        this.spotifyButton.type = 'button';
+        this.spotifyButton.addEventListener('click', () => this.onSpotify());
+        this.spotifyButton.innerHTML = '<i class="fa-brands fa-spotify"></i>';
+        this.editorButtonsContainer.append(this.spotifyButton);
 
         this.postButtonContainer = document.createElement('div');
         this.postButtonContainer.classList.add('post-creator-post-button-container');
@@ -142,16 +160,40 @@ class PostCreator extends HTMLElement {
         });
     }
 
+    onSpotify () {
+        const popup = new SpotifyPopup();
+
+        popup.onResponse = (song) => {
+            this.spotify_url = song.url;
+
+            this.embeds.style.display = 'block';
+            const iframe = document.createElement('iframe');
+            iframe.src = song.iframe_url;
+            iframe.classList.add('post-creator-iframe');
+            iframe.allow = 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';
+            iframe.loading = 'lazy';
+            iframe.style = 'border-radius: 12px;'
+            iframe.width = '100%';
+            iframe.height = '152';
+            iframe.title = song.title;
+            iframe.frameBorder = "0";
+            iframe.allowFullscreen = true;
+            this.embeds.append(iframe);
+        };
+    };
+
     async submit () {
         const imagesData = this.imagesContainer.getImages();
         let content = this.textarea.value;
         if (content) content = content.trim();
-        if ((!content || content.length <= 0) && imagesData.length === 0) return new Alert('No puedes enviar una publicación vacía.', { error: true, timeout: 4000 });
+        if ((!content || content.length <= 0) && imagesData.length === 0 && !this.spotify_url) return new Alert('No puedes enviar una publicación vacía.', { error: true, timeout: 4000 });
 
         new Alert('Enviando...', { error: false, timeout: null });
         this.imagesContainer.clear();
         this.imagesContainer.hide();
         this.textarea.set('');
+        this.embeds.style.display = 'none';
+        this.embeds.innerHTML = '';
 
         let response;
         try {
@@ -159,7 +201,8 @@ class PostCreator extends HTMLElement {
                 content: content, 
                 images: imagesData, 
                 type: this.data.type,
-                target_id: this.data.target_id
+                target_id: this.data.target_id,
+                spotify_url: this.spotify_url
             });
             this.response = response;
         } catch (error) {
@@ -170,6 +213,7 @@ class PostCreator extends HTMLElement {
             return new Alert(error.message, { error: true });
         }
 
+        this.has_spotify = false;
         this.has_images = false;
         this.has_video = false;
         this.has_text = false;

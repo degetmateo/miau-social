@@ -100,7 +100,8 @@ const post = async (req: Request, res: Response) => {
                 files['image-3'] ? { buffer: files['image-3'][0]['buffer'], index: 3 } : null
             ].filter(image => image !== null),
             type: req.body.type ? req.body.type as 'default' | 'reply' | 'quote' : 'default',
-            target_id: req.body.target_id ? Number(req.body.target_id) : null
+            target_id: req.body.target_id ? Number(req.body.target_id) : null,
+            spotify_url: req.body.spotify_url ? req.body.spotify_url as string : null
         });
 
         ResponseOk(res, RESPONSES.CREATED, response);
