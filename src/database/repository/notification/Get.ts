@@ -63,6 +63,12 @@ export default async function Get (data: {
                         FROM image tmedia 
                         WHERE tmedia.post_id = p.id_post AND tmedia.type = 'media'
                     ), '[]'::jsonb),
+                    'spotify', jsonb_build_object(
+                        'id', spotify.id,
+                        'title', spotify.title,
+                        'iframe_url', spotify.iframe_url,
+                        'thumbnail_url', spotify.thumbnail_url
+                    ),
                     'target_post', COALESCE((
                         SELECT jsonb_build_object(
                             'id', tp.id_post,
@@ -107,6 +113,12 @@ export default async function Get (data: {
                                 FROM image tmedia 
                                 WHERE tmedia.post_id = tp.id_post AND tmedia.type = 'media'
                             ), '[]'::jsonb),
+                            'spotify', jsonb_build_object(
+                                'id', tspoty.id,
+                                'title', tspoty.title,
+                                'iframe_url', tspoty.iframe_url,
+                                'thumbnail_url', tspoty.thumbnail_url
+                            ),
                             'target_post', COALESCE((
                                 SELECT jsonb_build_object(
                                     'id', ttp.id_post,
@@ -134,17 +146,25 @@ export default async function Get (data: {
                                         SELECT jsonb_agg(ttmedia.url ORDER BY ttmedia.id ASC)
                                         FROM image ttmedia 
                                         WHERE ttmedia.post_id = ttp.id_post AND ttmedia.type = 'media'
-                                    ), '[]'::jsonb)
+                                    ), '[]'::jsonb),
+                                    'spotify', jsonb_build_object(
+                                        'id', ttspoty.id,
+                                        'title', ttspoty.title,
+                                        'iframe_url', ttspoty.iframe_url,
+                                        'thumbnail_url', ttspoty.thumbnail_url
+                                    )
                                 )
                                 FROM post ttp
                                 LEFT JOIN member ttm ON ttp.id_member = ttm.id_member
                                 LEFT JOIN image tticon ON tticon.member_id = ttm.id_member AND tticon.type = 'icon'
+                                LEFT JOIN embed ttspoty ON ttspoty.post_id = ttp.id_post AND ttspoty.type = 'post'
                                 WHERE ttp.id_post = tp.target_post_id
                             ), 'null'::jsonb)
                         )
                         FROM post tp
                         LEFT JOIN member tm ON tp.id_member = tm.id_member
                         LEFT JOIN image ticon ON ticon.member_id = tm.id_member AND ticon.type = 'icon'
+                        LEFT JOIN embed tspoty ON tspoty.post_id = tp.id_post AND tspoty.type = 'post'
                         WHERE tp.id_post = p.target_post_id
                     ), 'null'::jsonb)
                 ) AS target_post
@@ -158,6 +178,8 @@ export default async function Get (data: {
                 post p ON (n.type_notification IN ('reply', 'upvote', 'quote', 'shared') AND n.id_post_target_notification = p.id_post)
             LEFT JOIN
                 image media ON media.post_id = p.id_post AND media.type = 'media'
+            LEFT JOIN
+                embed spotify ON spotify.post_id = p.id_post AND spotify.type = 'post'
             WHERE 
                 n.id_member = ${data.id_member}
             GROUP BY
@@ -171,7 +193,12 @@ export default async function Get (data: {
                 p.target_post_id,
                 p.content_post,
                 p.date_post,
-                p.type
+                p.type,
+                spotify.id,
+                spotify.url,
+                spotify.title,
+                spotify.iframe_url,
+                spotify.thumbnail_url
             ORDER BY 
                 n.date_notification DESC
             LIMIT 20

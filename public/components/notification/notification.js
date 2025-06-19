@@ -2,7 +2,6 @@ import {URL_NO_IMAGE} from "../../consts.js";
 import {formatContent, importCSS} from "../../helpers.js";
 import PostsManager from "../../modules/PostsManager.js";
 import router from "../../router.js";
-import Post from "../post/Post.js";
 
 importCSS('/public/components/notification/notification.css');
 
@@ -58,6 +57,20 @@ class Notification extends HTMLElement {
             this.body.onmousemove = () => {
                 this.classList.remove('notification-pending');
             }
+
+            // if (this.target_post && this.target_post.spotify && this.target_post.spotify.iframe_url) {
+            //     const iframe = document.createElement('iframe');
+            //     iframe.src = this.target_post.spotify.iframe_url;
+            //     iframe.classList.add('post-creator-iframe');
+            //     iframe.allow = 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';
+            //     iframe.loading = 'lazy';
+            //     iframe.style = 'border-radius: 12px; background-color: var(--border-color);'
+            //     iframe.width = '100%';
+            //     iframe.height = '152';
+            //     iframe.title = this.target_post.spotify.title;
+            //     iframe.frameBorder = "0";
+            //     this.append(iframe);
+            // };
         };
 
         if (this.data.type === 'reply') {
@@ -75,6 +88,20 @@ class Notification extends HTMLElement {
             this.body.onmousemove = () => {
                 this.classList.remove('notification-pending');
             }
+
+            // if (this.target_post && this.target_post.spotify && this.target_post.spotify.iframe_url) {
+            //     const iframe = document.createElement('iframe');
+            //     iframe.src = this.target_post.spotify.iframe_url;
+            //     iframe.classList.add('post-creator-iframe');
+            //     iframe.allow = 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';
+            //     iframe.loading = 'lazy';
+            //     iframe.style = 'border-radius: 12px; background-color: var(--border-color);'
+            //     iframe.width = '100%';
+            //     iframe.height = '152';
+            //     iframe.title = this.target_post.spotify.title;
+            //     iframe.frameBorder = "0";
+            //     this.append(iframe);
+            // };
         };
 
         if (this.data.type === 'upvote') {
@@ -101,6 +128,20 @@ class Notification extends HTMLElement {
                 this.links.textContent = ' ' + this.data.target_post.media.join(' ');
                 this.body.append(this.links); 
             };
+
+            // if (this.target_post && this.target_post.spotify && this.target_post.spotify.iframe_url) {
+            //     const iframe = document.createElement('iframe');
+            //     iframe.src = this.target_post.spotify.iframe_url;
+            //     iframe.classList.add('post-creator-iframe');
+            //     iframe.allow = 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';
+            //     iframe.loading = 'lazy';
+            //     iframe.style = 'border-radius: 12px; background-color: var(--border-color);'
+            //     iframe.width = '100%';
+            //     iframe.height = '152';
+            //     iframe.title = this.target_post.spotify.title;
+            //     iframe.frameBorder = "0";
+            //     this.append(iframe);
+            // };
 
             this.SelectingText();
         };
