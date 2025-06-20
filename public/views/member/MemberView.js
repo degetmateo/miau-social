@@ -53,6 +53,7 @@ export default class extends AbstractView {
             bottom: async () => {
                 if (this.fetching) return;
                 if (!this.members[this.i].fetching) return;
+
                 this.fetching = true;
                 this.main.append(this.spinner);
                 this.members[this.i].offset += 20;
@@ -64,7 +65,10 @@ export default class extends AbstractView {
                         replies: false,
                         shared: true
                     });
-                    if (posts.length <= 0) this.members[this.i].fetching = false;
+
+                    if (posts.length <= 0) {
+                        this.members[this.i].fetching = false;
+                    };
                 } catch (error) {
                     this.spinner.remove();
                     this.fetching = false;
@@ -151,15 +155,15 @@ export default class extends AbstractView {
             const profile = new Profile(member);
             this.profile.append(profile.render());
 
-            member.posts = new PostsContainer();
-            member.offset = 0;
-            member.scroll = 0;
-            member.profile = profile;
-            member.fetching = true;
-            member.cooldown = false;
-
             this.members.push(member);
             this.i = this.members.length - 1;
+
+            this.members[this.i].posts = new PostsContainer();
+            this.members[this.i].offset = 0;
+            this.members[this.i].scroll = 0;
+            this.members[this.i].profile = profile;
+            this.members[this.i].fetching = true;
+            this.members[this.i].cooldown = false;
             this.header.text.textContent = this.members[this.i].username;
 
             let posts;
@@ -170,7 +174,9 @@ export default class extends AbstractView {
                     replies: false,
                     shared: true
                 });
-                if (posts.length <= 0) this.members[this.i].fetching = false;
+                if (posts.length <= 0) {
+                    this.members[this.i].fetching = false;
+                };
             } catch (error) {
                 this.spinner.remove();
                 return new Alert(error.message);
@@ -178,7 +184,6 @@ export default class extends AbstractView {
             this.spinner.remove();
             this.members[this.i].posts.renderPosts(posts);
             this.posts.append(this.members[this.i].posts.render());
-            this.members[this.i].fetching = false;
         }
     }
 
