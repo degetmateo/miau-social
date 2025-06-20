@@ -78,6 +78,16 @@ class PostCreator extends HTMLElement {
         this.embeds.classList.add('post-creator-embeds');
         this.editor.append(this.embeds);
 
+        this.iframe = document.createElement('iframe');
+        this.iframe.classList.add('post-creator-iframe');
+        this.iframe.allow = 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';
+        // NOT LAZY
+        this.iframe.loading = 'eager';
+        this.iframe.style = 'border-radius: 12px;'
+        this.iframe.width = '100%';
+        this.iframe.height = '152';
+        this.iframe.frameBorder = "0";
+        this.iframe.allowFullscreen = true;
 
         this.buttonsContainer = document.createElement('div');
         this.buttonsContainer.classList.add('post-creator-buttons-container');
@@ -104,9 +114,18 @@ class PostCreator extends HTMLElement {
             this.imagesContainer.addImages(this.inputImages.files);
         };
 
+        this.resetButton = document.createElement('button');
+        this.resetButton.classList.add('post-creator-button', 'post-creator-button-reset');
+        this.resetButton.type = 'button';
+        this.resetButton.title = 'Reiniciar publicación';
+        this.resetButton.innerHTML = '<i class="fa-solid fa-arrow-rotate-left"></i>';
+        this.resetButton.addEventListener('click', () => this.reset());
+        this.editorButtonsContainer.append(this.resetButton);
+
         this.imgButton = document.createElement('button');
         this.imgButton.classList.add('post-creator-button');
         this.imgButton.type = 'button';
+        this.imgButton.title = 'Seleccionar imágenes';
         // this.imgButton.textContent = 'IMG';
         this.imgButton.innerHTML = '<i class="fa-solid fa-image"></i>';
         this.imgButton.addEventListener('click', () => this.inputImages.click());
@@ -115,6 +134,7 @@ class PostCreator extends HTMLElement {
         this.gifButton = document.createElement('button');
         this.gifButton.classList.add('post-creator-button', 'post-creator-button-gif');
         this.gifButton.type = 'button';
+        this.gifButton.title = 'Seleccionar GIFs';
         this.gifButton.textContent = 'GIF';
         this.gifButton.addEventListener('click', () => this.onTenor());
         this.editorButtonsContainer.append(this.gifButton);
@@ -122,6 +142,7 @@ class PostCreator extends HTMLElement {
         this.spotifyButton = document.createElement('button');
         this.spotifyButton.classList.add('post-creator-button');
         this.spotifyButton.type = 'button';
+        this.spotifyButton.title = 'Agregar una canción de Spotify';
         this.spotifyButton.addEventListener('click', () => this.onSpotify());
         this.spotifyButton.innerHTML = '<i class="fa-brands fa-spotify"></i>';
         this.editorButtonsContainer.append(this.spotifyButton);
@@ -151,6 +172,16 @@ class PostCreator extends HTMLElement {
         this.memberName.textContent = name;
     }
 
+    reset () {
+        this.imagesContainer.clear();
+        this.imagesContainer.hide();
+        this.textarea.set('');
+        this.embeds.style.display = 'none';
+        this.iframe.remove();
+        this.embeds.innerHTML = '';
+        this.spotify_url = null;
+    };
+
     async onTenor() {
         new TenorSelector({ 
             onSubmit: (url) => {
@@ -165,20 +196,10 @@ class PostCreator extends HTMLElement {
 
         popup.onResponse = (song) => {
             this.spotify_url = song.url;
-
             this.embeds.style.display = 'block';
-            const iframe = document.createElement('iframe');
-            iframe.src = song.iframe_url;
-            iframe.classList.add('post-creator-iframe');
-            iframe.allow = 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';
-            iframe.loading = 'lazy';
-            iframe.style = 'border-radius: 12px;'
-            iframe.width = '100%';
-            iframe.height = '152';
-            iframe.title = song.title;
-            iframe.frameBorder = "0";
-            iframe.allowFullscreen = true;
-            this.embeds.append(iframe);
+            this.iframe.title = song.title;
+            this.iframe.src = song.iframe_url;
+            this.embeds.append(this.iframe);
         };
     };
 
@@ -190,12 +211,7 @@ class PostCreator extends HTMLElement {
         if ((!content || content.length <= 0) && imagesData.length === 0 && !spotifyValue) return new Alert('No puedes enviar una publicación vacía.', { error: true, timeout: 4000 });
 
         new Alert('Enviando...', { error: false, timeout: null });
-        this.imagesContainer.clear();
-        this.imagesContainer.hide();
-        this.textarea.set('');
-        this.embeds.style.display = 'none';
-        this.embeds.innerHTML = '';
-        this.spotify_url = null;
+        this.reset();
 
         let response;
         try {
