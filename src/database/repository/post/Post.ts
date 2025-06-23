@@ -1,6 +1,8 @@
 import InvalidArgumentError from "../../../errors/InvalidArgumentError";
 import NotFoundError from "../../../errors/NotFoundError";
+import WebSocket from "../../../socket/WebSocket";
 import Postgres from "../../Postgres";
+import { notificationRepository } from "../notificationRepository";
 
 export default async function Post (data: {
     id_member: number;
@@ -191,7 +193,7 @@ export default async function Post (data: {
         if (data.type != 'default' && qTargetPost) {
             if (data.id_member == qTargetPost.id_member) return;
 
-            (await transaction`
+            const qn = (await transaction`
                 INSERT INTO 
                     notification (
                         id_member,
@@ -207,7 +209,19 @@ export default async function Post (data: {
                         ${IDPost},
                         ${data.id_member}
                     );
-            `);
+            `)[0];
+
+            const notification = await notificationRepository.TGetByID({
+                id: qn.id_notification,
+                transaction: transaction
+            });
+
+            const ms = WebSocket.members.get(qn.id_member);
+
+            if (!ms) return;
+            for (const s of ms.entries()) {
+                WebSocket.io.to(s[0]).emit('socket-notification', notification);
+            };
         };
     });
     return response[0];
