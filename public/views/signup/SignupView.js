@@ -1,8 +1,8 @@
 import FormSignup from "../../components/form-signup/FormSignup.js";
-import {importCSS} from "../../helpers.js";
+import Helper from "../../Helper.js";
 import AbstractView from "../AbstractView.js";
 
-importCSS('/public/views/signup/styles/signup.css');
+Helper.ImportCSS('/public/views/signup/styles/signup.css');
 
 export default class SignupView extends AbstractView {
     constructor () {

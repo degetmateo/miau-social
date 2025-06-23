@@ -1,5 +1,4 @@
-import {importCSS} from "../../helpers.js";
-import router from "../../router.js";
+import Helper from "../../Helper.js";
 import {authenticationService} from "../../services/authenticationService.js";
 import Validator from "../../Validator.js";
 import Alert from "../alert/alert.js";
@@ -7,7 +6,7 @@ import CaptchaBadge from "../captcha-badge/CaptchaBadge.js";
 import Input from "../input/input.js";
 import ScreenSpinner from "../screen-spinner/ScreenSpinner.js";
 
-importCSS('/public/components/form-signup/form-signup.css');
+Helper.ImportCSS('/public/components/form-signup/form-signup.css');
 
 export default class FormSignup {
     constructor (data = {

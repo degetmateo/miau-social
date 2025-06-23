@@ -1,7 +1,9 @@
 import DatabaseError from "../../../errors/DatabaseError";
 import GenericError from "../../../errors/GenericError";
 import NotFoundError from "../../../errors/NotFoundError";
+import WebSocket from "../../../socket/WebSocket";
 import Postgres from "../../Postgres";
+import { notificationRepository } from "../notificationRepository";
 
 export default async function Upvote (data: {
     id_member: number;
@@ -37,7 +39,7 @@ export default async function Upvote (data: {
 
             if (data.id_member == post.id_member) return;
 
-            (await transaction`
+            const qn = (await transaction`
                 INSERT INTO 
                     notification (
                         id_member,
@@ -55,12 +57,25 @@ export default async function Upvote (data: {
                 )
                 RETURNING *;
             `)[0];
+
+            const notification = await notificationRepository.TGetByID({
+                id: qn.id_notification,
+                transaction: transaction
+            });
+
+            const ms = WebSocket.members.get(qn.id_member);
+
+            if (!ms) return;
+            for (const s of ms.entries()) {
+                WebSocket.io.to(s[0]).emit('socket-notification', notification);
+            };
         });
 
         return response;  
     } catch (error) {
         if (error instanceof GenericError) throw error;
         else {
+            console.error(error);
             throw new DatabaseError();
         };
     };

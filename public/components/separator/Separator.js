@@ -1,6 +1,6 @@
-import {importCSS} from "../../helpers.js";
+import Helper from "../../Helper.js";
 
-importCSS('/public/components/separator/separator.css');
+Helper.ImportCSS('/public/components/separator/separator.css');
 
 export default class Separator {
     constructor () {

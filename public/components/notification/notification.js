@@ -1,9 +1,9 @@
 import {URL_NO_IMAGE} from "../../consts.js";
-import {formatContent, importCSS} from "../../helpers.js";
+import Helper from "../../Helper.js";
 import PostsManager from "../../modules/PostsManager.js";
 import router from "../../router.js";
 
-importCSS('/public/components/notification/notification.css');
+Helper.ImportCSS('/public/components/notification/notification.css');
 
 class Notification extends HTMLElement {
     constructor (data) {
@@ -118,7 +118,7 @@ class Notification extends HTMLElement {
             if (this.data.target_post.content) {
                 this.content = document.createElement('span');
                 this.content.classList.add('notification-content');
-                this.content.append(formatContent(this.data.target_post.content));
+                this.content.append(Helper.Format(this.data.target_post.content));
                 this.body.append(this.content);
             };
 
@@ -160,7 +160,7 @@ class Notification extends HTMLElement {
             if (this.data.target_post.target_post.content) {
                 this.content = document.createElement('span');
                 this.content.classList.add('notification-content');
-                this.content.append(formatContent(this.data.target_post.target_post.content));
+                this.content.append(Helper.Format(this.data.target_post.target_post.content));
                 this.body.append(this.content);
             };
 

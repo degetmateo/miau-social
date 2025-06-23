@@ -1,12 +1,11 @@
-import FormUpdatePassword from "../../components/form-update-password/FormUpdatePassword.js";
 import Header from "../../components/header/Header.js";
 import Nav from "../../components/nav/Nav.js";
 import Separator from "../../components/separator/Separator.js";
 import Tab from "../../components/tab/Tab.js";
-import {importCSS} from "../../helpers.js";
+import Helper from "../../Helper.js";
 import AbstractView from "../AbstractView.js";
 
-importCSS("/public/views/security/styles/security.css");
+Helper.ImportCSS("/public/views/security/styles/security.css");
 
 export default class SecurityView extends AbstractView {
     constructor () {

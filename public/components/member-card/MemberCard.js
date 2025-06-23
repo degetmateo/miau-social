@@ -1,8 +1,9 @@
 import {URL_NO_IMAGE} from "../../consts.js";
-import { formatContent, importCSS, loadImage } from "../../helpers.js";
+import Helper from "../../Helper.js";
+import { formatContent, loadImage } from "../../helpers.js";
 import router from "../../router.js";
 import MemberRole from "../member-role/MemberRole.js";
-importCSS('/public/components/member-card/member-card.css');
+Helper.ImportCSS('/public/components/member-card/member-card.css');
 
 class MemberCard extends HTMLElement {
     constructor (data, options) {

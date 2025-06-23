@@ -4,12 +4,11 @@ import Nav from "../../components/nav/Nav.js";
 import ScreenSpinner from "../../components/screen-spinner/ScreenSpinner.js";
 import Separator from "../../components/separator/Separator.js";
 import Tab from "../../components/tab/Tab.js";
-import {importCSS} from "../../helpers.js";
-import router from "../../router.js";
+import Helper from "../../Helper.js";
 import {sessionService} from "../../services/sessionService.js";
 import AbstractView from "../AbstractView.js";
 
-importCSS('/public/views/sessions/styles/sessions.css');
+Helper.ImportCSS('/public/views/sessions/styles/sessions.css');
 
 export default class SessionsView extends AbstractView {
     constructor () {

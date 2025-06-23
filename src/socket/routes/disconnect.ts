@@ -1,11 +1,6 @@
-import { DefaultEventsMap, Server, Socket } from "socket.io";
-import WebSocket from "../WebSocket";
+import { Socket } from "socket.io";
 
-export default async function disconnect (
-    ws: WebSocket,
-    io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, 
-    socket: Socket
-) {
+export default async function disconnect (socket: Socket) {
     socket.on('disconnect', () => {
         // const member = ws.users.find(u => u?.id == socket.id);
 

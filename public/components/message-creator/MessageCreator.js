@@ -34,9 +34,11 @@ class MessageCreator extends HTMLElement {
             if (!this.typing) {
                 this.typing = true;
 
-                if (window.app?.socket) {
-                    window.app.socket.emit('writing', localStorage.getItem('token'));
-                };
+                window.dispatchEvent(new CustomEvent('socket-emit-writing', {
+                    detail: {
+                        token: localStorage.getItem('token')
+                    }
+                }));
 
                 setTimeout(() => {
                     this.typing = false;
@@ -54,17 +56,18 @@ class MessageCreator extends HTMLElement {
     };
 
     async submit () {
-        if (!window.app?.socket) return;
         if (!this.input.innerText) return;
         if (!this.input.innerText.trim()) return;
         if (this.input.innerText.length > 512) return;
 
         this.typing = false;
 
-        window.app.socket.emit('chat-message', {
-            token: localStorage.getItem('token'),
-            content: this.input.innerText.trim() 
-        });
+        window.dispatchEvent(new CustomEvent('socket-emit-message', {
+            detail: {
+                token: localStorage.getItem('token'),
+                content: this.input.innerText.trim()
+            }
+        }));
 
         this.input.innerText = '';
     };

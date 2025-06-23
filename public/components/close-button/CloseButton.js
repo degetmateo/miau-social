@@ -1,7 +1,7 @@
 import Component from "../Component.js";
-import { importCSS } from "../../helpers.js";
+import Helper from "../../Helper.js";
 
-importCSS('/public/components/close-button/styles/close-button.css');
+Helper.ImportCSS('/public/components/close-button/styles/close-button.css');
 
 export default class CloseButton extends Component {
     constructor (options = {

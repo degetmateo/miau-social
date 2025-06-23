@@ -1,5 +1,4 @@
 import Component from '../Component.js';
-import { importCSS } from '../../helpers.js';
 import Input from '../input/input.js';
 import Textarea from '../textarea/textarea.js';
 import CloseButton from '../close-button/CloseButton.js';
@@ -7,12 +6,12 @@ import IconInput from '../icon-input/IconInput.js';
 import BannerInput from '../banner-input/BannerInput.js';
 import Alert from '../alert/alert.js';
 import ScreenSpinner from '../screen-spinner/ScreenSpinner.js';
-// import Profile from '../../views/member/Profile.js';
 import Button from '../button/Button.js';
 import EventsHandler from '../../modules/EventsHandler.js';
 import {memberService} from '../../services/memberService.js';
+import Helper from '../../Helper.js';
 
-importCSS('/public/components/profile-editor/styles/profile-editor.css');
+Helper.ImportCSS('/public/components/profile-editor/styles/profile-editor.css');
 
 export default class ProfileEditor extends Component {
     constructor (member, profile) {

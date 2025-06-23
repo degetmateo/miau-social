@@ -1,8 +1,8 @@
-import {importCSS} from "../../helpers.js";
+import Helper from "../../Helper.js";
 import Alert from "../alert/alert.js";
 import ImageViewer from "../image-viewer/ImageViewer.js";
 
-importCSS('/public/components/images-container/styles/images-container.css');
+Helper.ImportCSS('/public/components/images-container/styles/images-container.css');
 
 export default class ImagesContainer {
     constructor (data = {

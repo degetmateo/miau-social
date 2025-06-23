@@ -2,10 +2,10 @@ import FormUpdateUsername from "../../components/form-update-username/FormUpdate
 import Header from "../../components/header/Header.js";
 import Nav from "../../components/nav/Nav.js";
 import Separator from "../../components/separator/Separator.js";
-import {importCSS} from "../../helpers.js";
+import Helper from "../../Helper.js";
 import AbstractView from "../AbstractView.js";
 
-importCSS('/public/views/username/styles/username.css');
+Helper.ImportCSS('/public/views/username/styles/username.css');
 
 export default class UsernameView extends AbstractView {
     constructor () {

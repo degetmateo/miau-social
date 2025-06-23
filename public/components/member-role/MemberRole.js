@@ -1,5 +1,6 @@
-import {importCSS} from "../../helpers.js";
-importCSS('/public/components/member-role/member-role.css');
+import Helper from "../../Helper.js";
+
+Helper.ImportCSS('/public/components/member-role/member-role.css');
 
 class MemberRole extends HTMLElement {
     constructor (data) {

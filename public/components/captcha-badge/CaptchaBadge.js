@@ -1,6 +1,6 @@
-import {importCSS} from "../../helpers.js";
+import Helper from "../../Helper.js";
 
-importCSS('/public/components/captcha-badge/captcha-badge.css');
+Helper.ImportCSS('/public/components/captcha-badge/captcha-badge.css');
 
 export default class CaptchaBadge {
     constructor () {

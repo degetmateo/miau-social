@@ -111,7 +111,7 @@ class PostCreator extends HTMLElement {
                 return;
             }
 
-            new ImageCropper({
+            const cropper = new ImageCropper({
                 aspectRatio: null,
                 file: this.inputImages.files[0],
                 onSubmit: (blob) => {
@@ -119,8 +119,14 @@ class PostCreator extends HTMLElement {
                     this.imagesContainer.addImage({ src: URL.createObjectURL(blob), type: 'user' });
                     this.has_images = true;
                     this.inputImages.value = '';
+                    this.inputImages.files = null;
                 }
             });
+
+            cropper.onCancel = () => {
+                this.inputImages.value = '';
+                this.inputImages.files = null;
+            };
         };
 
         this.resetButton = document.createElement('button');

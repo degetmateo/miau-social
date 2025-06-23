@@ -1,6 +1,6 @@
-import {importCSS} from "../../helpers.js";
+import Helper from "../../Helper.js";
 
-importCSS('/public/components/button/styles/button.css');
+Helper.ImportCSS('/public/components/button/styles/button.css');
 
 export default class Button {
     constructor (options = {

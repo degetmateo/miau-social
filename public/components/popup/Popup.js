@@ -1,8 +1,8 @@
-import {importCSS} from "../../helpers.js";
+import Helper from "../../Helper.js";
 import Observer from "../../interfaces/Observer.js";
 import EventsHandler from "../../modules/EventsHandler.js";
 
-importCSS('/public/components/popup/popup.css');
+Helper.ImportCSS('/public/components/popup/popup.css');
 
 export default class Popup extends Observer {
     constructor () {

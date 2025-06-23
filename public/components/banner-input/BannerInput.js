@@ -1,8 +1,7 @@
-import {importCSS} from "../../helpers.js";
-import Alert from "../alert/alert.js";
+import Helper from "../../Helper.js";
 import ImageCropper from "../image-cropper/ImageCropper.js";
 
-importCSS(`/public/components/banner-input/styles/banner-input.css`);
+Helper.ImportCSS(`/public/components/banner-input/styles/banner-input.css`);
 
 export default class BannerInput {
     constructor () {

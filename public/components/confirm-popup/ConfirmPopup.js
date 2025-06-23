@@ -1,6 +1,6 @@
-import { importCSS } from "../../helpers.js";
+import Helper from "../../Helper.js";
 
-importCSS('/public/components/confirm-popup/confirm-popup.css');
+Helper.ImportCSS('/public/components/confirm-popup/confirm-popup.css');
 
 class ConfirmPopup extends HTMLElement {
     constructor (data = {

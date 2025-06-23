@@ -2,14 +2,14 @@ import Alert from "../../components/alert/alert.js";
 import CaptchaBadge from "../../components/captcha-badge/CaptchaBadge.js";
 import Input from "../../components/input/input.js";
 import ScreenSpinner from "../../components/screen-spinner/ScreenSpinner.js";
-import {importCSS} from "../../helpers.js";
 import {init} from "../../index.js";
 import router from "../../router.js";
 import {authenticationService} from "../../services/authenticationService.js";
 import AbstractView from "../AbstractView.js";
 import {grecaptchaService} from "../../services/grecaptchaService.js";
+import Helper from "../../Helper.js";
 
-importCSS('/public/views/signin/styles/signin.css');
+Helper.ImportCSS('/public/views/signin/styles/signin.css');
 
 export default class SigninView extends AbstractView {
     constructor () {

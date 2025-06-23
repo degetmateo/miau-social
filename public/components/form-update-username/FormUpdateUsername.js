@@ -1,4 +1,4 @@
-import {importCSS} from "../../helpers.js";
+import Helper from "../../Helper.js";
 import router from "../../router.js";
 import {memberService} from "../../services/memberService.js";
 import Validators from "../../Validators.js";
@@ -6,7 +6,7 @@ import Alert from "../alert/alert.js";
 import Input from "../input/input.js";
 import ScreenSpinner from "../screen-spinner/ScreenSpinner.js";
 
-importCSS('/public/components/form-update-username/form-update-username.css');
+Helper.ImportCSS('/public/components/form-update-username/form-update-username.css');
 
 class FormUpdateUsername extends HTMLElement {
     constructor () {

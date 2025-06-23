@@ -2,13 +2,12 @@ import Header from "../../components/header/Header.js";
 import MessageCreator from "../../components/message-creator/MessageCreator.js";
 import Nav from "../../components/nav/Nav.js";
 import View from "../../components/view/View.js";
-import {importCSS} from "../../helpers.js";
-import Service from "../../modules/Service.js";
+import Helper from "../../Helper.js";
 import router from "../../router.js";
 import AbstractView from "../AbstractView.js";
 import Message from "./Message.js";
 
-importCSS('/public/views/messages/styles/messages.css');
+Helper.ImportCSS('/public/views/messages/styles/messages.css');
 
 export default class MessagesView extends AbstractView {
     constructor () {
@@ -55,70 +54,45 @@ export default class MessagesView extends AbstractView {
         this.creator.classList.add('message-creator-border');
         this.creatorContainer.append(this.creator);
 
-        this.socket = null;
-        window.addEventListener('app-initialized', () => {
-            window.app.socket = io();
-            this.socket = window.app.socket;
-
-            this.socket.on('connect', () => {
-                this.socket.emit('register', localStorage.getItem('token'));
-            });
-
-            this.socket.on('messages', (messages) => {
-                for (const message of messages) {
-                    this.messages.prepend(new Message(message));
-                };
-
-                this.messages.scrollTop = this.messages.scrollHeight;
-            });
-
-            this.socket.on('chat-message', (message) => {
-                this.counter++;
-                if (!this.isActive()) {
-                    Nav.buttonMessages.setNumber(this.counter);
-                } else {
-                    this.counter = 0;
-                };
-    
+        window.addEventListener('messages', (e) => {
+            const messages = e.detail;
+            for (const message of messages) {
                 this.messages.prepend(new Message(message));
-                this.messages.scrollTop = this.messages.scrollHeight;
-            });
+            };
 
-            this.writingTimeout = null;
-            this.socket.on('writing', (data) => {
+            this.messages.scrollTop = this.messages.scrollHeight;
+        });
+
+        window.addEventListener('chat-message', (e) => {
+            const message = e.detail;
+            this.counter++;
+            if (!this.isActive()) {
+                Nav.buttonMessages.setNumber(this.counter);
+            } else {
+                this.counter = 0;
+            };
+
+            this.messages.prepend(new Message(message));
+            this.messages.scrollTop = this.messages.scrollHeight;
+        });
+
+        this.writingTimeout = null;
+        window.addEventListener('writing', (e) => {
+            const data = e.detail;
+
+            this.whoIsWritingUsername.textContent = data.creator.username + ' está escribiendo';
+            this.whoIsWritingContainer.append(this.whoIsWriting);
+            
+            if (this.writingTimeout) {
                 this.whoIsWritingUsername.textContent = data.creator.username + ' está escribiendo';
-                this.whoIsWritingContainer.append(this.whoIsWriting);
-                
-                if (this.writingTimeout) {
-                    this.whoIsWritingUsername.textContent = data.creator.username + ' está escribiendo';
-                    clearTimeout(this.writingTimeout);
-                    this.writingTimeout = null;
-                };
-                
-                this.writingTimeout = setTimeout(() => {
-                    this.whoIsWriting.remove();
-                    this.writingTimeout = null;
-                }, 5000);
-            });
-
-            this.socket.on('unauthorized', (data) => {
-                Service.Refresh({
-                    callback: async () => {
-                        if (data.code === 'register') {
-                            this.socket.on('connect', () => {
-                                this.socket.emit('register', localStorage.getItem('token'));
-                            });
-                        };
-
-                        if (data.code === 'message') {
-                            this.socket.emit('chat-message', {
-                                token: localStorage.getItem('token'),
-                                content: data.content 
-                            });
-                        };
-                    }
-                });
-            });
+                clearTimeout(this.writingTimeout);
+                this.writingTimeout = null;
+            };
+            
+            this.writingTimeout = setTimeout(() => {
+                this.whoIsWriting.remove();
+                this.writingTimeout = null;
+            }, 5000);
         });
 
         this.counter = 0;

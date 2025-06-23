@@ -61,7 +61,6 @@ export default class Server {
     public readonly app: express.Express;
     public readonly router: express.Router;
     public readonly server: http.Server;
-    public readonly io: WebSocket;
 
     private readonly paths = {
         docs: '/api/docs',
@@ -85,7 +84,7 @@ export default class Server {
             this.app.set('port', this.port);
             
             this.server = http.createServer(this.app);
-            this.io = new WebSocket(this.server);
+            WebSocket.Initialize(this.server);
             
             this.middlewares();
             this.database();

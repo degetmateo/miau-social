@@ -1,12 +1,12 @@
 import Alert from "../../components/alert/alert.js";
 import ScreenSpinner from "../../components/screen-spinner/ScreenSpinner.js";
-import {importCSS} from "../../helpers.js";
+import Helper from "../../Helper.js";
 import {init} from "../../index.js";
 import router from "../../router.js";
 import {authenticationService} from "../../services/authenticationService.js";
 import AbstractView from "../AbstractView.js";
 
-importCSS('/public/views/verification/styles/verify.css');
+Helper.ImportCSS('/public/views/verification/styles/verify.css');
 
 export default class VerifyView extends AbstractView {
     constructor () {

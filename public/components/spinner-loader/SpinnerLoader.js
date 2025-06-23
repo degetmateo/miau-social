@@ -1,6 +1,6 @@
-import { importCSS } from "../../helpers.js";
+import Helper from "../../Helper.js";
 
-importCSS('/public/components/spinner-loader/styles/spinner-loader.css');
+Helper.ImportCSS('/public/components/spinner-loader/styles/spinner-loader.css');
 
 export default class SpinnerLoader {
     constructor (options = {

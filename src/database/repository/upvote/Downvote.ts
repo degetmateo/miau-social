@@ -1,5 +1,6 @@
 import DatabaseError from "../../../errors/DatabaseError";
 import GenericError from "../../../errors/GenericError";
+import WebSocket from "../../../socket/WebSocket";
 import Postgres from "../../Postgres";
 
 export default async function Downvote (data: {
@@ -28,15 +29,23 @@ export default async function Downvote (data: {
 
             if (data.id_member == post.id_member) return;
 
-            (await transaction`
+            const deleted = (await transaction`
                 DELETE FROM 
                     notification
                 WHERE
                     id_member = ${post.id_member} AND
                     type_notification = 'upvote' AND
                     id_post_target_notification = ${data.id_post} AND
-                    id_member_target_notification = ${data.id_member};
-            `);
+                    id_member_target_notification = ${data.id_member}
+                RETURNING *;
+            `)[0];
+
+            const ms = WebSocket.members.get(deleted.id_member);
+
+            if (!ms) return;
+            for (const s of ms.entries()) {
+                WebSocket.io.to(s[0]).emit('socket-notification-deleted', deleted);
+            };
         });
 
         return response; 

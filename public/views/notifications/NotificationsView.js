@@ -1,15 +1,15 @@
 import Header from "../../components/header/Header.js";
-import Notification from "/public/components/notification/notification.js";
-import Separator from "../../components/separator/Separator.js";
 import EventsHandler from "../../modules/EventsHandler.js";
 import Notifier from "../../modules/Notifier.js";
 import {notificationService} from "../../services/notificationService.js";
 import AbstractView from "../AbstractView.js";
-import {importCSS, Scroll} from "../../helpers.js";
+import {Scroll} from "../../helpers.js";
 import Nav from "../../components/nav/Nav.js";
 import Spinner from "../../components/spinner/Spinner.js";
+import Helper from "../../Helper.js";
+import Notification from "../../components/notification/Notification.js";
 
-importCSS('/public/views/notifications/styles/notifications.css');
+Helper.ImportCSS('/public/views/notifications/styles/notifications.css');
 
 export default class NotificationsView extends AbstractView {
     constructor () {
@@ -62,18 +62,27 @@ export default class NotificationsView extends AbstractView {
                 this.main.append(this.spinner);
                 this.offset += this.limit;
                 const data = await notificationService.get({ offset: this.offset });
-                
                 for (const n of data) {
                     const notification = new Notification(n);
                     this.notifications.push(notification);
                     this.notificationsContainer.append(notification);
-                    // this.notificationsContainer.append(new Separator().render());
                 }
                 this.spinner.remove();
                 this.fetching = false;
             }
         });
-    }
+
+        window.addEventListener('socket-notification', (e) => {
+            const notification = new Notification(e.detail);
+            this.notifications.push(notification);
+            this.notificationsContainer.prepend(notification);
+        });
+
+        window.addEventListener('socket-notification-deleted', (e) => {
+            const notification = this.notifications.find(n => n.data.id == e.detail.id_notification);
+            if (notification) notification.remove();
+        });
+    };
 
     reset () {
         this.offset = 0;
@@ -101,7 +110,8 @@ export default class NotificationsView extends AbstractView {
             this.CreateMain();
         } else {
             this.setScroll(this.scroll);
-            this.read();
+            Notifier.read();
+            await notificationService.read();
         }
     }
 
@@ -121,24 +131,8 @@ export default class NotificationsView extends AbstractView {
             const notification = new Notification(n);
             this.notifications.push(notification);
             this.notificationsContainer.append(notification);
-            // this.notificationsContainer.append(new Separator().render());
         }
         this.spinner.remove();
-        this.read();
-    }
-
-    async read () {
-        Notifier.setRead();
         await notificationService.read();
-    }
-
-    onNotification = (unread) => {
-        for (const n of unread) {
-            const notification = new Notification(n);
-            if (this.notifications.find(n => n.getID() === notification.getID())) return;
-            this.notifications.push(notification);
-            // this.notificationsContainer.prepend(new Separator().render());
-            this.notificationsContainer.prepend(notification);
-        }
-    }
-}
+    };
+};

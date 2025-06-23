@@ -6,13 +6,14 @@ import Nav from "../../components/nav/Nav.js";
 import Spinner from "../../components/spinner/Spinner.js";
 import TabList from "../../components/tab-list/TabList.js";
 import View from "../../components/view/View.js";
-import {importCSS, Scroll} from "../../helpers.js";
+import Helper from "../../Helper.js";
+import {Scroll} from "../../helpers.js";
 import PostsManager from "../../modules/PostsManager.js";
 import Service from "../../modules/Service.js";
 import router from "../../router.js";
 import AbstractView from "../AbstractView.js";
 
-importCSS('/public/views/explore/explore.css');
+Helper.ImportCSS('/public/views/explore/explore.css');
 
 export default class ExploreView extends AbstractView {
     constructor () {

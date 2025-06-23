@@ -1,6 +1,6 @@
-import { importCSS } from "../../helpers.js";
+import Helper from "../../Helper.js";
 
-importCSS('/public/components/view/view.css');
+Helper.ImportCSS('/public/components/view/view.css');
 
 class View extends HTMLElement {
     constructor () {

@@ -1,24 +1,20 @@
-import Observer from "../interfaces/Observer.js";
+import Nav from "../components/nav/Nav.js";
 import router from "../router.js";
 import {notificationService} from "../services/notificationService.js";
-import EventsHandler from "./EventsHandler.js";
 
-class Notifier extends Observer {
+class Notifier {
     constructor () {
-        super();
         this.notifications = [];
-        this.cooldown = false;
-        this.interval = null;
-        this.observerId = 'notifier';
     }
 
     initialize () {
         if (router.getPathname() != '/notifications') this.get();
 
-        this.interval = setInterval(() => {
-            if (this.cooldown) return;
-            this.get();
-        }, 60000);
+        window.addEventListener('socket-notification', (e) => {
+            if (this.notifications.find(notification => notification.id == e.detail.id)) return;
+            this.notifications.unshift(e.detail);
+            Nav.onNotification(this.notifications.filter(n => n.status == 'pending'));
+        });
     }
 
     async get (offset) {
@@ -27,20 +23,20 @@ class Notifier extends Observer {
         this.notifications = filtered.concat(this.notifications);
         this.notifications = this.notifications.sort((a, b) => b.id - a.id);
 
-        if (this.hasUnread()) EventsHandler.onNotification(this.getUnread());
+        if (this.hasUnread()) Nav.onNotification(this.getUnread());
     }
 
     hasUnread () {
-        return this.notifications.find(notification => notification.status === 'pending');
+        return this.notifications.find(notification => notification.status == 'pending');
     }
 
     getUnread () {
-        return this.notifications.filter(notification => notification.status === 'pending');
+        return this.notifications.filter(notification => notification.status == 'pending');
     }
 
-    setRead () {
+    read () {
         this.notifications.forEach(notification => notification.status = 'seen');
-    }
+    };
 
     getNotifications () {
         return this.notifications;
@@ -48,18 +44,6 @@ class Notifier extends Observer {
 
     clear () {
         this.notifications = [];
-    }
-
-    activateCooldown () {
-        this.cooldown = true;
-        setTimeout(() => {
-            this.cooldown = false;
-        }, 60000);
-    }
-
-    onVisibilityChange () {
-        this.get();
-        this.activateCooldown();
     }
 }
 

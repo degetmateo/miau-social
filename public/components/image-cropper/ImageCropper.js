@@ -1,16 +1,17 @@
-import {dataURLToBlob, importCSS} from "../../helpers.js";
+import {dataURLToBlob} from "../../helpers.js";
 import EventsHandler from "../../modules/EventsHandler.js";
 import Button from "../button/Button.js";
 import Component from "../Component.js";
 
 import ScreenSpinner from "../screen-spinner/ScreenSpinner.js";
 import Alert from "../alert/alert.js";
+import Helper from "../../Helper.js";
 
 // import * as GIFCropper from '../../lib/cropperjs-gif-all.js';
 
 // import gifCropper from 'https://cdn.skypack.dev/gif-cropper';
 
-importCSS('/public/components/image-cropper/styles/image-cropper.css');
+Helper.ImportCSS('/public/components/image-cropper/styles/image-cropper.css');
 
 export default class ImageCropper extends Component {
     constructor (options = {
@@ -40,6 +41,7 @@ export default class ImageCropper extends Component {
             appearance: 'default',
             onClick: () => {
                 this.close();
+                this.onCancel();
             }
         });
 
@@ -67,6 +69,7 @@ export default class ImageCropper extends Component {
                         this.cropper,
                         (blob) => {
                             options.onSubmit(blob);
+                            this.onSubmit(blob);
                             spinner.remove();
                             this.close();
                         });
@@ -75,6 +78,7 @@ export default class ImageCropper extends Component {
                         
                         canvas.toBlob((blob) => {
                             options.onSubmit(blob);
+                            this.onSubmit(blob);
                         });
         
                         spinner.remove();
@@ -131,4 +135,8 @@ export default class ImageCropper extends Component {
     onEscape = () => {
         this.close();
     }
+
+    onCancel () {};
+
+    onSubmit () {};
 }

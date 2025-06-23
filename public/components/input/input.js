@@ -1,7 +1,7 @@
-import {importCSS} from "../../helpers.js";
+import Helper from "../../Helper.js";
 import Component from "../Component.js";
 
-importCSS('/public/components/input/styles/input.css');
+Helper.ImportCSS('/public/components/input/styles/input.css');
 
 export default class Input extends Component {
     constructor (options = {

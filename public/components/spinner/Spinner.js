@@ -1,6 +1,6 @@
-import {importCSS} from "../../helpers.js";
+import Helper from "../../Helper.js";
 
-importCSS('/public/components/spinner/spinner.css');
+Helper.ImportCSS('/public/components/spinner/spinner.css');
 
 class Spinner extends HTMLElement {
     constructor () {

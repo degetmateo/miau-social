@@ -1,10 +1,10 @@
 import {URL_NO_IMAGE} from "../../consts.js";
-import {formatContent, importCSS} from "../../helpers.js";
+import Helper from "../../Helper.js";
 import router from "../../router.js";
 import MediaContainer from "../media-container/MediaContainer.js";
 import MemberRole from "../member-role/MemberRole.js";
 
-importCSS('/public/components/quote/quote.css');
+Helper.ImportCSS('/public/components/quote/quote.css');
 
 class Quote extends HTMLElement {
     constructor (data) {
@@ -57,7 +57,7 @@ class Quote extends HTMLElement {
         }
 
         if (this.data.content) {
-            this.content = formatContent(this.data.content);
+            this.content = Helper.Format(this.data.content);
             this.content.classList.add('quote-content');
             this.body.append(this.content);
         }

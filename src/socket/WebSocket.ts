@@ -5,8 +5,8 @@ import message from './routes/message';
 import disconnect from './routes/disconnect';
 import writing from './routes/writing';
 
-export default class WebSocket {
-    public readonly io: Server;
+class WebSocket {
+    public io: Server;
     public users: any[];
     public messages: any[];
 
@@ -17,7 +17,7 @@ export default class WebSocket {
       role: string;
     }>>;
 
-    constructor (server: http.Server) {
+    constructor () {
         this.members = new Map<string, Map<string, {
           name: string;
           username: string;
@@ -25,6 +25,10 @@ export default class WebSocket {
           role: string;
         }>>();
 
+        this.messages = new Array<any>();
+    };
+
+    Initialize (server: http.Server) {
         this.io = new Server(server, {
           cors: {
             origin: process.env.FRONTEND_URL,
@@ -32,13 +36,14 @@ export default class WebSocket {
           }
         });
 
-        this.messages = new Array<any>();
 
         this.io.on('connection', (socket) => {
-          register(this, this.io, socket);
-          message(this, this.io, socket);
-          writing(this, this.io, socket);
-          disconnect(this, this.io, socket);
+          register(socket);
+          message(socket);
+          writing(socket);
+          disconnect(socket);
         });
     };
 };
+
+export default new WebSocket();

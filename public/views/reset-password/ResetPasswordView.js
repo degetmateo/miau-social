@@ -2,14 +2,14 @@ import Alert from "../../components/alert/alert.js";
 import CaptchaBadge from "../../components/captcha-badge/CaptchaBadge.js";
 import Input from "../../components/input/input.js";
 import ScreenSpinner from "../../components/screen-spinner/ScreenSpinner.js";
-import {importCSS} from "../../helpers.js";
+import Helper from "../../Helper.js";
 import router from "../../router.js";
 import {authenticationService} from "../../services/authenticationService.js";
 import {grecaptchaService} from "../../services/grecaptchaService.js";
 import Validators from "../../Validators.js";
 import AbstractView from "../AbstractView.js";
 
-importCSS('/public/views/reset-password/reset-password.css');
+Helper.ImportCSS('/public/views/reset-password/reset-password.css');
 
 export default class ResetPasswordView extends AbstractView {
     constructor () {

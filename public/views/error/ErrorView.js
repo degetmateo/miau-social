@@ -1,7 +1,7 @@
-import {importCSS} from "../../helpers.js";
+import Helper from "../../Helper.js";
 import AbstractView from "../AbstractView.js";
 
-importCSS('/public/views/error/styles/error.css');
+Helper.ImportCSS('/public/views/error/styles/error.css');
 
 export default class extends AbstractView {
     constructor () {

@@ -1,7 +1,6 @@
-import {importCSS} from "../../helpers.js";
+import Helper from "../../Helper.js";
 import Component from "../Component.js";
-
-importCSS('/public/components/textarea/styles/textarea.css');
+Helper.ImportCSS('/public/components/textarea/styles/textarea.css');
 
 export default class Textarea extends Component {
     constructor (options = {

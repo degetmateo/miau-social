@@ -5,6 +5,7 @@ import ScreenSpinner from "./components/screen-spinner/ScreenSpinner.js";
 import {authenticationService} from "./services/authenticationService.js";
 import Nav from "./components/nav/Nav.js";
 import PostsManager from "./modules/PostsManager.js";
+import Socket from "./modules/Socket.js";
 
 window.addEventListener("popstate", () => {
     router.resolve();
@@ -57,6 +58,7 @@ export const init = () => {
     EventsHandler.addObserver(Nav);
     Nav.set(window.app.member);
     EventsHandler.addObserver(Notifier);
+    Socket.Initialize();
     Notifier.initialize();
 
     window.dispatchEvent(new CustomEvent('app-initialized', {

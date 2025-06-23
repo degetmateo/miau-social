@@ -1,12 +1,11 @@
 import FormUpdatePassword from "../../components/form-update-password/FormUpdatePassword.js";
-import FormUpdateUsername from "../../components/form-update-username/FormUpdateUsername.js";
 import Header from "../../components/header/Header.js";
 import Nav from "../../components/nav/Nav.js";
 import Separator from "../../components/separator/Separator.js";
-import {importCSS} from "../../helpers.js";
+import Helper from "../../Helper.js";
 import AbstractView from "../AbstractView.js";
 
-importCSS('/public/views/password/styles/password.css');
+Helper.ImportCSS('/public/views/password/styles/password.css');
 
 export default class PasswordView extends AbstractView {
     constructor () {

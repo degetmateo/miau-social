@@ -1,12 +1,7 @@
-import { DefaultEventsMap, Server, Socket } from "socket.io";
+import { Socket } from "socket.io";
 import JWT from "../../helpers/JWT";
-import WebSocket from "../WebSocket";
 
-export default async function writing (
-    ws: WebSocket,
-    io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, 
-    socket: Socket
-) {
+export default async function writing (socket: Socket) {
     socket.on('writing', async (token) => {
         if (!token) return;
 

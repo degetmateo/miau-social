@@ -2,11 +2,12 @@ import Alert from "../../components/alert/alert.js";
 import Header from "../../components/header/Header.js";
 import MemberCard from "../../components/member-card/MemberCard.js";
 import Nav from "../../components/nav/Nav.js";
-import {importCSS, Scroll} from "../../helpers.js";
+import Helper from "../../Helper.js";
+import {Scroll} from "../../helpers.js";
 import {followService} from "../../services/followService.js";
 import AbstractView from "../AbstractView.js";
 
-importCSS('/public/views/followers/followers.css');
+Helper.ImportCSS('/public/views/followers/followers.css');
 
 export default class extends AbstractView {
     constructor () {

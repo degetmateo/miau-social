@@ -1,7 +1,7 @@
-import {importCSS} from "../../helpers.js";
+import Helper from "../../Helper.js";
 import router from "../../router.js";
 
-importCSS('/public/components/tab/tab.css');
+Helper.ImportCSS('/public/components/tab/tab.css');
 
 class Tab extends HTMLElement {
     constructor (data = {

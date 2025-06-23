@@ -1,10 +1,10 @@
-import {importCSS} from "../../helpers.js";
+import Helper from "../../Helper.js";
 import Observer from "../../interfaces/Observer.js";
 import EventsHandler from "../../modules/EventsHandler.js";
 import PostCreator from "../post-creator/PostCreator.js";
 import Separator from "../separator/Separator.js";
 
-importCSS('/public/components/post-creator-popup/post-creator-popup.css');
+Helper.ImportCSS('/public/components/post-creator-popup/post-creator-popup.css');
 
 const SVG_CLOSE = new Image();
 SVG_CLOSE.src = '/public/assets/close.svg';

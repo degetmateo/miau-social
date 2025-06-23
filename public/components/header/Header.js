@@ -1,7 +1,8 @@
-import {importCSS} from "../../helpers.js";
+import Helper from "../../Helper.js";
 import router from "../../router.js";
 import BackButton from "../back-button/BackButton.js";
-importCSS('/public/components/header/header.css');
+
+Helper.ImportCSS('/public/components/header/header.css');
 
 class Header extends HTMLElement {
     constructor (data = {

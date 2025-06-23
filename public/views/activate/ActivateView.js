@@ -2,12 +2,12 @@ import Alert from "../../components/alert/alert.js";
 import CaptchaBadge from "../../components/captcha-badge/CaptchaBadge.js";
 import Input from "../../components/input/input.js";
 import ScreenSpinner from "../../components/screen-spinner/ScreenSpinner.js";
-import {importCSS} from "../../helpers.js";
+import Helper from "../../Helper.js";
 import {authenticationService} from "../../services/authenticationService.js";
 import Validator from "../../Validator.js";
 import AbstractView from "../AbstractView.js";
 
-importCSS('/public/views/activate/styles/activate.css');
+Helper.ImportCSS('/public/views/activate/styles/activate.css');
 
 export default class ActivateView extends AbstractView {
     constructor () {

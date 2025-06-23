@@ -1,5 +1,4 @@
 import AbstractView from '../AbstractView.js';
-import {importCSS} from '../../helpers.js';
 import Header from '../../components/header/Header.js';
 import Separator from '../../components/separator/Separator.js';
 import Alert from '../../components/alert/alert.js';
@@ -7,8 +6,9 @@ import Tab from '../../components/tab/Tab.js';
 import Nav from '../../components/nav/Nav.js';
 import ConfirmPopup from '../../components/confirm-popup/ConfirmPopup.js';
 import Service from '../../modules/Service.js';
+import Helper from '../../Helper.js';
 
-importCSS('/public/views/settings/styles/settings.css');
+Helper.ImportCSS('/public/views/settings/styles/settings.css');
 
 export default class extends AbstractView {
     constructor () {

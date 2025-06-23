@@ -1,10 +1,10 @@
-import {importCSS } from "../../helpers.js";
+import Helper from "../../Helper.js";
 import router from "../../router.js";
 import PostBody from "./PostBody.js";
 import PostFooter from "./PostFooter.js";
 import PostHeader from "./PostHeader.js";
 
-importCSS('/public/components/post/post.css');
+Helper.ImportCSS('/public/components/post/post.css');
 
 class Post extends HTMLElement {
     constructor (data, options = {

@@ -1,8 +1,7 @@
-import {importCSS} from "../../helpers.js";
+import Helper from "../../Helper.js";
 import ImageViewer from "../image-viewer/ImageViewer.js";
-import SpinnerLoader from "../spinner-loader/SpinnerLoader.js";
 
-importCSS('/public/components/media-container/media-container.css');
+Helper.ImportCSS('/public/components/media-container/media-container.css');
 
 export default class MediaContainer {
     constructor (data = {

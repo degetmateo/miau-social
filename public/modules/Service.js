@@ -3,6 +3,7 @@ import router from "../router.js";
 import {authenticationService} from "../services/authenticationService.js";
 import EventsHandler from "./EventsHandler.js";
 import Notifier from "./Notifier.js";
+import Socket from "./Socket.js";
 
 class Service {
     Fetch = async (url, options = {}) => {
@@ -50,10 +51,9 @@ class Service {
 
     SignOut = async () => {
         localStorage.removeItem("token");
-        window.app.socket.disconnect();
-        window.app.socket = null;
         window.app.logged = false;
         window.app = {};
+        Socket.Close();
         Notifier.clear();
         EventsHandler.clear();
         router.reset();

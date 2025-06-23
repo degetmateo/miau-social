@@ -1,6 +1,6 @@
-import {importCSS} from "../../helpers.js";
+import Helper from "../../Helper.js";
 
-importCSS('/public/components/alert/alert.css');
+Helper.ImportCSS('/public/components/alert/alert.css');
 
 export default class Alert {
     constructor (message, options = {

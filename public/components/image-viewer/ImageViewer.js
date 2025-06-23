@@ -1,9 +1,9 @@
 import {URL_NO_IMAGE} from "../../consts.js";
-import {importCSS} from "../../helpers.js";
+import Helper from "../../Helper.js";
 import EventsHandler from "../../modules/EventsHandler.js";
 import Component from "../Component.js";
 
-importCSS('/public/components/image-viewer/styles/image-viewer.css');
+Helper.ImportCSS('/public/components/image-viewer/styles/image-viewer.css');
 
 export default class ImageViewer extends Component {
     constructor (data = {

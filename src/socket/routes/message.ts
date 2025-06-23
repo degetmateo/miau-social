@@ -3,11 +3,7 @@ import JWT from "../../helpers/JWT";
 import WebSocket from "../WebSocket";
 import UnauthorizedError from "../../errors/UnauthorizedError";
 
-export default async function message (
-    ws: WebSocket,
-    io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, 
-    socket: Socket
-) {
+export default async function message (socket: Socket) {
     socket.on('chat-message', async (message) => {
         if (!message) return;
         if (!message.token) return;
@@ -17,7 +13,7 @@ export default async function message (
         try {
             const member = await JWT.Validate(message.token);
 
-            io.emit('chat-message', {
+            WebSocket.io.emit('chat-message', {
                 creator: {
                     name: member.name,
                     username: member.username,
@@ -27,7 +23,7 @@ export default async function message (
                 content: message.content
             });
 
-            ws.messages.push({
+            WebSocket.messages.push({
                 creator: {
                     name: member.name,
                     username: member.username,
@@ -37,8 +33,8 @@ export default async function message (
                 content: message.content
             });
 
-            if (ws.messages.length > 50) {
-                ws.messages.shift();
+            if (WebSocket.messages.length > 50) {
+                WebSocket.messages.shift();
             };
         } catch (error) {
             socket.emit('unauthorized', {

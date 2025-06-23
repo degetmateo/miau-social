@@ -1,11 +1,11 @@
-import {importCSS} from "../../helpers.js";
+import Helper from "../../Helper.js";
 import {memberService} from "../../services/memberService.js";
 import Validators from "../../Validators.js";
 import Alert from "../alert/alert.js";
 import Input from "../input/input.js";
 import ScreenSpinner from "../screen-spinner/ScreenSpinner.js";
 
-importCSS('/public/components/form-update-password/form-update-password.css');
+Helper.ImportCSS('/public/components/form-update-password/form-update-password.css');
 
 class FormUpdatePassword extends HTMLElement {
     constructor () {

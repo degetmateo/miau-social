@@ -1,8 +1,8 @@
-import {importCSS} from "../../helpers.js";
+import Helper from "../../Helper.js";
 import router from "../../router.js";
 import AbstractView from "../AbstractView.js";
 
-importCSS('/public/views/landing/styles/landing-view.css');
+Helper.ImportCSS('/public/views/landing/styles/landing-view.css');
 
 export default class LandingView extends AbstractView {
     constructor () {

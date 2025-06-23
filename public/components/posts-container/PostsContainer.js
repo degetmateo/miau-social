@@ -1,8 +1,8 @@
 import Component from "../Component.js";
-import {importCSS} from "../../helpers.js";
 import PostsManager from "../../modules/PostsManager.js";
+import Helper from "../../Helper.js";
 
-importCSS('/public/components/posts-container/posts-container.css');
+Helper.ImportCSS('/public/components/posts-container/posts-container.css');
 
 class PostsContainer extends Component {
     constructor () {

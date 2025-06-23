@@ -1,6 +1,6 @@
 import Post from "../../components/post/Post.js";
 import SpinnerLoader from "../../components/spinner-loader/SpinnerLoader.js";
-import {importCSS, Scroll} from "../../helpers.js";
+import {Scroll} from "../../helpers.js";
 import {postService} from "../../services/postService.js";
 import AbstractView from "../AbstractView.js";
 import PostsContainer from "../../components/posts-container/PostsContainer.js";
@@ -9,8 +9,9 @@ import Header from "../../components/header/Header.js";
 import Nav from "../../components/nav/Nav.js";
 import PostsManager from "../../modules/PostsManager.js";
 import Spinner from "../../components/spinner/Spinner.js";
+import Helper from "../../Helper.js";
 
-importCSS('/public/views/comments/styles/comments.css');
+Helper.ImportCSS('/public/views/comments/styles/comments.css');
 
 export default class CommentsView extends AbstractView {
     constructor () {

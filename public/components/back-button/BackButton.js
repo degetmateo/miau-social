@@ -1,6 +1,6 @@
-import { importCSS } from "../../helpers.js";
+import Helper from "../../Helper.js";
 
-importCSS('/public/components/back-button/back-button.css');
+Helper.ImportCSS('/public/components/back-button/back-button.css');
 
 class BackButton extends HTMLElement {
     constructor () {

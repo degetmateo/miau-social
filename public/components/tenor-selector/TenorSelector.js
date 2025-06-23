@@ -1,11 +1,11 @@
-import {importCSS, Scroll } from "../../helpers.js";
+import Helper from "../../Helper.js";
+import {Scroll } from "../../helpers.js";
 import Observer from "../../interfaces/Observer.js";
 import EventsHandler from "../../modules/EventsHandler.js";
 import {tenorService} from "../../services/tenorService.js";
 import CloseButton from "../close-button/CloseButton.js";
-import Input from "../input/input.js";
 
-importCSS('/public/components/tenor-selector/styles/tenor-selector.css');
+Helper.ImportCSS('/public/components/tenor-selector/styles/tenor-selector.css');
 
 export default class TenorSelector extends Observer {
     constructor (options = {

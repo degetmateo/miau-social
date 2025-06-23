@@ -1,12 +1,13 @@
 import {URL_NO_IMAGE} from "../../consts.js";
-import {importCSS, loadImage, shortenLink} from "../../helpers.js";
+import Helper from "../../Helper.js";
+import { loadImage, shortenLink} from "../../helpers.js";
 import router from "../../router.js";
 import {followService} from "../../services/followService.js";
 import Alert from "../alert/alert.js";
 import ImageViewer from "../image-viewer/ImageViewer.js";
 import ProfileEditor from "../profile-editor/ProfileEditor.js";
 
-importCSS('/public/components/profile/profile.css');
+Helper.ImportCSS('/public/components/profile/profile.css');
 
 const IMAGE_LOCATION = new Image();
 IMAGE_LOCATION.src = "/public/components/profile/svg/LOCATION.svg";
