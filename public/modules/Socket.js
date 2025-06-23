@@ -54,20 +54,16 @@ class Socket {
             }));
         });
 
-        window.addEventListener('socket-emit-writing', this.emitWriting);
-        window.addEventListener('socket-emit-message', this.emitMessage);
-    };
-
-    emitWriting (e) {
-        const data = e.detail;
-        this.socket.emit('writing', data.token);
-    };
-
-    emitMessage (e) {
-        const data = e.detail;
-        this.socket.emit('chat-message', {
-            token: data.token,
-            content: data.content
+        window.addEventListener('socket-emit-writing', (e) => {
+            const data = e.detail;
+            this.socket.emit('writing', data.token);
+        });
+        window.addEventListener('socket-emit-message', (e) => {
+            const data = e.detail;
+            this.socket.emit('chat-message', {
+                token: data.token,
+                content: data.content
+            });
         });
     };
 
@@ -79,8 +75,17 @@ class Socket {
                 this.on = null;
             };
 
-            window.removeEventListener('socket-emit-writing', this.emitWriting);
-            window.removeEventListener('socket-emit-message', this.emitMessage);
+            window.removeEventListener('socket-emit-writing', (e) => {
+                const data = e.detail;
+                this.socket.emit('writing', data.token);
+            });
+            window.removeEventListener('socket-emit-message', (e) => {
+                const data = e.detail;
+                this.socket.emit('chat-message', {
+                    token: data.token,
+                    content: data.content
+                });
+            });
         } catch (error) {
             console.error(error);
         };
