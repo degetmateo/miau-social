@@ -1,3 +1,5 @@
+import Service from "./Service.js";
+
 class Socket {
     Initialize () {
         this.socket = io();
