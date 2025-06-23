@@ -39,7 +39,6 @@ export default class ImageCropper extends Component {
             text: 'Cancelar',
             appearance: 'default',
             onClick: () => {
-                options.onSubmit(null);
                 this.close();
             }
         });

@@ -3,6 +3,7 @@ import Helper from "../../Helper.js";
 import router from "../../router.js";
 import {postService} from "../../services/postService.js";
 import Alert from "../alert/alert.js";
+import ImageCropper from "../image-cropper/ImageCropper.js";
 import ImagesContainer from "../images-container/ImagesContainer.js";
 import SpotifyPopup from "../spotify-popup/SpotifyPopup.js";
 import TenorSelector from "../tenor-selector/TenorSelector.js";
@@ -100,7 +101,7 @@ class PostCreator extends HTMLElement {
         this.inputImages = document.createElement('input');
         this.inputImages.type = 'file';
         this.inputImages.accept = 'image/*, image/gif';
-        this.inputImages.multiple = true;
+        this.inputImages.multiple = false;
         this.inputImages.style.display = 'none';
 
         this.inputImages.onchange = () => {
@@ -110,8 +111,16 @@ class PostCreator extends HTMLElement {
                 return;
             }
 
-            this.imagesContainer.show();
-            this.imagesContainer.addImages(this.inputImages.files);
+            new ImageCropper({
+                aspectRatio: null,
+                file: this.inputImages.files[0],
+                onSubmit: (blob) => {
+                    this.imagesContainer.show();
+                    this.imagesContainer.addImage({ src: URL.createObjectURL(blob), type: 'user' });
+                    this.has_images = true;
+                    this.inputImages.value = '';
+                }
+            });
         };
 
         this.resetButton = document.createElement('button');
