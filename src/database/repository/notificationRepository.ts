@@ -2,7 +2,7 @@ import DatabaseError from "../../errors/DatabaseError";
 import GenericError from "../../errors/GenericError";
 import Postgres from "../Postgres";
 import Get from "./notification/Get";
-import TGetByID from "./notification/TGetById";
+import TGetByID from "./notification/TGetByID";
 
 const read = async (data: {
     id_member: number;
