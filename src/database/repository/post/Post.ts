@@ -208,7 +208,8 @@ export default async function Post (data: {
                         ${data.type},
                         ${IDPost},
                         ${data.id_member}
-                    );
+                    )
+                    RETURNING *;
             `)[0];
 
             const notification = await notificationRepository.TGetByID({

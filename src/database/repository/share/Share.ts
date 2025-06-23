@@ -65,7 +65,8 @@ export default async function Share (data: {
                     'shared',
                     ${INSERT.id_post},
                     ${data.member.id}
-                );
+                )
+                RETURNING *;
         `)[0];
 
         const notification = await notificationRepository.TGetByID({
