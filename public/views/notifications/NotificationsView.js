@@ -7,7 +7,7 @@ import {Scroll} from "../../helpers.js";
 import Nav from "../../components/nav/Nav.js";
 import Spinner from "../../components/spinner/Spinner.js";
 import Helper from "../../Helper.js";
-import Notification from "../../components/notification/Notification.js";
+import Notification from "../../components/notification/notification.js";
 
 Helper.ImportCSS('/public/views/notifications/styles/notifications.css');
 
