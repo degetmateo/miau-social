@@ -59,6 +59,7 @@ export default async function Delete (data: {
 
         if (!qDelete) throw new UnauthorizedError("Error de autentificación.");
 
+        if (!deleted || !deleted.id_member) return;
         const ms = WebSocket.members.get(deleted.id_member);
 
         if (!ms) return;

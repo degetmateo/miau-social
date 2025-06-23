@@ -42,6 +42,10 @@ class Notifier {
         return this.notifications;
     }
 
+    isEqualTo (observer) {
+        return this.observerId === observer.observerId;
+    };
+
     clear () {
         this.notifications = [];
     }
