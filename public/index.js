@@ -57,7 +57,6 @@ export const init = () => {
     PostsManager.Clear();
     EventsHandler.addObserver(Nav);
     Nav.set(window.app.member);
-    EventsHandler.addObserver(Notifier);
     Socket.Initialize();
     Notifier.initialize();
 

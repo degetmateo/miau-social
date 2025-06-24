@@ -63,12 +63,10 @@ export default async function Upvote (data: {
                 transaction: transaction
             });
 
-            const ms = WebSocket.members.get(qn.id_member);
-
-            if (!ms) return;
-            for (const s of ms.entries()) {
-                WebSocket.io.to(s[0]).emit('socket-notification', notification);
-            };
+            WebSocket.emitNotification({
+                memberId: qn.id_member,
+                notification: notification
+            });
         });
 
         return response;  

@@ -1,6 +1,7 @@
 import { Socket } from "socket.io";
 import JWT from "../../helpers/JWT";
 import WebSocket from "../WebSocket";
+import disconnect from "./disconnect";
 
 export default async function register (socket: Socket) {
     socket.on('register', async (token: string) => {
@@ -13,19 +14,11 @@ export default async function register (socket: Socket) {
                 name: member.name,
                 username: member.username,
                 icon_url: member.icon_url,
-                role: member.role
+                role: member.role,
+                token: token
             });
 
-            socket.on('disconnect', () => {
-                const sockets = WebSocket.members.get(member.id);
-
-                if (sockets) {
-                    sockets.delete(socket.id);
-                    if (sockets.size === 0) WebSocket.members.delete(member.id);
-                };
-            });
-
-            socket.emit('messages', WebSocket.messages);
+            disconnect(socket, member.id);
         } catch (error) {
             socket.emit('unauthorized', {
                 code: 'register'

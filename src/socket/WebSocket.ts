@@ -2,19 +2,17 @@ import http from 'http';
 import { Server } from "socket.io";
 import register from './routes/register';
 import message from './routes/message';
-import disconnect from './routes/disconnect';
 import writing from './routes/writing';
 
 class WebSocket {
     public io: Server;
-    public users: any[];
-    public messages: any[];
 
     public members: Map<string, Map<string, {
       name: string;
       username: string;
       icon_url: string;
       role: string;
+      token: string;
     }>>;
 
     constructor () {
@@ -23,9 +21,8 @@ class WebSocket {
           username: string;
           icon_url: string;
           role: string;
+          token: string;
         }>>();
-
-        this.messages = new Array<any>();
     };
 
     Initialize (server: http.Server) {
@@ -41,8 +38,25 @@ class WebSocket {
           register(socket);
           message(socket);
           writing(socket);
-          disconnect(socket);
         });
+    };
+
+    emitNotification (data: {
+      memberId: string;
+      notification: any;
+    }) {
+      try {
+        const member = this.members.get(data.memberId);
+        if (!member) return;
+              
+        const sockets = member.entries();
+        for (const socket of sockets) {
+            const socketId = socket[0];
+            this.io.to(socketId).emit('socket-notification', data.notification);
+        };
+      } catch (error) {
+        console.error(error);
+      };
     };
 };
 

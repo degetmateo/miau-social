@@ -9,12 +9,6 @@ class Socket {
             this.socket.emit('register', localStorage.getItem('token'));
         });
 
-        this.socket.on('messages', (messages) => {
-            window.dispatchEvent(new CustomEvent('messages', {
-                detail: messages
-            }));
-        });
-
         this.socket.on('chat-message', (message) => {
             window.dispatchEvent(new CustomEvent('chat-message', {
                 detail: message
@@ -56,19 +50,23 @@ class Socket {
             }));
         });
 
-        window.addEventListener('socket-emit-writing', (e) => {
+        this.emitWriting = (e) => {
             const data = e.detail;
             this.socket.emit('writing', data.token);
-        });
-        window.addEventListener('socket-emit-message', (e) => {
+        };
+
+        this.emitMessage = (e) => {
             const data = e.detail;
             this.socket.emit('chat-message', {
                 token: data.token,
                 content: data.content
             });
-        });
-    };
+        };
 
+        window.addEventListener('socket-emit-writing', this.emitWriting);
+        window.addEventListener('socket-emit-message', this.emitMessage);
+    };
+    
     Close () {
         try {
             if (this.socket) {
@@ -77,17 +75,8 @@ class Socket {
                 this.on = null;
             };
 
-            window.removeEventListener('socket-emit-writing', (e) => {
-                const data = e.detail;
-                this.socket.emit('writing', data.token);
-            });
-            window.removeEventListener('socket-emit-message', (e) => {
-                const data = e.detail;
-                this.socket.emit('chat-message', {
-                    token: data.token,
-                    content: data.content
-                });
-            });
+            window.removeEventListener('socket-emit-writing', this.emitWriting);
+            window.removeEventListener('socket-emit-message', this.emitMessage);
         } catch (error) {
             console.error(error);
         };

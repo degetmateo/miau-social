@@ -54,15 +54,6 @@ export default class MessagesView extends AbstractView {
         this.creator.classList.add('message-creator-border');
         this.creatorContainer.append(this.creator);
 
-        window.addEventListener('messages', (e) => {
-            const messages = e.detail;
-            for (const message of messages) {
-                this.messages.prepend(new Message(message));
-            };
-
-            this.messages.scrollTop = this.messages.scrollHeight;
-        });
-
         window.addEventListener('chat-message', (e) => {
             const message = e.detail;
             this.counter++;

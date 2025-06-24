@@ -1,7 +1,6 @@
-import { DefaultEventsMap, Server, Socket } from "socket.io";
+import { Socket } from "socket.io";
 import JWT from "../../helpers/JWT";
 import WebSocket from "../WebSocket";
-import UnauthorizedError from "../../errors/UnauthorizedError";
 
 export default async function message (socket: Socket) {
     socket.on('chat-message', async (message) => {
@@ -22,20 +21,6 @@ export default async function message (socket: Socket) {
                 },
                 content: message.content
             });
-
-            WebSocket.messages.push({
-                creator: {
-                    name: member.name,
-                    username: member.username,
-                    icon_url: member.icon_url,
-                    role: member.role
-                },
-                content: message.content
-            });
-
-            if (WebSocket.messages.length > 50) {
-                WebSocket.messages.shift();
-            };
         } catch (error) {
             socket.emit('unauthorized', {
                 code: 'message',
