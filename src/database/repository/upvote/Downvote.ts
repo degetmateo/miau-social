@@ -10,35 +10,30 @@ export default async function Downvote (data: {
     try {
         let response = null;
         await Postgres.query().begin(async transaction => {
-            (await transaction`
+            const deleteUpvote = (await transaction`
                 DELETE FROM
                     upvote
                 WHERE
                     id_member_upvote = ${data.id_member} AND
-                    id_post = ${data.id_post};
-            `);
-
-            const post = (await transaction`
-                SELECT 
-                    id_member
-                FROM
-                    post
-                WHERE
-                    id_post = ${data.id_post};
+                    id_post = ${data.id_post}
+                RETURNING *;
             `)[0];
 
-            if (data.id_member == post.id_member) return;
+            if (!deleteUpvote) return;
+            if (data.id_member == deleteUpvote.id_member_post) return;
 
             const deleted = (await transaction`
                 DELETE FROM 
                     notification
                 WHERE
-                    id_member = ${post.id_member} AND
+                    id_member = ${deleteUpvote.id_member_post} AND
                     type_notification = 'upvote' AND
-                    id_post_target_notification = ${data.id_post} AND
-                    id_member_target_notification = ${data.id_member}
+                    id_post_target_notification = ${deleteUpvote.id_post} AND
+                    id_member_target_notification = ${deleteUpvote.id_member_upvote}
                 RETURNING *;
             `)[0];
+
+            if (!deleted) return;
 
             const ms = WebSocket.members.get(deleted.id_member);
 
