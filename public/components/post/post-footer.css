@@ -44,3 +44,12 @@
     color: var(--font-color-light);
     font-size: 12px;
 }
+
+@media (max-width: 900px) {
+    .post-footer-interaction-container:hover {
+        /* cursor: none; */
+        filter: none;
+        background-color: initial;
+        /* pointer-events: none; */
+    }
+}

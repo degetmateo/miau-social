@@ -34,11 +34,7 @@ class MessageCreator extends HTMLElement {
             if (!this.typing) {
                 this.typing = true;
 
-                window.dispatchEvent(new CustomEvent('socket-emit-writing', {
-                    detail: {
-                        token: localStorage.getItem('token')
-                    }
-                }));
+                window.dispatchEvent(new CustomEvent('socket-emit-writing'));
 
                 setTimeout(() => {
                     this.typing = false;
@@ -64,7 +60,6 @@ class MessageCreator extends HTMLElement {
 
         window.dispatchEvent(new CustomEvent('socket-emit-message', {
             detail: {
-                token: localStorage.getItem('token'),
                 content: this.input.innerText.trim()
             }
         }));

@@ -12,7 +12,6 @@ class WebSocket {
       username: string;
       icon_url: string;
       role: string;
-      token: string;
     }>>;
 
     constructor () {
@@ -21,7 +20,6 @@ class WebSocket {
           username: string;
           icon_url: string;
           role: string;
-          token: string;
         }>>();
     };
 

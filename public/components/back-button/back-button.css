@@ -16,3 +16,9 @@ back-button span {
     color: var(--color-font);
     text-align: center;
 }
+
+@media (max-width: 900px) {
+    back-button:hover {
+        user-select: none;
+    }
+}

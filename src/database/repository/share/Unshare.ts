@@ -14,18 +14,19 @@ export default async function Unshare (data: {
                 id_member = ${data.member.id} AND
                 target_post_id = ${data.id}
             RETURNING
-                id_member;
+                id_member,
+                id_post;
         `)[0];
 
         const deleted = (await transaction`
             DELETE FROM
                 notification
             WHERE
-                id_member = ${qDelete.id_member} AND
-                id_post_target_notification = ${data.id} AND
+                type_notification = 'shared' AND
                 id_member_target_notification = ${data.member.id} AND
-                type_notification = 'shared'
-            RETURNING *;
+                id_post_target_notification = ${qDelete.id_post}
+            RETURNING
+                id_member;
         `)[0];
 
         const ms = WebSocket.members.get(deleted.id_member);

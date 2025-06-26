@@ -1,14 +1,17 @@
 import { Socket } from "socket.io";
 import JWT from "../../helpers/JWT";
+import { ResponseError, ResponseOk } from "../ControllerResponse";
 
 export default async function writing (socket: Socket) {
-    socket.on('writing', async (token) => {
-        if (!token) return;
-
+    socket.on('socket-writing', async (data: any, func: Function) => {
         try {
-            const member = await JWT.Validate(token);
+            if (!data) return;
+            if (!data.token) return;
+            if (!data.token.trim()) return;
 
-            socket.broadcast.emit('writing', {
+            const member = await JWT.Validate(data.token);
+
+            socket.broadcast.emit('socket-writing', {
                 creator: {
                     name: member.name,
                     username: member.username,
@@ -16,10 +19,10 @@ export default async function writing (socket: Socket) {
                     role: member.role
                 }
             });
+
+            ResponseOk(func);
         } catch (error) {
-            socket.emit('unauthorized', {
-                code: 'register'
-            });
+            ResponseError(func, error);
         };
     });
 };

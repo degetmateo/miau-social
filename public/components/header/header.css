@@ -16,8 +16,16 @@
     justify-content: flex-start;
     align-items: center;
     gap: 10px;
+
+    user-select: none;
 }
 
 .header-title {
     color: var(--color-font);
+}
+
+@media (max-width: 900px) {
+    .header:hover {
+        background-color: initial;
+    }
 }

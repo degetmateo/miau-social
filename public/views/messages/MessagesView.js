@@ -54,7 +54,7 @@ export default class MessagesView extends AbstractView {
         this.creator.classList.add('message-creator-border');
         this.creatorContainer.append(this.creator);
 
-        window.addEventListener('chat-message', (e) => {
+        window.addEventListener('socket-message', (e) => {
             const message = e.detail;
             this.counter++;
             if (!this.isActive()) {
@@ -68,7 +68,7 @@ export default class MessagesView extends AbstractView {
         });
 
         this.writingTimeout = null;
-        window.addEventListener('writing', (e) => {
+        window.addEventListener('socket-writing', (e) => {
             const data = e.detail;
 
             this.whoIsWritingUsername.textContent = data.creator.username + ' está escribiendo';

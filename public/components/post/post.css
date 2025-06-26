@@ -24,10 +24,8 @@
 
 @media (max-width: 900px) {
     .post:hover {
-        background-color: unset;
-    }
-    
-    .post:active {
-        background-color: var(--hover-color);
+        /* cursor: none; */
+        background-color: initial;
+        /* pointer-events: none; */
     }
 }

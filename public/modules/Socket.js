@@ -1,3 +1,4 @@
+import Alert from "../components/alert/alert.js";
 import Service from "./Service.js";
 
 class Socket {
@@ -6,36 +7,27 @@ class Socket {
         this.on = this.socket.on;
 
         this.socket.on('connect', () => {
-            this.socket.emit('register', localStorage.getItem('token'));
+            this.socket.emit('register', {
+                token: localStorage.getItem('token')
+            }, (response) => {
+                this.Response(response, () => {
+                    this.socket.emit('register', {
+                        token: localStorage.getItem('token')
+                    });
+                });
+            });
         });
 
-        this.socket.on('chat-message', (message) => {
-            window.dispatchEvent(new CustomEvent('chat-message', {
-                detail: message
-            }));
-        });
-
-        this.socket.on('writing', (data) => {
-            window.dispatchEvent(new CustomEvent('writing', {
+        this.socket.on('socket-message', (data) => {
+            window.dispatchEvent(new CustomEvent('socket-message', {
                 detail: data
             }));
         });
 
-        this.socket.on('unauthorized', (data) => {
-            Service.Refresh({
-                callback: async () => {
-                    if (data.code === 'register') {
-                        this.socket.emit('register', localStorage.getItem('token'));
-                    };
-
-                    if (data.code === 'message') {
-                        this.socket.emit('chat-message', {
-                            token: localStorage.getItem('token'),
-                            content: data.content 
-                        });
-                    };
-                }
-            });
+        this.socket.on('socket-writing', (data) => {
+            window.dispatchEvent(new CustomEvent('socket-writing', {
+                detail: data
+            }));
         });
 
         this.socket.on('socket-notification', (notification) => {
@@ -50,23 +42,55 @@ class Socket {
             }));
         });
 
-        this.emitWriting = (e) => {
-            const data = e.detail;
-            this.socket.emit('writing', data.token);
-        };
-
-        this.emitMessage = (e) => {
-            const data = e.detail;
-            this.socket.emit('chat-message', {
-                token: data.token,
-                content: data.content
+        this.EmitWriting = () => {
+            this.socket.emit('socket-writing', {
+                token: localStorage.getItem('token')
+            }, (response) => {
+                this.Response(response, () => {
+                    this.socket.emit('socket-writing', {
+                        token: localStorage.getItem('token')
+                    });
+                });
             });
         };
 
-        window.addEventListener('socket-emit-writing', this.emitWriting);
-        window.addEventListener('socket-emit-message', this.emitMessage);
+        this.EmitMessage = (e) => {
+            this.socket.emit('socket-message', {
+                token: localStorage.getItem('token'),
+                content: e.detail.content
+            }, (response) => {
+                this.Response(response, () => {
+                    this.socket.emit('socket-message', {
+                        token: localStorage.getItem('token'),
+                        content: e.detail.content
+                    });
+                });
+            });
+        };
+
+        window.addEventListener('socket-emit-writing', this.EmitWriting);
+        window.addEventListener('socket-emit-message', this.EmitMessage);
     };
+
+    EmitMessage () {};
+
+    EmitWriting () {};
     
+    Response (response, func) {
+        if (response.ok) return;
+
+        if (response.status === 401) {
+            return Service.Refresh({
+                callback: () => {
+                    func();
+                }
+            });
+        } else {
+            console.error(response.error);
+            return new Alert(response.error.message, { error: true });
+        };
+    };
+
     Close () {
         try {
             if (this.socket) {
@@ -75,8 +99,8 @@ class Socket {
                 this.on = null;
             };
 
-            window.removeEventListener('socket-emit-writing', this.emitWriting);
-            window.removeEventListener('socket-emit-message', this.emitMessage);
+            window.removeEventListener('socket-emit-writing', this.EmitWriting);
+            window.removeEventListener('socket-emit-message', this.EmitMessage);
         } catch (error) {
             console.error(error);
         };
