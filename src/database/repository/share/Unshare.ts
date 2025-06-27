@@ -15,7 +15,7 @@ export default async function Unshare (data: {
                 target_post_id = ${data.id}
             RETURNING
                 id_member,
-                id_post;
+                target_post_id;
         `)[0];
 
         const deleted = (await transaction`
@@ -24,7 +24,7 @@ export default async function Unshare (data: {
             WHERE
                 type_notification = 'shared' AND
                 id_member_target_notification = ${data.member.id} AND
-                id_post_target_notification = ${qDelete.id_post}
+                id_post_target_notification = ${qDelete.target_post_id}
             RETURNING
                 id_member;
         `)[0];
