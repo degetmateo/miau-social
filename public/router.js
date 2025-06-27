@@ -22,6 +22,7 @@ import UsernameView from "./views/username/UsernameView.js";
 import PasswordView from "./views/password/PasswordView.js";
 import SessionsView from "./views/sessions/SessionsView.js";
 import ExploreView from "./views/explore/ExploreView.js";
+import TermsConditionsView from "./views/terms-and-conditions/TermsConditionsView.js";
 
 class Router {
     constructor () {
@@ -30,6 +31,7 @@ class Router {
 
         this.views = {
             error: new ErrorView(),
+            tc: new TermsConditionsView(),
             landing: new LandingView(),
             verify: new VerifyView(),
             home: new HomeView(),
@@ -79,6 +81,7 @@ class Router {
             .on("/recovery/password", () => this.views.recoverPassword.init())
             .on("/recovery/username", () => this.views.recoverUsername.init())
             .on("/recovery/reset-password", ({ data, params }) => this.views.resetPassword.init(data, params))
+            .on("/terms-and-conditions", () => this.views.tc.init())
             .notFound(() => this.views.error.init());
     }
 

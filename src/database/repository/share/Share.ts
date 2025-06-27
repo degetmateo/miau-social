@@ -63,7 +63,7 @@ export default async function Share (data: {
                     ${post.id_member},
                     NOW(),
                     'shared',
-                    ${INSERT.id_post},
+                    ${data.id},
                     ${data.member.id}
                 )
                 RETURNING *;

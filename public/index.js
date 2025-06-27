@@ -14,6 +14,12 @@ window.addEventListener("popstate", () => {
 document.addEventListener('DOMContentLoaded', async () => {
     const loader = new ScreenSpinner({ opaque: true });
 
+    if (router.getPathname() === '/terms-and-conditions') {
+        router.resolve();
+        loader.remove();
+        return;
+    }
+
     if (router.getPathname() === '/verify') {
         router.resolve();
         loader.remove();
