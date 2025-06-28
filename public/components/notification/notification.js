@@ -156,15 +156,14 @@ class Notification extends HTMLElement {
             this.body = document.createElement('div');
             this.body.classList.add('notification-body');
             this.append(this.body);
-
-            if (this.data.target_post.content) {
+            if (this.data && this.data.target_post && this.data.target_post.content) {
                 this.content = document.createElement('span');
                 this.content.classList.add('notification-content');
-                this.content.append(Helper.Format(this.data.target_post.target_post.content));
+                this.content.append(Helper.Format(this.data.target_post.content));
                 this.body.append(this.content);
             };
 
-            if (this.data.target_post.media) {
+            if (this.data && this.data.target_post && this.data.target_post.media) {
                 this.links = document.createElement('span');
                 this.links.classList.add('notification-links');
                 this.links.textContent = ' ' + this.data.target_post.media.join(' ');
