@@ -60,8 +60,8 @@ class WebSocket {
         this.io.on('connection', (socket) => {
           register(socket);
           ChatsRouter(socket);
-          // message(socket);
-          // writing(socket);
+          message(socket);
+          writing(socket);
         });
     };
 

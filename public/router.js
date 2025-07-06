@@ -2,7 +2,6 @@ import SettingsView from "./views/settings/SettingsView.js";
 import MemberView from "./views/member/MemberView.js";
 import AdminView from "./views/AdminView.js";
 import CommentsView from "./views/comments/CommentsView.js";
-import MessagesView from "./views/messages/MessagesView.js";
 import NotificationsView from "./views/notifications/NotificationsView.js";
 import FollowedView from "./views/followed/FollowedView.js";
 import FollowersView from "./views/followers/FollowersView.js";
@@ -23,6 +22,9 @@ import PasswordView from "./views/password/PasswordView.js";
 import SessionsView from "./views/sessions/SessionsView.js";
 import ExploreView from "./views/explore/ExploreView.js";
 import TermsConditionsView from "./views/terms-and-conditions/TermsConditionsView.js";
+import ChatsView from "./views/messages/ChatsView.js";
+import ChatView from "./views/chat/ChatView.js";
+import GlobalChatView from "./views/global-chat/GlobalChatView.js";
 
 class Router {
     constructor () {
@@ -37,7 +39,8 @@ class Router {
             home: new HomeView(),
             settings: new SettingsView(),
             notifications: new NotificationsView(),
-            messages: new MessagesView(),
+            chats: new ChatsView(),
+            globalChat: new GlobalChatView(),
             member: new MemberView(),
             followed: new FollowedView(),
             followers: new FollowersView(),
@@ -72,7 +75,8 @@ class Router {
             .on("/member/:username/followers", ({ data }) => this.views.followers.init(data))
             .on("/admin", () => this.views.admin.init())
             .on("/post/:id_post/comments", ({ data }) => this.views.post.init(data))
-            // .on("/messages", () => this.views.messages.init())
+            .on("/chats", () => this.views.chats.init())
+            .on('/chats/general', () => this.views.globalChat.init())
             .on("/notifications", () => this.views.notifications.init())
             .on("/signup", () => this.views.signup.init())
             .on("/signin", () => this.views.signin.init())

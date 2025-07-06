@@ -73,14 +73,16 @@ export default async function Share (data: {
         IDNotification = qn.id_notification;
     });
 
-    const notification = await notificationRepository.GetByID({
-        id: IDNotification
-    });
-
-    const ms = WebSocket.members.get(notification.id_member);
-
-    if (!ms) return;
-    for (const s of ms.entries()) {
-        WebSocket.io.to(s[0]).emit('socket-notification', notification);
+    if (IDNotification) {
+        const notification = await notificationRepository.GetByID({
+            id: IDNotification
+        });
+    
+        const ms = WebSocket.members.get(notification.id_member);
+    
+        if (!ms) return;
+        for (const s of ms.entries()) {
+            WebSocket.io.to(s[0]).emit('socket-notification', notification);
+        };
     };
 };
