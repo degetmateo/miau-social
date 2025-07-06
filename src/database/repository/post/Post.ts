@@ -224,9 +224,10 @@ export default async function Post (data: {
         
         const ms = WebSocket.members.get(notification.id_member);
     
-        if (!ms) return;
-        for (const s of ms.entries()) {
-            WebSocket.io.to(s[0]).emit('socket-notification', notification);
+        if (ms) {
+            for (const s of ms.entries()) {
+                WebSocket.io.to(s[0]).emit('socket-notification', notification);
+            };
         };
     };
 

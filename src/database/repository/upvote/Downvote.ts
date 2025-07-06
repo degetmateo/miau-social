@@ -37,9 +37,10 @@ export default async function Downvote (data: {
 
             const ms = WebSocket.members.get(deleted.id_member);
 
-            if (!ms) return;
-            for (const s of ms.entries()) {
-                WebSocket.io.to(s[0]).emit('socket-notification-deleted', deleted);
+            if (ms) {
+                for (const s of ms.entries()) {
+                    WebSocket.io.to(s[0]).emit('socket-notification-deleted', deleted);
+                };
             };
         });
 

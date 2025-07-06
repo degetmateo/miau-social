@@ -227,7 +227,6 @@ class PostCreator extends HTMLElement {
 
         new Alert('Enviando...', { error: false, timeout: null });
         this.reset();
-
         let response;
         try {
             response = await postService.post({ 
