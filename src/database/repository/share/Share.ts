@@ -8,6 +8,7 @@ export default async function Share (data: {
     member: any;
     id: number;
 }) {
+    let IDNotification = null;
     await Postgres.query().begin(async transaction => {
         const qShared = (await transaction`
             SELECT 
@@ -69,16 +70,17 @@ export default async function Share (data: {
                 RETURNING *;
         `)[0];
 
-        const notification = await notificationRepository.TGetByID({
-            id: qn.id_notification,
-            transaction: transaction
-        });
-
-        const ms = WebSocket.members.get(qn.id_member);
-
-        if (!ms) return;
-        for (const s of ms.entries()) {
-            WebSocket.io.to(s[0]).emit('socket-notification', notification);
-        };
+        IDNotification = qn.id_notification;
     });
+
+    const notification = await notificationRepository.GetByID({
+        id: IDNotification
+    });
+
+    const ms = WebSocket.members.get(notification.id_member);
+
+    if (!ms) return;
+    for (const s of ms.entries()) {
+        WebSocket.io.to(s[0]).emit('socket-notification', notification);
+    };
 };

@@ -2,6 +2,7 @@ import DatabaseError from "../../errors/DatabaseError";
 import GenericError from "../../errors/GenericError";
 import Postgres from "../Postgres";
 import Get from "./notification/Get";
+import GetByID from "./notification/GetByID";
 import TGetByID from "./notification/TGetByID";
 
 const read = async (data: {
@@ -31,5 +32,6 @@ const read = async (data: {
 export const notificationRepository = {
     Get,
     TGetByID,
+    GetByID,
     read
 }

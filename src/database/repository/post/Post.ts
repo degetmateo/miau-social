@@ -18,6 +18,7 @@ export default async function Post (data: {
     }
 }) {
     let response = null;
+    let IDNotification = null;
     await Postgres.query().begin(async transaction => {
         await transaction`SET TRANSACTION ISOLATION LEVEL READ COMMITTED;`;
 
@@ -33,7 +34,7 @@ export default async function Post (data: {
                     id_post = ${data.target_id};
             `)[0];
 
-            if (!qTargetPost) throw new NotFoundError("No se ha encontrado el post objetivo.");
+            if (!qTargetPost) throw new NotFoundError("La publicación a la que intentas responder no existe.");
         };
 
         const qInsert: Array<{ id_post: number }> = await transaction`
@@ -212,19 +213,20 @@ export default async function Post (data: {
                     RETURNING *;
             `)[0];
 
-            const notification = await notificationRepository.TGetByID({
-                id: qn.id_notification,
-                transaction: transaction
-            });
-
-            const ms = WebSocket.members.get(qn.id_member);
-
-            if (!ms) return;
-            for (const s of ms.entries()) {
-                WebSocket.io.to(s[0]).emit('socket-notification', notification);
-            };
+            IDNotification = qn.id_notification;
         };
     });
+
+    const notification = await notificationRepository.GetByID({
+        id: IDNotification
+    });
+
+    const ms = WebSocket.members.get(notification.id_member);
+
+    if (!ms) return;
+    for (const s of ms.entries()) {
+        WebSocket.io.to(s[0]).emit('socket-notification', notification);
+    };
 
     WebSocket.EmitNewPost(response[0]);
     return response[0];

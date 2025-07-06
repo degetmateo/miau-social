@@ -15,6 +15,9 @@ class WebSocket {
       role: string;
     }>>;
 
+    public logs: Map<string, Record<string, number[]>>;
+    public cooldowns: Map<string, Record<string, number>>;
+
     constructor () {
         this.members = new Map<string, Map<string, {
           name: string;
@@ -22,6 +25,27 @@ class WebSocket {
           icon_url: string;
           role: string;
         }>>();
+
+        this.logs = new Map<string, Record<string, number[]>>();
+        this.cooldowns = new Map<string, Record<string, number>>();
+    };
+
+    isRateLimited (memberId: string, action: string): boolean {
+      const now = Date.now();
+      const cd = this.cooldowns.get(memberId)?.['message'];
+      if (cd && now < cd) return true;
+      if (!this.logs.has(memberId)) this.logs.set(memberId, {});
+      const actions = this.logs.get(memberId)!;
+      if (!actions['message']) actions['message'] = [];
+      actions['message'] =  actions['message'].filter(ts => now - ts < 5000);
+      actions['message'].push(now);
+
+      if (actions['message'].length > 6) {
+        if (!this.cooldowns.has(memberId)) this.cooldowns.set(memberId, {});
+        this.cooldowns.get(memberId)!['message'] = now + 10000;
+        return true;
+      };
+      return false;
     };
 
     Initialize (server: http.Server) {

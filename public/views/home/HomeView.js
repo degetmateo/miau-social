@@ -132,18 +132,21 @@ export default class extends AbstractView {
         this.setView(this.view)
         this.nav.append(Nav);
 
-
         this.creator.updateIcon(window.app.member.icon_url || URL_NO_IMAGE);
         this.creator.updateName(window.app.member.name);
 
         if (this.firstTime) {
             this.loadTimeline();
-        }
+            this.firstTime = false;
+        };
 
         if (!this.firstTime) {
             this.setScroll(this.scroll);
-        }
-    }
+            if (this.waitingPosts.length > 0) {
+                this.GenerateAlertNewPosts();
+            };
+        };
+    };
 
     changeTimeline (timelineMode) {
         this.setScroll(0);
@@ -182,7 +185,6 @@ export default class extends AbstractView {
         this.spinner.remove();
 
         this.drawPosts(posts);
-        this.firstTime = false;
 
         this.posts = posts;
     }
@@ -211,7 +213,10 @@ export default class extends AbstractView {
         else this.waitingPosts.push(post);
 
         if (router.getPathname() != '/home') return;
+        this.GenerateAlertNewPosts();
+    };
 
+    GenerateAlertNewPosts () {
         new Alert('Hay nuevas publicaciones.', {
             error: false,
             timeout: null,
@@ -228,6 +233,7 @@ export default class extends AbstractView {
                     this.updateTimelineButtons();
                     this.offset = 0;
                     this.posts = [];
+                    this.waitingPosts = [];
                     this.clearTimeline();
                     this.loadTimeline();
                     return;
