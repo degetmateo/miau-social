@@ -225,5 +225,7 @@ export default async function Post (data: {
             };
         };
     });
+
+    WebSocket.EmitNewPost(response[0]);
     return response[0];
 };

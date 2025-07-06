@@ -22,6 +22,7 @@ export default class extends AbstractView {
         this.firstTime = true;
         this.scroll = 0;
         this.posts = [];
+        this.waitingPosts = [];
         this.fetching = false;
 
         this.timelineMode = localStorage.getItem('timelime-mode');
@@ -100,13 +101,9 @@ export default class extends AbstractView {
                 this.fetching = false;
             }
         });
-        
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState != 'visible') return;
-            if (window.location.pathname != '/home') return;
-            if (this.cooldown) return;
-            this.activateCooldown();
-            this.updateTimeline();
+
+        window.addEventListener('socket-new-post', (e) => {
+            this.updateTimeline(e.detail);
         });
     };
 
@@ -208,32 +205,40 @@ export default class extends AbstractView {
         this.timeline.innerHTML = '';
     }
 
-    async updateTimeline () {
-        const posts = this.timelineMode === 'global' ? 
-            await postService.get({ offset: this.offset }) :
-            await postService.getFollowing({ offset: this.offset });
+    updateTimeline (post) {
+        if (post.type != 'default' && post.type != 'quote') return;
+        if (this.waitingPosts.find(p => p.id == post.id)) return;
+        else this.waitingPosts.push(post);
 
-        if (posts.find(post => post.id > this.posts[0].id && post.type != 'reply')) {
-            new Alert('Hay nuevas publicaciones.', {
-                error: false,
-                timeout: null,
-                onClick: () => {
-                    if (router.getPathname() != '/home') {
-                        router.navigateTo('/home');
-                    }
+        if (router.getPathname() != '/home') return;
 
-                    this.setScroll(0);
+        new Alert('Hay nuevas publicaciones.', {
+            error: false,
+            timeout: null,
+            onClick: () => {
+                if (router.getPathname() != '/home') {
+                    router.navigateTo('/home');
+                };
+
+                this.setScroll(0);
+
+                if (this.timelineMode != 'global') {
+                    this.timelineMode = 'global';
+                    localStorage.setItem('timelime-mode', this.timelineMode);
+                    this.updateTimelineButtons();
+                    this.offset = 0;
+                    this.posts = [];
                     this.clearTimeline();
-                    this.drawPosts(posts);
-                }
-            });
+                    this.loadTimeline();
+                    return;
+                };
+                
+                for (const nP of this.waitingPosts) {
+                    this.timeline.prepend(PostsManager.Create(nP));
+                };
 
-            for (const post of posts) {
-                if (this.posts.find(p => p.id === post.id)) continue;
-                else this.posts.unshift(post);
+                this.waitingPosts = [];
             }
-
-            this.posts.sort((a, b) => b.id - a.id);
-        }
-    }
-}
+        });
+    };
+};

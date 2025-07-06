@@ -54,7 +54,7 @@ class Nav extends HTMLElement {
             icon_on: '/public/assets/nav/messages-on.svg',
             icon_off: '/public/assets/nav/messages-off.svg'
         });
-        this.buttons.append(this.buttonMessages);
+        // this.buttons.append(this.buttonMessages);
         const roleM = new MemberRole({ role: 'tester', text: 'BETA' });
         roleM.classList.add('button-messages-role');
         this.buttonMessages.append(roleM);

@@ -3,7 +3,7 @@ import View from "../../components/view/View.js";
 import Helper from "../../Helper.js";
 import AbstractView from "../AbstractView.js";
 
-Helper.ImportCSS('/public/views/terms-and-conditions/terms-and-conditions.css');
+// Helper.ImportCSS('/public/views/terms-and-conditions/terms-and-conditions.css');
 
 export default class TermsConditionsView extends AbstractView {
     constructor () {

@@ -3,6 +3,7 @@ import { Server } from "socket.io";
 import register from './routes/register';
 import message from './routes/message';
 import writing from './routes/writing';
+import ChatsRouter from './routes/chats';
 
 class WebSocket {
     public io: Server;
@@ -34,8 +35,9 @@ class WebSocket {
 
         this.io.on('connection', (socket) => {
           register(socket);
-          message(socket);
-          writing(socket);
+          ChatsRouter(socket);
+          // message(socket);
+          // writing(socket);
         });
     };
 
@@ -52,6 +54,14 @@ class WebSocket {
             const socketId = socket[0];
             this.io.to(socketId).emit('socket-notification', data.notification);
         };
+      } catch (error) {
+        console.error(error);
+      };
+    };
+
+    EmitNewPost (data: any) {
+      try {
+        this.io.emit('socket-new-post', data);
       } catch (error) {
         console.error(error);
       };

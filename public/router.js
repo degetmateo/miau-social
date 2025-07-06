@@ -72,7 +72,7 @@ class Router {
             .on("/member/:username/followers", ({ data }) => this.views.followers.init(data))
             .on("/admin", () => this.views.admin.init())
             .on("/post/:id_post/comments", ({ data }) => this.views.post.init(data))
-            .on("/messages", () => this.views.messages.init())
+            // .on("/messages", () => this.views.messages.init())
             .on("/notifications", () => this.views.notifications.init())
             .on("/signup", () => this.views.signup.init())
             .on("/signin", () => this.views.signin.init())

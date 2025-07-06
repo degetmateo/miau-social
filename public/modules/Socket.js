@@ -5,6 +5,8 @@ class Socket {
     Initialize () {
         this.socket = io();
         this.on = this.socket.on;
+        this.emit = this.socket.emit;
+        window.app.socket = this.socket;
 
         this.socket.on('connect', () => {
             this.socket.emit('register', {
@@ -39,6 +41,12 @@ class Socket {
         this.socket.on('socket-notification-deleted', (notification) => {
             window.dispatchEvent(new CustomEvent('socket-notification-deleted', {
                 detail: notification
+            }));
+        });
+
+        this.socket.on('socket-new-post', (data) => {
+            window.dispatchEvent(new CustomEvent('socket-new-post', {
+                detail: data
             }));
         });
 
@@ -97,6 +105,8 @@ class Socket {
                 this.socket.disconnect();
                 this.socket = null;
                 this.on = null;
+                this.socket.emit = null;
+                window.app.socket = null;
             };
 
             window.removeEventListener('socket-emit-writing', this.EmitWriting);
