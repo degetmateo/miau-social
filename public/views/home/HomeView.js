@@ -209,6 +209,7 @@ export default class extends AbstractView {
 
     updateTimeline (post) {
         if (post.type != 'default' && post.type != 'quote') return;
+        if (post.type == 'default' && post.creator.id == window.app.member.id) return;
         if (this.waitingPosts.find(p => p.id == post.id)) return;
         else this.waitingPosts.push(post);
 
