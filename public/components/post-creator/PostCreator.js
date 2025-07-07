@@ -100,7 +100,7 @@ class PostCreator extends HTMLElement {
 
         this.inputImages = document.createElement('input');
         this.inputImages.type = 'file';
-        this.inputImages.accept = 'image/*, image/gif';
+        this.inputImages.accept = 'image/png, image/jpeg, image/gif';
         this.inputImages.multiple = false;
         this.inputImages.style.display = 'none';
 
@@ -111,22 +111,23 @@ class PostCreator extends HTMLElement {
                 return;
             }
 
-            const cropper = new ImageCropper({
-                aspectRatio: null,
-                file: this.inputImages.files[0],
-                onSubmit: (blob) => {
-                    this.imagesContainer.show();
-                    this.imagesContainer.addImage({ src: URL.createObjectURL(blob), type: 'user' });
-                    this.has_images = true;
-                    this.inputImages.value = '';
-                    this.inputImages.files = null;
-                }
-            });
+            this.imagesContainer.show();
+            this.imagesContainer.addImage({ src: URL.createObjectURL(this.inputImages.files[0]), type: 'user' });
+            this.has_images = true;
+            this.inputImages.value = '';
+            this.inputImages.files = null;
 
-            cropper.onCancel = () => {
-                this.inputImages.value = '';
-                this.inputImages.files = null;
-            };
+            // const cropper = new ImageCropper({
+            //     aspectRatio: null,
+            //     file: this.inputImages.files[0],
+            //     onSubmit: (blob) => {
+            //     }
+            // });
+
+            // cropper.onCancel = () => {
+            //     this.inputImages.value = '';
+            //     this.inputImages.files = null;
+            // };
         };
 
         this.resetButton = document.createElement('button');
