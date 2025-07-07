@@ -105,7 +105,6 @@ class Socket {
                 this.socket.disconnect();
                 this.socket = null;
                 this.on = null;
-                this.socket.emit = null;
                 window.app.socket = null;
             };
 

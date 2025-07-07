@@ -62,7 +62,5 @@ export default class ChatsView extends AbstractView {
     };
 
     reset () {
-        this.socket = null;
-        this.messages.innerHTML = '';
     };
 };
