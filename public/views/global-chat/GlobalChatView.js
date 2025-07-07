@@ -105,6 +105,12 @@ export default class GlobalChatView extends AbstractView {
             };
         });
 
+        window.addEventListener('socket-messages', (e) => {
+            for (const message of e.detail.messages) {
+                this.messages.prepend(new Message(message));
+            };
+        });
+
         this.writingTimeout = null;
         window.addEventListener('socket-writing', (e) => {
             const data = e.detail;

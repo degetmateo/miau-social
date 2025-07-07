@@ -24,6 +24,20 @@ export default async function message (socket: Socket) {
                 content: data.content
             });
 
+            WebSocket.messages.push({
+                creator: {
+                    name: member.name,
+                    username: member.username,
+                    icon_url: member.icon_url,
+                    role: member.role
+                },
+                content: data.content
+            });
+
+            if (WebSocket.messages.length > 100) {
+                WebSocket.messages.shift();
+            };
+
             ResponseOk(func);
         } catch (error) {
             ResponseError(func, error);

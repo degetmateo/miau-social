@@ -17,6 +17,12 @@ class Socket {
                         token: localStorage.getItem('token')
                     });
                 });
+
+                window.dispatchEvent(new CustomEvent('socket-messages', {
+                    detail: {
+                        messages: response.data.messages
+                    }
+                }));
             });
         });
 

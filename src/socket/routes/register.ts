@@ -22,7 +22,9 @@ export default async function register (socket: Socket) {
             });
 
             disconnect(socket, member.id);
-            ResponseOk(func, null, RESPONSES.OK);
+            ResponseOk(func, {
+                messages: WebSocket.messages
+            }, RESPONSES.OK);
         } catch (error) {
             ResponseError(func, error);
         };

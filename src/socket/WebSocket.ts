@@ -18,6 +18,16 @@ class WebSocket {
     public logs: Map<string, Record<string, number[]>>;
     public cooldowns: Map<string, Record<string, number>>;
 
+    public messages: Array<{
+      content: string;
+      creator: {
+        name: string;
+        username: string;
+        icon_url: string;
+        role: string;
+      }
+    }>;
+
     constructor () {
         this.members = new Map<string, Map<string, {
           name: string;
@@ -28,6 +38,16 @@ class WebSocket {
 
         this.logs = new Map<string, Record<string, number[]>>();
         this.cooldowns = new Map<string, Record<string, number>>();
+
+        this.messages = new Array<{
+          content: string;
+          creator: {
+            name: string;
+            username: string;
+            icon_url: string;
+            role: string;
+          }
+        }>();
     };
 
     isRateLimited (memberId: string, action: string): boolean {
