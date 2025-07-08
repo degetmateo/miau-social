@@ -1,4 +1,5 @@
 import Alert from "../../components/alert/alert.js";
+import Aside from "../../components/aside/Aside.js";
 import Chat from "../../components/chat/Chat.js";
 import Header from "../../components/header/Header.js";
 import MessageCreator from "../../components/message-creator/MessageCreator.js";
@@ -26,6 +27,9 @@ export default class ChatsView extends AbstractView {
         this.main = document.createElement('main');
         this.main.classList.add('messages-main');
         this.view.append(this.main);
+
+        this.aside = new Aside();
+        this.view.append(this.aside);
 
         this.header = new Header({ text: 'Chats' });
         this.header.addEventListener('click', () => {

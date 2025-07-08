@@ -8,6 +8,7 @@ import Nav from "../../components/nav/Nav.js";
 import Spinner from "../../components/spinner/Spinner.js";
 import Helper from "../../Helper.js";
 import Notification from "../../components/notification/notification.js";
+import Aside from "../../components/aside/Aside.js";
 
 Helper.ImportCSS('/public/views/notifications/styles/notifications.css');
 
@@ -37,6 +38,9 @@ export default class NotificationsView extends AbstractView {
         this.main = document.createElement('main');
         this.main.classList.add('notifications-main');
         this.view.append(this.main);
+
+        this.aside = new Aside();
+        this.view.append(this.aside);
 
         this.header = new Header({
             text: 'Notificaciones'

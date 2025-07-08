@@ -26,6 +26,15 @@ class Socket {
             });
         });
 
+        this.socket.on('socket-connections', (data) => {
+            window.app.memberCount = data.memberCount;
+            window.dispatchEvent(new CustomEvent('socket-connections', {
+                detail: {
+                    memberCount: data.memberCount
+                }
+            }));
+        });
+
         this.socket.on('socket-message', (data) => {
             window.dispatchEvent(new CustomEvent('socket-message', {
                 detail: data

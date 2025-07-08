@@ -1,26 +1,35 @@
-class Aside {
+import Helper from "../../Helper.js";
+
+Helper.ImportCSS('/public/components/aside/aside.css');
+
+class Aside extends HTMLElement {
     constructor () {
-        this.css('/public/components/aside/styles/aside.css');
+        super();
+        this.classList.add('aside');
+
         this.container = document.createElement('div');
         this.container.classList.add('aside-container');
+        this.append(this.container);
 
-        this.message = document.createElement('p');
-        this.message.classList.add('aside-message');
-        this.message.innerHTML = `Cantidad de Miembros: 400`;
+        this.c = document.createElement('div');
+        this.c.classList.add('aside-connections-container');
+        this.container.append(this.c);
 
-        this.container.appendChild(this.message);
-    }
+        this.members = document.createElement('span');
+        this.members.textContent = 'Miembros en línea:';
+        this.members.classList.add('aside-members');
+        this.c.append(this.members);
 
-    node = () => {
-        return this.container;
-    }
+        this.count = document.createElement('span');
+        this.count.classList.add('aside-count');
+        this.count.textContent = '0';
+        this.c.append(this.count);
 
-    css = (href) => {
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = href;
-        document.head.appendChild(link);
-    }
-}
+        window.addEventListener('socket-connections', (e) => {
+            this.count.textContent = e.detail.memberCount || 1;
+        });
+    };
+};
 
-export default new Aside();
+customElements.define('app-aside', Aside);
+export default Aside;

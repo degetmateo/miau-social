@@ -1,4 +1,5 @@
 import Alert from "../../components/alert/alert.js";
+import Aside from "../../components/aside/Aside.js";
 import Header from "../../components/header/Header.js";
 import Input from "../../components/input/input.js";
 import MemberCard from "../../components/member-card/MemberCard.js";
@@ -27,6 +28,9 @@ export default class ExploreView extends AbstractView {
         this.main = document.createElement('main');
         this.main.classList.add('explore-main');
         this.view.append(this.main);
+
+        this.aside = new Aside();
+        this.view.append(this.aside);
 
         this.header = new Header({ text: 'Explorar' });
         this.header.addEventListener('click', (e) => {

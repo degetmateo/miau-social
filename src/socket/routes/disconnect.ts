@@ -9,5 +9,9 @@ export default async function disconnect (socket: Socket, memberId: string) {
             sockets.delete(socket.id);
             if (sockets.size === 0) WebSocket.members.delete(memberId);
         };
+
+        WebSocket.io.emit('socket-connections', {
+            memberCount: WebSocket.members.size
+        });
     });
 };

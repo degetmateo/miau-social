@@ -25,6 +25,10 @@ export default async function register (socket: Socket) {
             ResponseOk(func, {
                 messages: WebSocket.messages
             }, RESPONSES.OK);
+
+            WebSocket.io.emit('socket-connections', {
+                memberCount: WebSocket.members.size
+            });
         } catch (error) {
             ResponseError(func, error);
         };

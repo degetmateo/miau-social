@@ -1,4 +1,5 @@
 import Alert from "../../components/alert/alert.js";
+import Aside from "../../components/aside/Aside.js";
 import Header from "../../components/header/Header.js";
 import Nav from "../../components/nav/Nav.js";
 import PostsContainer from "../../components/posts-container/PostsContainer.js";
@@ -27,8 +28,10 @@ export default class extends AbstractView {
 
         this.main = document.createElement('div');
         this.main.classList.add('member-main');
-
         this.view.append(this.main);
+
+        this.aside = new Aside();
+        this.view.append(this.aside);
 
         this.header = new Header({
             text: ''

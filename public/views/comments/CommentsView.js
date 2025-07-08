@@ -10,6 +10,7 @@ import Nav from "../../components/nav/Nav.js";
 import PostsManager from "../../modules/PostsManager.js";
 import Spinner from "../../components/spinner/Spinner.js";
 import Helper from "../../Helper.js";
+import Aside from "../../components/aside/Aside.js";
 
 Helper.ImportCSS('/public/views/comments/styles/comments.css');
 
@@ -26,6 +27,9 @@ export default class CommentsView extends AbstractView {
         this.main = document.createElement('main');
         this.main.classList.add('comments-main');
         this.view.append(this.main);
+
+        this.aside = new Aside();
+        this.view.append(this.aside);
 
         this.header = new Header({
             text: 'Publicación'

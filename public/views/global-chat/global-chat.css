@@ -61,6 +61,8 @@
     font-family: Inter-Regular;
     max-height: 150px;
     overflow-y: auto;
+    word-wrap: break-word;
+    word-break: break-all;
 }
 
 .global-chat-creator-button-container {

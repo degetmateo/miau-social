@@ -1,3 +1,4 @@
+import Aside from "../../components/aside/Aside.js";
 import Header from "../../components/header/Header.js";
 import Nav from "../../components/nav/Nav.js";
 import Helper from "../../Helper.js";
@@ -16,6 +17,9 @@ export default class GlobalChatView extends AbstractView {
         this.main = document.createElement('main');
         this.main.classList.add('global-chat-main');
         this.view.append(this.main);
+
+        this.aside = new Aside();
+        this.view.append(this.aside);
 
         this.header = new Header({ text: 'General' });
         this.main.append(this.header);

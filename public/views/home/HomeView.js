@@ -1,4 +1,5 @@
 import Alert from "../../components/alert/alert.js";
+import Aside from "../../components/aside/Aside.js";
 import Nav from "../../components/nav/Nav.js";
 import PostCreator from "../../components/post-creator/PostCreator.js";
 import Spinner from "../../components/spinner/Spinner.js";
@@ -41,6 +42,9 @@ export default class extends AbstractView {
         this.main = document.createElement('main');
         this.main.classList.add('home-main');
         this.view.append(this.main);
+
+        this.aside = new Aside();
+        this.view.append(this.aside);
 
         this.timelineButtons = document.createElement('div');
         this.timelineButtons.classList.add('home-timeline');
