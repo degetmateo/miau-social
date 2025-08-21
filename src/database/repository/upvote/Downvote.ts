@@ -9,6 +9,7 @@ export default async function Downvote (data: {
 }) {
     try {
         let response = null;
+        let deleted = null;
         await Postgres.query().begin(async transaction => {
             const deleteUpvote = (await transaction`
                 DELETE FROM
@@ -22,7 +23,7 @@ export default async function Downvote (data: {
             if (!deleteUpvote) return;
             if (data.id_member == deleteUpvote.id_member_post) return;
 
-            const deleted = (await transaction`
+            deleted = (await transaction`
                 DELETE FROM 
                     notification
                 WHERE
@@ -32,17 +33,17 @@ export default async function Downvote (data: {
                     id_member_target_notification = ${deleteUpvote.id_member_upvote}
                 RETURNING *;
             `)[0];
+        });
 
-            if (!deleted) return;
-
+        if (deleted) {
             const ms = WebSocket.members.get(deleted.id_member);
-
+    
             if (ms) {
                 for (const s of ms.entries()) {
                     WebSocket.io.to(s[0]).emit('socket-notification-deleted', deleted);
                 };
             };
-        });
+        };
 
         return response; 
     } catch (error) {

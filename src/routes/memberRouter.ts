@@ -20,4 +20,6 @@ router.post('/update-profile', Authorization.Everyone, Multer.MultipleUploads(['
 router.post('/update-username', Authorization.Everyone, memberController.updateUsername);
 router.post('/update-password', Authorization.Everyone, memberController.updatePassword);
 
+router.get('/', Authorization.Everyone, memberController.get);
+
 export default router;

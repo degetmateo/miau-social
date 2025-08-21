@@ -5,6 +5,7 @@ export default async function Unshare (data: {
     member: any;
     id: number;
 }) {
+    let deleted = null;
     await Postgres.query().begin(async transaction => {
         const qDelete = (await transaction`
             DELETE FROM
@@ -18,7 +19,7 @@ export default async function Unshare (data: {
                 target_post_id;
         `)[0];
 
-        const deleted = (await transaction`
+        deleted = (await transaction`
             DELETE FROM
                 notification
             WHERE
@@ -28,13 +29,15 @@ export default async function Unshare (data: {
             RETURNING
                 id_member;
         `)[0];
+    });
 
+    if (deleted) {
         const ms = WebSocket.members.get(deleted.id_member);
-
+    
         if (ms){
             for (const s of ms.entries()) {
                 WebSocket.io.to(s[0]).emit('socket-notification-deleted', deleted);
             };
         };
-    });
+    };
 };

@@ -158,6 +158,21 @@ const updateProfile = async (req: Request, res: Response) => {
     }
 }
 
+const get = async (req: Request, res: Response) => {
+    try {
+        const search = req.query.search = req.query.search ? req.query.search.toString() : null;
+        const data = await memberService.get({
+            member: req.member,
+            search: search,
+            offset: req.query.offset ? parseInt(req.query.offset.toString()) : 0
+        });
+        ResponseOk(res, RESPONSES.OK, data);
+    } catch (error) {
+        console.error(error);
+        ResponseError(res, error);
+    };
+};
+
 export const memberController = {
     getByUsername,
     updateName,
@@ -168,5 +183,6 @@ export const memberController = {
     updateIconImage,
     updateBannerURL,
     updateBannerImage,
-    updateProfile
+    updateProfile,
+    get
 }

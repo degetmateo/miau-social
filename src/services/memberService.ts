@@ -1,3 +1,4 @@
+import GetMembers from "../database/repository/auxiliary/GetMembers";
 import { memberRepository } from "../database/repository/memberRepository";
 import InvalidArgumentError from "../errors/InvalidArgumentError";
 import ImgBB from "../helpers/ImgBB";
@@ -218,6 +219,18 @@ const updateProfile = async (data: {
     return response;
 }
 
+const get = async (data: {
+    member: any;
+    search?: string;
+    offset: number;
+}) => {
+    if (!data.search) throw new InvalidArgumentError("Search query is required.");
+    return await GetMembers({
+        query: data.search,
+        offset: data.offset
+    });
+};
+
 export const memberService = {
     getByUsername,
     updateName,
@@ -228,5 +241,6 @@ export const memberService = {
     updateIconImage,
     updateBannerURL,
     updateBannerImage,
-    updateProfile
+    updateProfile,
+    get
 }

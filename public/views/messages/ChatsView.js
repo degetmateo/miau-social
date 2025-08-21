@@ -37,9 +37,6 @@ export default class ChatsView extends AbstractView {
         });
         this.main.append(this.header);
 
-        // this.formCreateChat = new FormCreateChat();
-        // this.main.append(this.formCreateChat);
-
         this.chats = document.createElement('div');
         this.chats.classList.add('messages-chats');
         this.main.append(this.chats);
@@ -49,6 +46,14 @@ export default class ChatsView extends AbstractView {
         this.globalChat.addEventListener('click', () => {
             router.navigateTo('/chats/general');
         });
+
+        this.startChatButton = document.createElement('div');
+        this.startChatButton.classList.add('chats-start-chat-button');
+        this.startChatButton.textContent = 'Comenzar Chat';
+        this.startChatButton.addEventListener('click', () => {
+            router.navigateTo('/chats/start-chat');
+        });
+        this.chats.append(this.startChatButton);
     };
 
     init () {    

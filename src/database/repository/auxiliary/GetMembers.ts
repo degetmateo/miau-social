@@ -2,7 +2,6 @@ import Postgres from "../../Postgres";
 
 export default async function GetMembers (data: {
     query: string;
-    filter: 'posts' | 'members';
     offset: number;
 }) {
     return await Postgres.query()`

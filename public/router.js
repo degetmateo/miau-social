@@ -25,6 +25,7 @@ import TermsConditionsView from "./views/terms-and-conditions/TermsConditionsVie
 import ChatsView from "./views/messages/ChatsView.js";
 import ChatView from "./views/chat/ChatView.js";
 import GlobalChatView from "./views/global-chat/GlobalChatView.js";
+import StartChatView from "./views/start-chat/StartChatView.js";
 
 class Router {
     constructor () {
@@ -39,7 +40,9 @@ class Router {
             home: new HomeView(),
             settings: new SettingsView(),
             notifications: new NotificationsView(),
+            chat: new ChatView(),
             chats: new ChatsView(),
+            startChat: new StartChatView(),
             globalChat: new GlobalChatView(),
             member: new MemberView(),
             followed: new FollowedView(),
@@ -77,6 +80,8 @@ class Router {
             .on("/post/:id_post/comments", ({ data }) => this.views.post.init(data))
             .on("/chats", () => this.views.chats.init())
             .on('/chats/general', () => this.views.globalChat.init())
+            .on('/chats/start-chat', () => this.views.startChat.init())
+            .on("/chats/member/:username", ({ data }) => this.views.chat.init(data))
             .on("/notifications", () => this.views.notifications.init())
             .on("/signup", () => this.views.signup.init())
             .on("/signin", () => this.views.signin.init())
