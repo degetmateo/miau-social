@@ -79,6 +79,30 @@ export default class StartChatView extends AbstractView {
         this.setTitle('Comenzar Chat');
         this.setView(this.view);
         this.nav.append(Nav);
+
+        this.members.innerHTML = '';
+        this.offset = 0;
+        this.query = '';
+        this.fetching = true;
+
+        const spinner = new Spinner();
+        this.members.append(spinner);
+
+        const data = await Service.Fetch(`/api/follow/random`, {
+            method: "GET"
+        });
+
+        for (const member of data) {
+            this.members.append(new MemberCard(member, {
+                bio: false,
+                onClick: () => {
+                    router.navigateTo(`/chats/member/${member.username}`);
+                }
+            }));
+        };
+        
+        spinner.remove();
+        this.fetching = false;
     };
 
     async submit () {

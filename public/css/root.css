@@ -29,6 +29,14 @@
     --text-color: #2c3e50;
 
     --background-color-transparent: #00000094;
+
+    --font-jetbrains-regular: 'JetBrainsMono-Regular', monospace;
+    --font-jetbrains-light: 'JetBrainsMono-Light', monospace;
+    --font-jetbrains-bold: 'JetBrainsMono-Bold', monospace;
+
+    --font-inter-regular: 'Inter-Regular', sans-serif;
+    --font-inter-light: 'Inter-Light', sans-serif;
+    --font-inter-bold: 'Inter-Bold', sans-serif;
 }
 
 @font-face {

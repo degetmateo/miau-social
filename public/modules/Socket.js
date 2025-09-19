@@ -35,18 +35,6 @@ class Socket {
             }));
         });
 
-        this.socket.on('socket-message', (data) => {
-            window.dispatchEvent(new CustomEvent('socket-message', {
-                detail: data
-            }));
-        });
-
-        this.socket.on('socket-writing', (data) => {
-            window.dispatchEvent(new CustomEvent('socket-writing', {
-                detail: data
-            }));
-        });
-
         this.socket.on('socket-notification', (notification) => {
             window.dispatchEvent(new CustomEvent('socket-notification', {
                 detail: notification
@@ -65,40 +53,55 @@ class Socket {
             }));
         });
 
-        this.EmitWriting = () => {
-            this.socket.emit('socket-writing', {
-                token: localStorage.getItem('token')
-            }, (response) => {
-                this.Response(response, () => {
-                    this.socket.emit('socket-writing', {
-                        token: localStorage.getItem('token')
-                    });
-                });
-            });
-        };
-
-        this.EmitMessage = (e) => {
-            this.socket.emit('socket-message', {
-                token: localStorage.getItem('token'),
-                content: e.detail.content
-            }, (response) => {
-                this.Response(response, () => {
-                    this.socket.emit('socket-message', {
-                        token: localStorage.getItem('token'),
-                        content: e.detail.content
-                    });
-                });
-            });
-        };
-
-        window.addEventListener('socket-emit-writing', this.EmitWriting);
-        window.addEventListener('socket-emit-message', this.EmitMessage);
+        this.socket.on('socket-message', (data) => {
+            window.dispatchEvent(new CustomEvent('socket-message', {
+                detail: data
+            }));
+        });
     };
 
-    EmitMessage () {};
+    Emission (event, data) {
+        return new Promise((resolve) => {
+            this.socket.emit(event, {
+                token: localStorage.getItem('token'),
+                ...data
+            }, (response) => {
+                resolve(response);
+            });
+        });
+    };
 
-    EmitWriting () {};
-    
+    async Emit (event, data) {
+        let response = { ok: false, error: { message: 'Error.' } };
+        
+        try {
+            response = await this.Emission(event, data);
+            
+            if (!response.ok && response.status === 401) {
+                await this.RefreshToken();
+                response = await this.Emission(event, data);
+            };
+        } catch (error) {
+            console.error(error);
+            response.ok = false;
+            response.error = error;
+        };
+
+        return response;
+    };
+
+    async RefreshToken () {
+        const request = await fetch('/api/authentication/refresh-token', {
+            method: "POST",
+            credentials: "include"
+        });
+
+        const response = await request.json();
+        if (!response.ok) throw new Error(response.error.message);
+
+        localStorage.setItem("token", response.data);
+    };
+
     Response (response, func) {
         if (response.ok) return;
 
@@ -122,9 +125,6 @@ class Socket {
                 this.on = null;
                 window.app.socket = null;
             };
-
-            window.removeEventListener('socket-emit-writing', this.EmitWriting);
-            window.removeEventListener('socket-emit-message', this.EmitMessage);
         } catch (error) {
             console.error(error);
         };

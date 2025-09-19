@@ -38,8 +38,15 @@ const get = async (data: {
     return response;
 }
 
+const getRandomFollowers = async (data: {
+    member: any;
+}) => {
+    return await followRepository.getRandomFollowers(data);
+};
+
 export const followService = {
     follow,
     unfollow,
-    get
+    get,
+    getRandomFollowers
 }

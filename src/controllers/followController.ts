@@ -46,8 +46,22 @@ const get = async (req: Request, res: Response) => {
     }
 }
 
+const getRandomFollowers = async (req: Request, res: Response) => {
+    try {
+        const response = await followService.getRandomFollowers({
+            member: req.member
+        });
+
+        ResponseOk(res, RESPONSES.OK, response);
+    } catch (error) {
+        console.error(error);
+        ResponseError(res, error);
+    }
+}
+
 export const followController = {
     follow,
     unfollow,
-    get
+    get,
+    getRandomFollowers
 }

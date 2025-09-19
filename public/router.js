@@ -22,9 +22,8 @@ import PasswordView from "./views/password/PasswordView.js";
 import SessionsView from "./views/sessions/SessionsView.js";
 import ExploreView from "./views/explore/ExploreView.js";
 import TermsConditionsView from "./views/terms-and-conditions/TermsConditionsView.js";
-import ChatsView from "./views/messages/ChatsView.js";
+import ChatsView from "./views/chats-view/ChatsView.js";
 import ChatView from "./views/chat/ChatView.js";
-import GlobalChatView from "./views/global-chat/GlobalChatView.js";
 import StartChatView from "./views/start-chat/StartChatView.js";
 
 class Router {
@@ -43,7 +42,6 @@ class Router {
             chat: new ChatView(),
             chats: new ChatsView(),
             startChat: new StartChatView(),
-            globalChat: new GlobalChatView(),
             member: new MemberView(),
             followed: new FollowedView(),
             followers: new FollowersView(),
@@ -79,7 +77,6 @@ class Router {
             .on("/admin", () => this.views.admin.init())
             .on("/post/:id_post/comments", ({ data }) => this.views.post.init(data))
             .on("/chats", () => this.views.chats.init())
-            .on('/chats/general', () => this.views.globalChat.init())
             .on('/chats/start-chat', () => this.views.startChat.init())
             .on("/chats/member/:username", ({ data }) => this.views.chat.init(data))
             .on("/notifications", () => this.views.notifications.init())

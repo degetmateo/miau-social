@@ -13,6 +13,8 @@ import tenorRouter from "./routes/tenorRouter";
 import sessionRouter from './routes/sessionRouter';
 import shareRouter from './routes/shareRouter';
 import auxRouter from './routes/auxRouter';
+import chatRouter from './routes/chatRouter';
+
 import http from 'http';
 import WebSocket from "./socket/WebSocket";
 
@@ -74,8 +76,9 @@ export default class Server {
         tenor: '/api/tenor',
         session: '/api/session',
         share: '/api/share',
-        aux: '/api/aux'
-    }
+        aux: '/api/aux',
+        chat: '/api/chat'
+    };
 
     constructor (port: number) {
         try {
@@ -140,6 +143,7 @@ export default class Server {
         this.app.use(this.paths.session, sessionRouter);
         this.app.use(this.paths.share, shareRouter);
         this.app.use(this.paths.aux, auxRouter);
+        this.app.use(this.paths.chat, chatRouter);
         this.app.use(this.paths.docs, swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
         this.app.use('*', (_, res) => {

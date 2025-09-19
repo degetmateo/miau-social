@@ -1,9 +1,7 @@
 import http from 'http';
 import { Server } from "socket.io";
 import register from './routes/register';
-import message from './routes/message';
-import writing from './routes/writing';
-import ChatsRouter from './routes/chats';
+import privateMessage from './routes/message';
 
 class WebSocket {
     public io: Server;
@@ -79,9 +77,7 @@ class WebSocket {
 
         this.io.on('connection', (socket) => {
           register(socket);
-          ChatsRouter(socket);
-          message(socket);
-          writing(socket);
+          privateMessage(socket);
         });
     };
 

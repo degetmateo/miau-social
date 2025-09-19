@@ -112,9 +112,46 @@ const getFollowers = async (data: {
     }
 }
 
+const getRandomFollowers = async (data: {
+    member: any;
+}) => {
+    try {
+        const response = await Postgres.query()`
+            SELECT
+                m2.id_member AS id,
+                m2.username_member AS username,
+                m2.name_member AS name,
+                m2.role_member AS role,
+                m2.bio_member AS bio,
+                icon.url AS icon_url
+            FROM
+                follow f, member m1, member m2
+            LEFT JOIN
+                image icon ON icon.member_id = m2.id_member AND icon.type = 'icon'
+            WHERE
+                m1.username_member = ${data.member.username} AND
+                f.id_member_follower = m2.id_member AND
+                f.id_member_followed = m1.id_member
+            ORDER BY
+                RANDOM()
+            LIMIT
+                20;
+        `;
+
+        return response;
+    } catch (error) {
+        if (error instanceof GenericError) throw error;
+        else {
+            console.error(error);
+            throw new DatabaseError();
+        }
+    }
+};
+
 export const followRepository = {
     follow,
     unfollow,
     getFollowed,
-    getFollowers
+    getFollowers,
+    getRandomFollowers
 }

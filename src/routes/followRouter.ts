@@ -10,4 +10,6 @@ router.delete('/member/:id_member(\\d+)', Authorization.Everyone, followControll
 
 router.get('/', Authorization.Everyone, followController.get);
 
+router.get('/random', Authorization.Everyone, followController.getRandomFollowers);
+
 export default router;
