@@ -2,9 +2,10 @@ import jwt from "jsonwebtoken";
 import UnauthorizedError from "../errors/UnauthorizedError";
 
 class JWT {
-    Generate = (data: any, expiresIn: string | number): Promise<string> => {
+    Generate = (data: any, expiresIn: any): Promise<string> => {
         return new Promise((resolve, reject) => {
             const payload = { data };
+
             jwt.sign(payload, process.env.JWT_KEY, { expiresIn }, (err, token) => {
                 if (err) reject("Error al generar el token.");
                 resolve(token);
