@@ -12,6 +12,8 @@ class Mailer {
         if (!this.transporter) {
             this.transporter = nodemailer.createTransport({
                 service: 'gmail',
+                logger: true,
+                secure: true,
                 auth: {
                     user: process.env.MAILER_USER,
                     pass: process.env.MAILER_PASSWORD
