@@ -70,7 +70,7 @@ export default async function Signup (data: {
             try {
                 await Mailer.Send({
                     to: data.email,
-                    subject: 'Activá tu cuenta de Social Miau',
+                    subject: 'Activá tu cuenta de Oomfy',
                     html: `
                         <p>Para activar tu cuenta debes ir al siguiente enlace. Expira en 10 minutos. No se lo compartas a nadie.</p>
                         <p>Si no era tu intención recibir este correo, ignóralo.</p>

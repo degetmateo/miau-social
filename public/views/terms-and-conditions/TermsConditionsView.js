@@ -19,7 +19,7 @@ export default class TermsConditionsView extends AbstractView {
             
             <div class="tc-block">
                 <p class="tc-p">Última actualización: 27 de junio de 2025</p>
-                <p>Al crearte una cuenta en social-miau.onrender.com, estás aceptando los siguientes términos y condiciones:</p>
+                <p>Al crearte una cuenta en oomfy.online, estás aceptando los siguientes términos y condiciones:</p>
             </div>
 
             <div class="tc-block">

@@ -65,6 +65,6 @@ export default class LandingView extends AbstractView {
         }
 
         this.setView(this.view);
-        this.setTitle('Social Miau');
+        this.setTitle('Oomfy');
     }
 }

@@ -61,7 +61,7 @@ export default async function Activate (data: {
             try {
                 await Mailer.Send({
                     to: member.email,
-                    subject: 'Activá tu cuenta de Social Miau',
+                    subject: 'Activá tu cuenta de Oomfy',
                     html: `
                         <p>Para activar tu cuenta debes ir al siguiente enlace. Expira en 10 minutos. No se lo compartas a nadie.</p>
                         <p>Si no era tu intención recibir este correo, ignóralo.</p>
