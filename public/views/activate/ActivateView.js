@@ -108,7 +108,7 @@ export default class ActivateView extends AbstractView {
         const loader = new ScreenSpinner();
 
         grecaptcha.ready(() => {
-            grecaptcha.execute('6LeMrAkrAAAAADDW0Gu_K5HfNWpSgx9zhyN0hl3O', {
+            grecaptcha.execute('6Lfy-vIsAAAAAOSWaK4avDdN7B9mTNJLuCH5ed3z', {
                 action: 'submit'
             }).then(async (token) => {
                 let response;

@@ -411,7 +411,7 @@ export default class FormSignup {
         this.loader = new ScreenSpinner();
 
         grecaptcha.ready(() => {
-            grecaptcha.execute('6LeMrAkrAAAAADDW0Gu_K5HfNWpSgx9zhyN0hl3O', { action: 'submit' }).then(async (token) => {
+            grecaptcha.execute('6Lfy-vIsAAAAAOSWaK4avDdN7B9mTNJLuCH5ed3z', { action: 'submit' }).then(async (token) => {
                 try {
                     await authenticationService.signup({
                         captcha_token: token,
