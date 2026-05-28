@@ -16,12 +16,12 @@ export default async function ResetPassword (data: {
 
             const member = (await transaction`
                 UPDATE 
-                    member
+                    oomfy
                 SET
-                    password_member = ${data.password}
+                    password = ${data.password}
                 WHERE
-                    id_member = ${data.id} AND
-                    username_member = ${data.username} AND
+                    id = ${data.id} AND
+                    username = ${data.username} AND
                     email = ${data.email}
                 RETURNING
                     *;
@@ -33,7 +33,7 @@ export default async function ResetPassword (data: {
                 DELETE FROM
                     session
                 WHERE
-                    member_id = ${data.id};
+                    oomfy_id = ${data.id};
             `);
         });
     } catch (error) {

@@ -13,14 +13,14 @@ export default async function RecoverPassword (data: {
         await Postgres.query().begin(async transaction => {
             const member = (await transaction`
                 SELECT
-                    id_member as id,
-                    username_member as username,
-                    role_member as role,
-                    email as email
+                    id,
+                    username,
+                    role,
+                    email
                 FROM
-                    member
+                    oomfy
                 WHERE
-                    username_member = ${data.username};
+                    username = ${data.username};
             `)[0];
  
             if (!member) throw new InvalidArgumentError();

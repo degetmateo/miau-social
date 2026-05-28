@@ -27,24 +27,24 @@ export default async function Authenticate (data: {
             };
 
             const member = (await transaction`
-                SELECT 
-                    m.id_member as id,
-                    m.name_member as name,
-                    m.username_member as username,
-                    m.role_member as role,
-                    m.email as email,
-                    icon.url as icon_url,
-                    banner.url as banner_url
+                SELECT
+                    o.id,
+                    o.name,
+                    o.username,
+                    o.role,
+                    o.email
+                    i.url as icon_url,
+                    b.url as banner_url
                 FROM
-                    member m
+                    oomfy o
                 LEFT JOIN
-                    image icon ON icon.member_id = m.id_member AND icon.type = 'icon'
+                    icon i ON i.id = o.id
                 LEFT JOIN
-                    image banner ON banner.member_id = m.id_member AND banner.type = 'banner'
+                    banner b ON b.id = o.id
                 WHERE
-                    m.id_member = ${memberData.id} AND
-                    m.username_member = ${memberData.username} AND
-                    m.email = ${memberData.email};
+                    o.id = ${memberData.id} AND
+                    o.username = ${memberData.username} AND
+                    o.email = ${memberData.email};
             `)[0];
 
             if (!member) throw new UnauthorizedError("Ha ocurrido un error de autorización.");
@@ -55,7 +55,7 @@ export default async function Authenticate (data: {
                 FROM
                     session
                 WHERE
-                    member_id = ${member.id} AND
+                    oomfy_id = ${member.id} AND
                     token = ${data.token};
             `)[0];
 
@@ -96,6 +96,6 @@ export default async function Authenticate (data: {
         else {
             console.error(error);
             throw new DatabaseError();
-        }
-    }
+        };
+    };
 };

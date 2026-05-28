@@ -1,3 +1,5 @@
+const uuid = require('uuid');
+
 import DatabaseError from "../../../errors/DatabaseError";
 import GenericError from "../../../errors/GenericError";
 import UnauthorizedError from "../../../errors/UnauthorizedError";
@@ -17,25 +19,25 @@ export default async function Verify (data: {
         await Postgres.query().begin(async transaction => {
             const member = (await transaction`
                 SELECT
-                    m.id_member AS id,
-                    m.username_member AS username,
-                    m.name_member AS name,
-                    m.role_member AS role,
-                    m.email AS email,
-                    icon.url AS icon_url,
-                    banner.url AS banner_url,
-                    m.status AS status
+                    m.id,
+                    m.username,
+                    m.name,
+                    m.role,
+                    m.email,
+                    i.url AS icon_url,
+                    b.url AS banner_url,
+                    m.status
                 FROM
-                    member m
+                    oomfy m
                 LEFT JOIN
-                    image icon ON icon.member_id = m.id_member AND icon.type = 'icon'
+                    icon i ON i.id = m.id
                 LEFT JOIN
-                    image banner ON banner.member_id = m.id_member AND banner.type = 'banner'
+                    banner b ON b.id = m.id
                 WHERE
-                    m.id_member = ${data.id} AND
-                    m.username_member = ${data.username} AND
+                    m.id = ${data.id} AND
+                    m.username = ${data.username} AND
                     m.email = ${data.email} AND
-                    m.role_member = ${data.role} AND
+                    m.role = ${data.role} AND
                     m.status = 'pending'
             `)[0];
 
@@ -43,21 +45,21 @@ export default async function Verify (data: {
 
             const q: any = (await transaction`
                 UPDATE 
-                    member
+                    oomfy
                 SET
                     status = 'active'
                 WHERE
-                    id_member = ${data.id} AND
-                    username_member = ${data.username} AND
+                    id = ${data.id} AND
+                    username = ${data.username} AND
                     email = ${data.email} AND
-                    role_member = ${data.role} AND
+                    role = ${data.role} AND
                     status = 'pending'
                 RETURNING
-                    id_member AS id,
-                    username_member AS username,
-                    name_member AS name,
-                    role_member AS role,
-                    email as email;
+                    id,
+                    username,
+                    name,
+                    role,
+                    email;
             `)[0];
 
             if (!q) throw new UnauthorizedError('Ha ocurrido un error de autorización.');
@@ -72,13 +74,15 @@ export default async function Verify (data: {
             (await transaction`
                 INSERT INTO
                     session (
-                        member_id,
+                        id,
+                        oomfy_id,
                         date,
                         ip,
                         platform,
                         token
                     )
                 VALUES (
+                    ${uuid.v7()},
                     ${member.id},
                     ${new Date().toISOString()},
                     ${data.ip},

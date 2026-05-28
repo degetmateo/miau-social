@@ -17,6 +17,7 @@ import chatRouter from './routes/chatRouter';
 
 import http from 'http';
 import WebSocket from "./socket/WebSocket";
+import mongodb from "./database/mongo/mongodb";
 
 const requestIp = require('request-ip');
 const cookieParser = require('cookie-parser');
@@ -129,7 +130,8 @@ export default class Server {
 
     private database = () => {
         Postgres.init();
-    }
+        mongodb.init();
+    };
 
     private routes = () => {
         this.app.use(this.paths.authentication, authenticationRouter);

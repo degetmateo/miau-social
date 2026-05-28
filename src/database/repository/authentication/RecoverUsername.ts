@@ -10,10 +10,10 @@ export default async function RecoverUsername (data: {
         await Postgres.query().begin(async transaction => {
             const member = (await transaction`
                 SELECT
-                    username_member as username,
-                    email as email
+                    username,
+                    email
                 FROM
-                    member
+                    oomfy
                 WHERE
                     email = ${data.email};
             `)[0];

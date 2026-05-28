@@ -28,6 +28,14 @@ declare global {
         MAILER_PASSWORD: string;
         MAILER_USER: string;
         PRODUCTION: "TRUE" | "FALSE";
+        
+        PG_DATABASE_URI: string;
+        PG_DATABASE_CA: string;
+
+        MONGODB_DATABASE_KEY: string;
+        MONGODB_DATABASE_NAME: string;
+
+
       }
     }
   }

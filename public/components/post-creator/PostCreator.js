@@ -237,6 +237,7 @@ class PostCreator extends HTMLElement {
                 target_id: this.data.target_id,
                 spotify_url: spotifyValue
             });
+            console.log(response);
             this.response = response;
         } catch (error) {
             this.has_images = false;

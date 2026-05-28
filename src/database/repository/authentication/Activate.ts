@@ -17,16 +17,16 @@ export default async function Activate (data: {
         await Postgres.query().begin(async transaction => {
             const member: any = (await transaction`
                 SELECT
-                    id_member AS id,
-                    username_member AS username,
-                    role_member AS role,
-                    password_member AS password,
-                    email AS email,
-                    status AS status
+                    id,
+                    username,
+                    role,
+                    password,
+                    email,
+                    status
                 FROM
-                    member
+                    oomfy
                 WHERE
-                    username_member = ${data.username};
+                    username = ${data.username};
             `)[0];
 
             if (!member) throw new NotFoundError('Algunos de tus datos son incorrectos.');
@@ -38,16 +38,16 @@ export default async function Activate (data: {
             } else {
                 await transaction`
                     UPDATE 
-                        member
+                        oomfy
                     SET
                         email = ${data.email}
                     WHERE
-                        id_member = ${member.id} AND
-                        username_member = ${member.username};
+                        id = ${member.id} AND
+                        username = ${member.username};
                 `;
 
                 member.email = data.email;
-            }
+            };
 
             const TOKEN = await JWT.Generate({
                 id: member.id,
@@ -61,7 +61,7 @@ export default async function Activate (data: {
             try {
                 await Mailer.Send({
                     to: member.email,
-                    subject: 'Activá tu cuenta de Oomfy',
+                    subject: 'Activá tu cuenta de oomfy',
                     html: `
                         <p>Para activar tu cuenta debes ir al siguiente enlace. Expira en 10 minutos. No se lo compartas a nadie.</p>
                         <p>Si no era tu intención recibir este correo, ignóralo.</p>

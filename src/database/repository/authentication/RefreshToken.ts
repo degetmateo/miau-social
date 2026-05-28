@@ -24,20 +24,20 @@ export default async function RefreshToken (data: {
             const session = (await transaction`
                 SELECT
                     s.id as session_id,
-                    m.id_member as id,
-                    m.name_member as name,
-                    m.username_member as username,
-                    m.role_member as role,
-                    m.email as email,
-                    icon.url as icon_url
+                    m.id,
+                    m.name,
+                    m.username,
+                    m.role,
+                    m.email,
+                    i.url as icon_url
                 FROM
                     session s
                 LEFT JOIN
-                    member m ON m.id_member = s.member_id
+                    oomfy m ON m.id = s.oomfy
                 LEFT JOIN
-                    image icon ON icon.type = 'icon' AND icon.member_id = m.id_member
+                    icon i ON i.id = m.id
                 WHERE
-                    s.member_id = ${member.id} AND
+                    s.oomfy_id = ${member.id} AND
                     s.token = ${data.token};
             `)[0];
 

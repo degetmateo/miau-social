@@ -19,12 +19,12 @@ export default async function Signup (data: {
             const q = await transaction`
                 SELECT
                     email,
-                    username_member AS username
+                    username
                 FROM
-                    member
+                    oomfy
                 WHERE
                     email = ${data.email} OR
-                    LOWER(username_member) = LOWER(${data.username});
+                    LOWER(username) = LOWER(${data.username});
             `;
 
             if (q.length > 0) {
@@ -37,12 +37,12 @@ export default async function Signup (data: {
             data.password = await Password.hash(data.password);
 
             const member = (await transaction`
-                INSERT INTO member (
-                    username_member,
-                    name_member,
-                    password_member,
-                    date_creation_member,
-                    role_member,
+                INSERT INTO oomfy (
+                    username,
+                    name,
+                    password,
+                    created_at,
+                    role,
                     status,
                     email
                 )
@@ -70,7 +70,7 @@ export default async function Signup (data: {
             try {
                 await Mailer.Send({
                     to: data.email,
-                    subject: 'Activá tu cuenta de Oomfy',
+                    subject: 'Activá tu cuenta de oomfy',
                     html: `
                         <p>Para activar tu cuenta debes ir al siguiente enlace. Expira en 10 minutos. No se lo compartas a nadie.</p>
                         <p>Si no era tu intención recibir este correo, ignóralo.</p>
