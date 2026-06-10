@@ -25,6 +25,7 @@ import TermsConditionsView from "./views/terms-and-conditions/TermsConditionsVie
 import ChatsView from "./views/chats-view/ChatsView.js";
 import ChatView from "./views/chat/ChatView.js";
 import StartChatView from "./views/start-chat/StartChatView.js";
+import PublicationView from "./views/publication.view.js";
 
 class Router {
     constructor () {
@@ -46,7 +47,7 @@ class Router {
             followed: new FollowedView(),
             followers: new FollowersView(),
             admin: new AdminView(),
-            post: new CommentsView(),
+            publication: new PublicationView(),
             signup: new SignupView(),
             signin: new SigninView(),
             activate: new ActivateView(),
@@ -75,7 +76,9 @@ class Router {
             .on("/member/:username/followed", ({ data }) => this.views.followed.init(data))
             .on("/member/:username/followers", ({ data }) => this.views.followers.init(data))
             .on("/admin", () => this.views.admin.init())
-            .on("/post/:id_post/comments", ({ data }) => this.views.post.init(data))
+            
+            .on("/publication/:id", (meta) => this.views.publication.init(meta))
+
             .on("/chats", () => this.views.chats.init())
             .on('/chats/start-chat', () => this.views.startChat.init())
             .on("/chats/member/:username", ({ data }) => this.views.chat.init(data))

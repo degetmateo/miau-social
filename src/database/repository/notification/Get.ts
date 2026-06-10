@@ -7,6 +7,7 @@ export default async function Get (data: {
     offset: number;
 }) {
     try {
+        return [];
         const response = await Postgres.query()`
             SELECT 
                 n.id_notification AS id,

@@ -48,16 +48,16 @@ class Nav extends HTMLElement {
         });
         this.buttons.append(this.buttonNotifications);
 
-        this.buttonMessages = new NavButton({
-            pathname: '/chats',
-            text: 'Chats',
-            icon_on: '/public/assets/nav/messages-on.svg',
-            icon_off: '/public/assets/nav/messages-off.svg'
-        });
-        this.buttons.append(this.buttonMessages);
-        const roleM = new MemberRole({ role: 'tester', text: 'BETA' });
-        roleM.classList.add('button-messages-role');
-        this.buttonMessages.append(roleM);
+        // this.buttonMessages = new NavButton({
+        //     pathname: '/chats',
+        //     text: 'Chats',
+        //     icon_on: '/public/assets/nav/messages-on.svg',
+        //     icon_off: '/public/assets/nav/messages-off.svg'
+        // });
+        // this.buttons.append(this.buttonMessages);
+        // const roleM = new MemberRole({ role: 'tester', text: 'BETA' });
+        // roleM.classList.add('button-messages-role');
+        // this.buttonMessages.append(roleM);
 
         this.buttonSettings = new NavButton({
             pathname: '/settings',
@@ -79,7 +79,7 @@ class Nav extends HTMLElement {
         this.buttonExplore.update();
         this.buttonProfile.update();
         this.buttonNotifications.update();
-        this.buttonMessages.update();
+        // this.buttonMessages.update();
         this.buttonSettings.update();
     };
 

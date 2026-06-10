@@ -7,7 +7,7 @@ import Validator from "../helpers/Validator";
 import { PARAMETERS } from "../static/parameters";
 
 const getByUsername = async (data: {
-    id_logged_member: number;
+    id_logged_member: string;
     username: string;
 }) => {
     if (!data.username) throw new InvalidArgumentError("Username not found.");

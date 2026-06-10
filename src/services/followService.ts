@@ -2,21 +2,19 @@ import { followRepository } from "../database/repository/followRepository";
 import InvalidArgumentError from "../errors/InvalidArgumentError";
 
 const follow = async (data: {
-    id_member_follower: number;
-    id_member_followed: number;
+    id_member_follower: string;
+    id_member_followed: string;
 }) => {
-    if (data.id_member_followed <= 0) throw new InvalidArgumentError("La ID del miembro a seguir debe ser positiva.");
-    if (data.id_member_followed == data.id_member_follower) throw new InvalidArgumentError("No puedes seguir a ti mismo.");
+    if (data.id_member_followed == data.id_member_follower) throw new InvalidArgumentError("No puedes seguirte a ti mismo.");
 
     const response = await followRepository.follow(data);
     return response;
 }
 
 const unfollow = async (data: {
-    id_member_follower: number;
-    id_member_followed: number;
+    id_member_follower: string;
+    id_member_followed: string;
 }) => {
-    if (data.id_member_followed <= 0) throw new InvalidArgumentError("La ID del miembro a dejar de seguir debe ser positiva.");
     if (data.id_member_followed == data.id_member_follower) throw new InvalidArgumentError("No puedes dejar de seguirte a ti mismo.");
 
     const response = await followRepository.unfollow(data);

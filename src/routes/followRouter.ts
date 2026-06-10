@@ -4,9 +4,9 @@ import { followController } from "../controllers/followController";
 
 const router: Router = Router();
 
-router.post('/member/:id_member(\\d+)', Authorization.Everyone, followController.follow);
+router.post('/member/:id', Authorization.Everyone, followController.follow);
 
-router.delete('/member/:id_member(\\d+)', Authorization.Everyone, followController.unfollow);
+router.delete('/member/:id', Authorization.Everyone, followController.unfollow);
 
 router.get('/', Authorization.Everyone, followController.get);
 

@@ -98,19 +98,19 @@ export default class CommentsView extends AbstractView {
 
             this.creator = new PostCreator({
                 alert: '¡Respuesta enviada!',
-                target_id: this.posts[this.i].id,
-                title: `Responder a @${this.posts[this.i].creator.username}`,
+                target_id: this.posts[this.i]._id,
+                title: `Responder a @${this.posts[this.i].author.username}`,
                 type: 'reply'
             });
 
             this.creator.updateName(window.app.member.name);
-            this.creator.updateIcon(window.app.member.icon_url);
+            this.creator.updateIcon(window.app.member.icon.url);
 
             this.replyCreatorContainer.append(this.creator);
 
             this.creator.onSuccess((response) => {
                 this.posts[this.i].element.footer.increaseRepliesCount();
-                this.posts[this.i].comments_count = parseInt(this.posts[this.i].comments_count) + 1;
+                this.posts[this.i].comment_count = parseInt(this.posts[this.i].comment_count) + 1;
                 PostsManager.Update(this.posts[this.i]);
                 this.posts[this.i].replies.offset += 1;
                 this.posts[this.i].replies.container.prepend(response);
@@ -118,7 +118,10 @@ export default class CommentsView extends AbstractView {
 
             if (!this.posts[this.i].replies.cooldown) {
                 this.posts[this.i].replies.cooldown = true;
-                const replies = await postService.getReplies({ id: this.posts[this.i].id, offset: 0 });
+                const replies = await postService.get({ 
+                    type: 'reply',
+                    targetPublicationId: this.posts[this.i]._id, 
+                });
                 this.posts[this.i].replies.container.clear();
                 for (const pr of replies) {
                     this.posts[this.i].replies.container.append(pr);
@@ -134,8 +137,8 @@ export default class CommentsView extends AbstractView {
 
             if (!this.posts[this.i].cooldown) {
                 this.posts[this.i].cooldown = true;
-                const updatedPost = await postService.getById({ id: this.params.id_post });
-                PostsManager.Update(updatedPost);
+                const updatedPost = await postService.get({ _id: this.params.id_post });
+                PostsManager.Update(updatedPost[0]);
                 let pIndex = this.i;
                 setTimeout(() => {
                     this.posts[pIndex].cooldown = false;
@@ -154,7 +157,7 @@ export default class CommentsView extends AbstractView {
             let post = PostsManager.FindById(this.params.id_post);
 
             if (!post) {
-                post = await postService.getById({ id: this.params.id_post });
+                post = (await postService.get({ _id: this.params.id_post }))[0];
             } else {
                 post = post.data;
             };
@@ -172,22 +175,22 @@ export default class CommentsView extends AbstractView {
                 thread = PostsManager.GetThread(px);
 
                 if (thread.length <= 0) {
-                    thread = await postService.getThread({ id: this.params.id_post, offset: 0 });
+                    thread = await postService.get({ rootPublicationId: post.root_publication_id });
                 } else {
                     thread = thread.map(pi => pi.data);
-                }
+                };
 
                 for (const pt of thread) {
                     threadContainer.prepend(pt);
-                }
-            }
+                };
+            };
     
             repliedLoader.remove();
             this.repliedPosts.append(threadContainer.render());
     
             const repliesContainer = new PostsContainer();
 
-            const replies = await postService.getReplies({ id: this.params.id_post, offset: 0 });
+            const replies = await postService.get({ targetPublicationId: this.params.id_post, type: 'reply' });
             for (const pr of replies) {
                 repliesContainer.append(pr);
             }
@@ -217,19 +220,19 @@ export default class CommentsView extends AbstractView {
 
             this.creator = new PostCreator({
                 alert: '¡Respuesta enviada!',
-                target_id: this.posts[this.i].id,
+                target_id: this.posts[this.i]._id,
                 title: `Responder a @${this.posts[this.i].creator.username}`,
                 type: 'reply'
             });
 
             this.creator.updateName(window.app.member.name);
-            this.creator.updateIcon(window.app.member.icon_url);
+            this.creator.updateIcon(window.app.member.icon.url);
 
             this.replyCreatorContainer.append(this.creator);
 
             this.creator.onSuccess((response) => {
                 this.posts[this.i].element.footer.increaseRepliesCount();
-                this.posts[this.i].comments_count = parseInt(this.posts[this.i].comments_count) + 1;
+                this.posts[this.i].comment_count = parseInt(this.posts[this.i].comment_count) + 1;
                 PostsManager.Update(this.posts[this.i]);
                 this.posts[this.i].replies.offset += 1;
                 this.posts[this.i].replies.container.prepend(response);
@@ -258,7 +261,7 @@ export default class CommentsView extends AbstractView {
         const threadLoader = new SpinnerLoader({ size: 'medium' });
         this.repliedPosts.append(threadLoader.render());
 
-        const thread = await postService.getThread({ id: this.params.id_post, offset: this.posts[this.i].thread.offset });
+        const thread = await postService.get({ rootPublicationId: this.posts[this.i].root_publication_id });
 
         threadLoader.remove();
 
@@ -284,7 +287,7 @@ export default class CommentsView extends AbstractView {
         const spinner = new Spinner();
         this.repliesPosts.append(spinner);
 
-        const replies = await postService.getReplies({ id: this.params.id_post, offset: this.posts[this.i].replies.offset });
+        const replies = await postService.getReplies({ targetPublicationId: this.params.id_post, type: 'reply' });
         
         spinner.remove();
 

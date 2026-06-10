@@ -9,14 +9,14 @@ export default async function Get (data: {
     try {
         return await Postgres.query()`
             SELECT
-                s.date,
+                s.created_at,
                 s.ip,
                 s.platform,
                 s.token = ${data.token} AS actual
             FROM
                 session s
             WHERE
-                s.member_id = ${data.member.id}
+                s.oomfy_id = ${data.member.id}
         `;
     } catch (error) {
         if (error instanceof GenericError) throw error;

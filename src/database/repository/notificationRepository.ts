@@ -9,6 +9,7 @@ const read = async (data: {
     id_member: number;
 }) => {
     try {
+        return [];
         const response = await Postgres.query()`
             UPDATE
                 notification

@@ -18,7 +18,7 @@ export default async function Logout (data: {
                 DELETE FROM
                     session
                 WHERE
-                    member_id = ${member.id} AND
+                    oomfy_id = ${member.id} AND
                     token = ${data.token};
             `);
         });

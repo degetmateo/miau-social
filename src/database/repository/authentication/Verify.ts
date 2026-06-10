@@ -7,7 +7,7 @@ import JWT from "../../../helpers/JWT";
 import Postgres from "../../Postgres";
 
 export default async function Verify (data: {
-    id: number;
+    id: string;
     email: string;
     username: string;
     role: string;
@@ -76,7 +76,7 @@ export default async function Verify (data: {
                     session (
                         id,
                         oomfy_id,
-                        date,
+                        created_at,
                         ip,
                         platform,
                         token

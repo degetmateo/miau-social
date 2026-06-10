@@ -52,7 +52,7 @@ class Post extends HTMLElement {
             if (e.target.closest('.quote')) return;
             if (e.target.closest('.link')) return;
             if (e.target.closest('.media-container-image')) return;
-            if (!this.isSelectingText) return router.navigateTo('/post/'+this.data.id+'/comments');
+            if (!this.isSelectingText) return router.navigateTo('/publication/'+this.data._id);
         }
     };
 

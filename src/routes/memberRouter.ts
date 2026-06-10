@@ -6,6 +6,7 @@ import Multer from "../middlewares/Multer";
 const router: Router = Router();
 
 router.get('/:username', Authorization.Everyone, memberController.getByUsername);
+
 router.post('/update/name', Authorization.Everyone, memberController.updateName);
 router.post('/update/bio', Authorization.Everyone, memberController.updateBio);
 

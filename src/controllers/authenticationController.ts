@@ -2,12 +2,9 @@ import { Request, Response } from "express"
 import { ResponseError, ResponseOk, SetRefreshToken } from "../helpers/ControllerResponse";
 import { RESPONSES } from "../static/responses";
 import { authenticationService } from "../services/authenticationService";
-import UnauthorizedError from "../errors/UnauthorizedError";
 
 const authenticate = async (req: Request, res: Response) => {
     try {
-                throw new UnauthorizedError('Actualmente nos encontramos en mantenimiento. Inténtalo de nuevo más tarde.');
-
         const data = await authenticationService.authenticate({
             token: req.cookies['refresh_token'] as string
         });
@@ -23,8 +20,6 @@ const authenticate = async (req: Request, res: Response) => {
 
 const refreshToken = async (req: Request, res: Response) => {
     try {
-                throw new UnauthorizedError('Actualmente nos encontramos en mantenimiento. Inténtalo de nuevo más tarde.');
-
         const data = await authenticationService.refreshToken({
             token: req.cookies['refresh_token'] as string
         });
@@ -38,8 +33,6 @@ const refreshToken = async (req: Request, res: Response) => {
 
 const signin = async (req: Request, res: Response) => {
     try {
-        throw new UnauthorizedError('Actualmente nos encontramos en mantenimiento. Inténtalo de nuevo más tarde.');
-
         const data = await authenticationService.signin({
             username: req.body.username as string,
             password: req.body.password as string,
@@ -59,8 +52,6 @@ const signin = async (req: Request, res: Response) => {
 
 const signup = async (req: Request, res: Response) => {
     try {
-        throw new UnauthorizedError('Actualmente nos encontramos en mantenimiento. Inténtalo más tarde.');
-
         const response = await authenticationService.signup({
             email: req.body.email as string,
             username: req.body.username as string,
@@ -78,8 +69,6 @@ const signup = async (req: Request, res: Response) => {
 
 const verify = async (req: Request, res: Response) => {
     try {
-                throw new UnauthorizedError('Actualmente nos encontramos en mantenimiento. Inténtalo de nuevo más tarde.');
-
         const data = await authenticationService.verify({
             token: req.body.token as string,
             ip: req.ip || req.socket.remoteAddress,
@@ -97,8 +86,6 @@ const verify = async (req: Request, res: Response) => {
 
 const activate = async (req: Request, res: Response) => {
     try {
-                throw new UnauthorizedError('Actualmente nos encontramos en mantenimiento. Inténtalo de nuevo más tarde.');
-
         const response = await authenticationService.activate({
             username: req.body.username as string,
             email: req.body.email as string,
@@ -115,8 +102,6 @@ const activate = async (req: Request, res: Response) => {
 
 const recoverPassword = async (req: Request, res: Response) => {
     try {
-                throw new UnauthorizedError('Actualmente nos encontramos en mantenimiento. Inténtalo de nuevo más tarde.');
-
         const response = await authenticationService.recoverPassword({
             token: req.body.token as string,
             username: req.body.username as string
@@ -131,8 +116,6 @@ const recoverPassword = async (req: Request, res: Response) => {
 
 const resetPassword = async (req: Request, res: Response) => {
     try {
-                throw new UnauthorizedError('Actualmente nos encontramos en mantenimiento. Inténtalo de nuevo más tarde.');
-
         const response = await authenticationService.resetPassword({
             grecaptcha_token: req.body.grecaptcha_token as string,
             token: req.body.token as string,
@@ -148,8 +131,6 @@ const resetPassword = async (req: Request, res: Response) => {
 
 const recoverUsername = async (req: Request, res: Response) => {
     try {
-                throw new UnauthorizedError('Actualmente nos encontramos en mantenimiento. Inténtalo de nuevo más tarde.');
-
         const response = await authenticationService.recoverUsername({
             token: req.body.token as string,
             email: req.body.email as string
@@ -164,7 +145,6 @@ const recoverUsername = async (req: Request, res: Response) => {
 
 const logout = async (req: Request, res: Response) => {
     try {
-        
         const data = await authenticationService.logout({
             token: req.cookies['refresh_token'] as string
         });

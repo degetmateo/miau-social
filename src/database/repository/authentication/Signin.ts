@@ -1,11 +1,13 @@
 const uuid = require('uuid');
 
+import { UUID } from "mongodb";
 import DatabaseError from "../../../errors/DatabaseError";
 import GenericError from "../../../errors/GenericError";
 import IsPendingError from "../../../errors/IsPendingError";
 import UnauthorizedError from "../../../errors/UnauthorizedError";
 import JWT from "../../../helpers/JWT";
 import Password from "../../../helpers/Password";
+import { mongo } from "../../mongo/mongodb";
 import Postgres from "../../Postgres";
 
 export default async function Signin (data: {
@@ -22,18 +24,9 @@ export default async function Signin (data: {
                     m.id,
                     m.username,
                     m.password,
-                    m.name,
-                    m.role,
-                    m.email,
-                    i.url AS icon_url,
-                    b.url AS banner_url,
-                    m.status
+                    m.email
                 FROM
                     oomfy m
-                LEFT JOIN
-                    icon i ON i.id = m.id
-                LEFT JOIN
-                    banner b ON b.id = b.id
                 WHERE
                     m.username = ${data.username};
             `)[0];
@@ -45,10 +38,17 @@ export default async function Signin (data: {
             delete member.password;
             delete member.status;
 
+            const membersCollection = mongo.collection('members');
+            const publicMember = await membersCollection.findOne({ _id: new UUID(member.id) as any });
+
+            delete publicMember.icon.delete_url;
+            delete publicMember.banner.delete_url;
+
             const REFRESH_TOKEN = await JWT.Generate({
                 id: member.id,
+                name: publicMember.name,
                 username: member.username,
-                role: member.role,
+                role: publicMember.role,
                 email: member.email
             }, "30d");
 
@@ -77,12 +77,11 @@ export default async function Signin (data: {
                 id: member.id,
                 name: member.name,
                 username: member.username,
-                icon_url: member.icon_url,
                 role: member.role,
                 email: member.email
             }, "15m");
 
-            response = member;
+            response = publicMember;
             response.token = ACCESS_TOKEN
             response.refresh_token = REFRESH_TOKEN;
         });

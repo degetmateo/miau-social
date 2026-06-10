@@ -1,8 +1,10 @@
+import { mongo } from "../../mongo/mongodb";
 import DatabaseError from "../../../errors/DatabaseError";
 import GenericError from "../../../errors/GenericError";
 import UnauthorizedError from "../../../errors/UnauthorizedError";
 import JWT from "../../../helpers/JWT";
 import Postgres from "../../Postgres";
+import { UUID } from "mongodb";
 
 export default async function Authenticate (data: {
     token: string;
@@ -32,15 +34,12 @@ export default async function Authenticate (data: {
                     o.name,
                     o.username,
                     o.role,
-                    o.email
-                    i.url as icon_url,
-                    b.url as banner_url
+                    o.email,
+                    s.id as session_id
                 FROM
                     oomfy o
                 LEFT JOIN
-                    icon i ON i.id = o.id
-                LEFT JOIN
-                    banner b ON b.id = o.id
+                    session s ON s.oomfy_id = o.id AND s.token = ${data.token}
                 WHERE
                     o.id = ${memberData.id} AND
                     o.username = ${memberData.username} AND
@@ -48,18 +47,7 @@ export default async function Authenticate (data: {
             `)[0];
 
             if (!member) throw new UnauthorizedError("Ha ocurrido un error de autorización.");
- 
-            const session = (await transaction`
-                SELECT
-                    id
-                FROM
-                    session
-                WHERE
-                    oomfy_id = ${member.id} AND
-                    token = ${data.token};
-            `)[0];
-
-            if (!session) throw new UnauthorizedError("Expiró la sesión.", "EXPIRED_SESSION_au");
+            if (!member.session_id) throw new UnauthorizedError("Expiró la sesión.", "EXPIRED_SESSION_au");
 
             const REFRESH_TOKEN = await JWT.Generate({
                 id: member.id,
@@ -74,19 +62,25 @@ export default async function Authenticate (data: {
                 SET
                     token = ${REFRESH_TOKEN}
                 WHERE
-                    id = ${session.id};
+                    id = ${member.session_id};
             `);
+
+            const membersCollection = mongo.collection('members');
+            const publicMember = await membersCollection.findOne({ _id: new UUID(member.id) as any });
 
             const ACCESS_TOKEN = await JWT.Generate({
                 id: member.id,
                 name: member.name,
                 username: member.username,
-                icon_url: member.icon_url,
+                icon_url: publicMember.icon.url,
                 role: member.role,
                 email: member.email
             }, "15m");
 
-            response = member;
+            delete publicMember.icon.delete_url;
+            delete publicMember.banner.delete_url;
+
+            response = publicMember;
             response.token = ACCESS_TOKEN;
             response.refresh_token = REFRESH_TOKEN;
         });

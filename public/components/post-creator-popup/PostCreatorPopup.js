@@ -56,7 +56,7 @@ export default class PostCreatorPopup extends Observer {
             type: data.type
         });
 
-        this.creator.updateIcon(window.app.member.icon_url);
+        this.creator.updateIcon(window.app.member.icon.url);
         this.creator.updateName(window.app.member.name);
         this.creator.onSuccess((post) => {
             if (this.data.onSuccess) this.data.onSuccess(post);

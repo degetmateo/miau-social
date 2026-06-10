@@ -62,12 +62,12 @@ export default class extends AbstractView {
                 this.members[this.i].offset += 20;
                 let posts;
                 try {
-                    posts = await postService.get({ 
-                        username: this.params.username, 
-                        offset: this.members[this.i].offset,
-                        replies: false,
-                        shared: true
+                    posts = await postService.get({
+                        olderPublicationId: this.members[this.i].olderPublication ? this.members[this.i].olderPublication._id : null,
+                        username: this.params.username
                     });
+                    
+                    this.members[this.i].olderPublication = posts[posts.length - 1];
 
                     if (posts.length <= 0) {
                         this.members[this.i].fetching = false;
@@ -124,10 +124,11 @@ export default class extends AbstractView {
 
             let member;
             try {
-                member = await memberService.getByUsername({ username: this.params.username });
+                const res = await memberService.getByUsername({ username: this.params.username });
+                member = res[0];
             } catch (error) {
                 return new Alert(error.message);
-            }
+            };
 
             this.members[this.i] = {
                 ...member,
@@ -135,8 +136,9 @@ export default class extends AbstractView {
                 offset: this.members[this.i].offset,
                 scroll: this.members[this.i].scroll,
                 posts: this.members[this.i].posts,
-                profile: this.members[this.i].profile
-            }
+                profile: this.members[this.i].profile,
+                olderPublication: this.members[this.i].olderPublication
+            };
 
             this.members[this.i].profile.update(member);
             this.members[this.i].cooldown = true;
@@ -149,7 +151,8 @@ export default class extends AbstractView {
 
             let member;
             try {
-                member = await memberService.getByUsername({ username: this.params.username });
+                const res = await memberService.getByUsername({ username: this.params.username });
+                member = res[0];
             } catch (error) {
                 this.spinner.remove();
                 return new Alert(error.message);
@@ -171,15 +174,15 @@ export default class extends AbstractView {
 
             let posts;
             try {
-                posts = await postService.get({ 
-                    username: this.params.username, 
-                    offset: this.members[this.i].offset,
-                    replies: false,
-                    shared: true
+                posts = await postService.get({
+                    olderPublicationId: this.members[this.i].olderPublication ? this.members[this.i].olderPublication._id : null,
+                    username: this.params.username
                 });
                 if (posts.length <= 0) {
                     this.members[this.i].fetching = false;
                 };
+
+                this.members[this.i].olderPublication = posts[posts.length - 1];
             } catch (error) {
                 this.spinner.remove();
                 return new Alert(error.message);

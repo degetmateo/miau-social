@@ -175,7 +175,7 @@ class PostCreator extends HTMLElement {
         this.postButtonContainer.append(this.postButton);
 
         window.addEventListener('app-initialized', () => {
-            this.icon.style.backgroundImage = `url(${window.app.member.icon_url || URL_NO_IMAGE})`;
+            this.icon.style.backgroundImage = `url(${window.app.member.icon.url || URL_NO_IMAGE})`;
             this.memberName.textContent = window.app.member.name;
         });
     }
@@ -237,7 +237,7 @@ class PostCreator extends HTMLElement {
                 target_id: this.data.target_id,
                 spotify_url: spotifyValue
             });
-            console.log(response);
+
             this.response = response;
         } catch (error) {
             this.has_images = false;
@@ -255,7 +255,7 @@ class PostCreator extends HTMLElement {
         return new Alert(this.data.alert || '¡Publicación enviada!', { 
             error: false,
             onClick: () => {
-                router.navigateTo(`/post/${response.id}/comments`);
+                router.navigateTo(`/publication/${response._id}`);
             }
         });
     }

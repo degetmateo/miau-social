@@ -6,7 +6,7 @@ import { upvoteService } from "../services/upvoteService";
 const upvote = async (req: Request, res: Response) => {
     try {
         const response = await upvoteService.upvote({
-            id_member: req.member.id,
+            id_member: req.member.id as any,
             id_post: req.body.id_post
         });
 
@@ -20,7 +20,7 @@ const upvote = async (req: Request, res: Response) => {
 const downvote = async (req: Request, res: Response) => {
     try {
         const response = await upvoteService.downvote({
-            id_member: req.member.id,
+            id_member: req.member.id as any,
             id_post: req.body.id_post
         });
 

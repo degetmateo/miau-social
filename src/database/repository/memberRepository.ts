@@ -88,52 +88,52 @@ const getPrivateByUsername = async (data: {
 }
 
 const getByUsername = async (data: {
-    id_logged_member: number;
+    id_logged_member: string;
     username: string;
 }) => {
     try {
         const response = await Postgres.query()`
             SELECT 
-                m.id_member AS id,
-                m.username_member AS username,
-                m.name_member AS name,
-                m.role_member AS role,
-                m.bio_member AS bio,
-                m.date_creation_member AS created_at,
-                m.location AS location,
-                m.link AS link,
-                icon.url AS icon_url,
-                banner.url AS banner_url,
+                m.id,
+                m.username,
+                m.name,
+                m.role,
+                m.bio,
+                m.created_at,
+                m.location,
+                m.link,
+                i.url AS icon_url,
+                b.url AS banner_url,
                 (SELECT COUNT(*) FROM 
                     follow f 
                 WHERE
-                    f.id_member_followed = m.id_member) AS followers_count,
+                    f.oomfy_id_followed = m.id) AS followers_count,
                 (SELECT COUNT(*) FROM 
                     follow f 
                 WHERE
-                    f.id_member_follower = m.id_member) AS followed_count,
+                    f.oomfy_id_follower = m.id) AS followed_count,
                 EXISTS (
                     SELECT 1 FROM
                         follow f
                     WHERE 
-                        f.id_member_follower = ${data.id_logged_member} AND 
-                        f.id_member_followed = m.id_member
+                        f.oomfy_id_follower = ${data.id_logged_member} AND 
+                        f.oomfy_id_followed = m.id
                 ) as is_followed,
                 EXISTS (
                     SELECT 1 FROM
                         follow f
                     WHERE
-                        f.id_member_follower = m.id_member AND
-                        f.id_member_followed = ${data.id_logged_member}    
+                        f.oomfy_id_follower = m.id AND
+                        f.oomfy_id_followed = ${data.id_logged_member}    
                 ) as is_follower
             FROM
-                member m
+                oomfy m
             LEFT JOIN
-                image icon ON icon.member_id = m.id_member AND icon.type = 'icon'
+                icon i ON i.id = m.id
             LEFT JOIN
-                image banner ON banner.member_id = m.id_member AND banner.type = 'banner'
+                banner b ON b.id = m.id
             WHERE
-                m.username_member = ${data.username};
+                m.username = ${data.username};
         `;
 
         if (!response[0]) throw new NotFoundError("Este usuario no existe.");

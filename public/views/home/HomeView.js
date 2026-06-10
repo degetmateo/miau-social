@@ -60,7 +60,6 @@ export default class extends AbstractView {
         this.followingButton.textContent = 'Siguiendo';
         this.followingButton.classList.add('home-timeline-button');
         this.followingButton.onclick = () => this.changeTimeline('following');
-        this.timelineButtons.append(this.followingButton);
 
         this.updateTimelineButtons();
 
@@ -94,14 +93,14 @@ export default class extends AbstractView {
 
                 this.timeline.append(this.spinner);
     
-                const posts = this.timelineMode === 'global' ? 
-                    await postService.get({ offset: this.offset }) :
-                    await postService.getFollowing({ offset: this.offset });
+                const publications = await postService.get({ olderPublicationId: this.olderPublicationId, type: 'default' });
+                const olderPublication = publications[publications.length - 1];
+                if (olderPublication) this.olderPublicationId = olderPublication._id;
     
                 this.spinner.remove();
 
-                this.drawPosts(posts);
-                this.posts = [...this.posts, ...posts];
+                this.drawPosts(publications);
+                this.posts = [...this.posts, ...publications];
                 this.fetching = false;
             }
         });
@@ -136,7 +135,7 @@ export default class extends AbstractView {
         this.setView(this.view)
         this.nav.append(Nav);
 
-        this.creator.updateIcon(window.app.member.icon_url || URL_NO_IMAGE);
+        this.creator.updateIcon(window.app.member.icon.url || URL_NO_IMAGE);
         this.creator.updateName(window.app.member.name);
 
         if (this.firstTime) {
@@ -166,13 +165,7 @@ export default class extends AbstractView {
     }
 
     updateTimelineButtons () {
-        if (this.timelineMode === 'global') {
             this.globalButton.classList.add('home-timeline-button-active');
-            this.followingButton.classList.remove('home-timeline-button-active');
-        } else {
-            this.followingButton.classList.add('home-timeline-button-active');
-            this.globalButton.classList.remove('home-timeline-button-active');
-        }
     }
 
     setScroll (scroll) {
@@ -182,15 +175,14 @@ export default class extends AbstractView {
     async loadTimeline () {
         this.timeline.append(this.spinner);
 
-        const posts = this.timelineMode === 'global' ? 
-            await postService.get({ offset: this.offset }) :
-            await postService.getFollowing({ offset: this.offset });
+        const publications = await postService.get({ olderPublicationId: this.olderPublicationId, type: 'default' });
         
+        const olderPublication = publications[publications.length - 1];
+        if (olderPublication) this.olderPublicationId = olderPublication._id;
+
         this.spinner.remove();
-
-        this.drawPosts(posts);
-
-        this.posts = posts;
+        this.drawPosts(publications);
+        this.posts = publications;
     }
 
     drawPosts (posts) {

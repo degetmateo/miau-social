@@ -28,7 +28,7 @@ class PostHeader extends HTMLElement {
             this.sharedContainer.classList.add('post-shared-container');
             this.sharedContainer.onclick = (e) => {
                 e.stopPropagation();
-                router.navigateTo('/member/'+this.meta.creator.username);
+                router.navigateTo('/member/'+this.meta.author.username);
             };
             this.append(this.sharedContainer);
 
@@ -37,7 +37,7 @@ class PostHeader extends HTMLElement {
 
             this.sharedInfo = document.createElement('span');
             this.sharedInfo.classList.add('post-shared');
-            this.sharedInfo.textContent = 'Compartido por '+this.meta.creator.name;
+            this.sharedInfo.textContent = 'Compartido por '+this.meta.author.name;
             this.sharedContainer.append(this.sharedInfo);
         };
 
@@ -48,7 +48,7 @@ class PostHeader extends HTMLElement {
         this.icon = document.createElement('img');
         this.icon.classList.add('post-header-icon');
         this.icon.src = URL_NO_IMAGE;
-        this.icon.src = this.data.creator.icon_url || URL_NO_IMAGE;
+        this.icon.src = this.data.author.icon_url || URL_NO_IMAGE;
         this.icon.onerror = () => this.icon.src = URL_NO_IMAGE;
         this.icon.onclick = (e) => this.onIcon(e);
         this.signContainer.append(this.icon);
@@ -67,11 +67,11 @@ class PostHeader extends HTMLElement {
 
         this.name = document.createElement('span');
         this.name.classList.add('post-header-signature-top-name');
-        this.name.textContent = this.data.creator.name;
+        this.name.textContent = this.data.author.name;
         this.name.onclick = (e) => this.onName(e);
         this.signatureTopLeft.append(this.name);
         
-        this.roleC = new MemberRole({ role: this.data.creator.role, text: this.data.creator.role });
+        this.roleC = new MemberRole({ role: this.data.author.role, text: this.data.author.role });
         this.signatureTopLeft.append(this.roleC);
 
         this.buttonContainer = document.createElement('div');
@@ -89,7 +89,7 @@ class PostHeader extends HTMLElement {
 
         this.username = document.createElement('span');
         this.username.classList.add('post-header-signature-bottom-username');
-        this.username.textContent = '@' + this.data.creator.username;
+        this.username.textContent = '@' + this.data.author.username;
         this.signatureBottom.append(this.username);
 
         for (let i = 1; i <= 3; i++) {
@@ -101,18 +101,18 @@ class PostHeader extends HTMLElement {
 
     onIcon (e) {
         e.stopPropagation();
-        router.navigateTo('/member/'+this.data.creator.username);
+        router.navigateTo('/member/'+this.data.author.username);
     };
 
     onName (e) {
         e.stopPropagation();
-        router.navigateTo('/member/'+this.data.creator.username);
+        router.navigateTo('/member/'+this.data.author.username);
     };
 
     onOptions (e) { 
         e.stopPropagation();
 
-        if (window.app.member.id == this.data.creator.id) {
+        if (window.app.member.id == this.data.author.id) {
             const popup = new Popup();
             
             popup.CreateButton("Reportar Publicación", () => {
@@ -128,7 +128,7 @@ class PostHeader extends HTMLElement {
                     popup.delete();
 
                     try {
-                        await postService.remove({ id: this.data.id });
+                        await postService.remove({ id: this.data._id });
                     } catch (error) {
                         return new Alert(error.message, { error: true });  
                     };
@@ -151,7 +151,7 @@ class PostHeader extends HTMLElement {
                     new Alert("Espere...");
 
                     try {
-                        await postService.removeAdmin({ id: this.data.id });
+                        await postService.removeAdmin({ id: this.data._id });
                     } catch (error) {
                         return new Alert(error.message, { error: true });  
                     };
@@ -177,9 +177,9 @@ class PostHeader extends HTMLElement {
         if (!data) return;
         this.data = data;
 
-        this.name.textContent = this.data.creator.name;
-        this.username.textContent = '@' + this.data.creator.username;
-        this.icon.src = this.data.creator.icon_url || URL_NO_IMAGE;
+        this.name.textContent = this.data.author.name;
+        this.username.textContent = '@' + this.data.author.username;
+        this.icon.src = this.data.author.icon_url || URL_NO_IMAGE;
     }
 };
 

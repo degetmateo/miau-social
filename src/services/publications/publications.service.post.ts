@@ -1,18 +1,18 @@
-import { postRepository } from "../../database/repository/postRepository";
+import { publicationsRepository } from "../../database/mongo/repositories/publications/publications.repository";
 import InvalidArgumentError from "../../errors/InvalidArgumentError";
 import ImgBB from "../../helpers/ImgBB";
 import Spotify from "../../helpers/Spotify";
 import { PARAMETERS } from "../../static/parameters";
 
-export default async function Post (data: {
-    id_member: number;
+export default async (data: {
+    oomfyId: string;
     content: string;
     tenor: { src: string; index: number }[];
     images: { buffer: Express.Multer.File['buffer'], index: number }[];
     type: 'default' | 'reply' | 'quote';
-    target_id: number;
+    target_id: string;
     spotify_url: string | null;
-}) {
+}) => {
     if (data.content) data.content = data.content.trim();
     const isEmpty = 
     (!data.content || data.content.length <= 0) && 
@@ -30,7 +30,12 @@ export default async function Post (data: {
     }
 
     if (!['default', 'reply', 'quote', 'shared'].includes(data.type)) throw new InvalidArgumentError('Tipo de publicación inválida.');
-    if (data.target_id && data.target_id < 0) throw new InvalidArgumentError('TARGET_ID no puede ser negativa.');
+
+    if (['reply', 'quote', 'shared'].includes(data.type)) {
+        if (!data.target_id) {
+            throw new InvalidArgumentError('TARGET_PUBLICATION_ID_NOT_FOUND');
+        };
+    };
 
     let checkedImages: {
         url: string;
@@ -62,18 +67,17 @@ export default async function Post (data: {
 
     checkedImages = checkedImages.sort((a, b) => a.index - b.index);
 
-
-    let spotifyResponse = null;
+    let spotifyResponse: { url: string; title: string; iframe_url: string; thumbnail_url: string; } = null;
     if (data.spotify_url) {
         spotifyResponse = await Spotify.Fetch(data.spotify_url);
     };
 
-    const response = await postRepository.post({
-        id_member: data.id_member,
+    const response = await publicationsRepository.post({
+        oomfyId: data.oomfyId,
         content: data.content,
         images: checkedImages,
         type: data.type,
-        target_id: data.target_id,
+        targetPublicationId: data.target_id,
         spotify: spotifyResponse
     });
 

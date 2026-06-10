@@ -73,7 +73,7 @@ class PostFooter extends HTMLElement {
 
         this.upvoteCount = document.createElement('span');
         this.upvoteCount.classList.add('post-footer-interaction-count');
-        this.upvoteCount.textContent = this.data.upvotes_count || 0;
+        this.upvoteCount.textContent = this.data.upvote_count || 0;
         this.upvoteContainer.append(this.upvoteCount);
 
         this.shareContainer = document.createElement('div');
@@ -88,7 +88,7 @@ class PostFooter extends HTMLElement {
 
         this.shareCount = document.createElement('span');
         this.shareCount.classList.add('post-footer-interaction-count');
-        this.shareCount.textContent = this.data.shared_count || 0;
+        this.shareCount.textContent = this.data.share_count || 0;
         this.shareContainer.append(this.shareCount);
 
         this.quoteContainer = document.createElement('div');
@@ -103,7 +103,7 @@ class PostFooter extends HTMLElement {
 
         this.quoteCount = document.createElement('span');
         this.quoteCount.classList.add('post-footer-interaction-count');
-        this.quoteCount.textContent = this.data.quotes_count || 0;
+        this.quoteCount.textContent = this.data.quote_count || 0;
         this.quoteContainer.append(this.quoteCount);
 
         this.repliesContainer = document.createElement('div');
@@ -116,7 +116,7 @@ class PostFooter extends HTMLElement {
 
         this.repliesCount = document.createElement('span');
         this.repliesCount.classList.add('post-footer-interaction-count');
-        this.repliesCount.textContent = this.data.comments_count || 0;
+        this.repliesCount.textContent = this.data.comment_count || 0;
         this.repliesContainer.append(this.repliesCount);
 
         this.bookmark = document.createElement('div');
@@ -130,7 +130,7 @@ class PostFooter extends HTMLElement {
 
         this.bookmarkCount = document.createElement('span');
         this.bookmarkCount.classList.add('post-footer-interaction-count');
-        this.bookmarkCount.textContent = this.data.bookmarks_count || 0;
+        this.bookmarkCount.textContent = this.data.bookmark_count || 0;
         this.bookmark.append(this.bookmarkCount);
 
         this.dateContainer = document.createElement('div');
@@ -142,7 +142,7 @@ class PostFooter extends HTMLElement {
         this.exactDate = document.createElement('span');
         this.exactDate.classList.add('post-footer-exact-date');
 
-        const date = new Date(this.data.date);
+        const date = new Date(this.data.created_at);
         const dateText = isNotThisYear(date) ?
             date.toLocaleDateString('es-AR', {
                 weekday: 'short',
@@ -165,7 +165,7 @@ class PostFooter extends HTMLElement {
 
         this.relativeDate = document.createElement('span');
         this.relativeDate.classList.add('post-footer-relative-date');
-        this.relativeDate.textContent = `(${getTimeElapsedSince(new Date(this.data.date))})`;
+        this.relativeDate.textContent = `(${getTimeElapsedSince(new Date(this.data.created_at))})`;
         this.dateContainer.append(this.relativeDate);
     };
 
@@ -207,12 +207,12 @@ class PostFooter extends HTMLElement {
     }
 
     increaseUpvotesCount () {
-        this.data.upvotes_count = parseInt(this.data.upvotes_count || 0) + 1;
+        this.data.upvotes_count = parseInt(this.data.upvote_count || 0) + 1;
         this.upvoteCount.textContent = this.data.upvotes_count;
     }
 
     decreaseUpvotesCount () {
-        this.data.upvotes_count = parseInt(this.data.upvotes_count || 1) - 1;
+        this.data.upvotes_count = parseInt(this.data.upvote_count || 1) - 1;
         this.upvoteCount.textContent = this.data.upvotes_count;
     }
     
@@ -258,7 +258,7 @@ class PostFooter extends HTMLElement {
         this.decreaseSharesCount();
         PostsManager.Update(this.data);
 
-        if (this.meta.type == 'shared' && this.meta.creator.id == window.app.member.id) {
+        if (this.meta.type == 'shared' && this.meta.author.id == window.app.member.id) {
             this.remove();
         };
 
@@ -284,13 +284,13 @@ class PostFooter extends HTMLElement {
     }
 
     increaseSharesCount () {
-        this.data.shared_count = parseInt(this.data.shared_count || 0) + 1;
-        this.shareCount.textContent = this.data.shared_count;
+        this.data.share_count = parseInt(this.data.share_count || 0) + 1;
+        this.shareCount.textContent = this.data.share_count;
     }
 
     decreaseSharesCount () {
-        this.data.shared_count = parseInt(this.data.shared_count || 1) - 1;
-        this.shareCount.textContent = this.data.shared_count;
+        this.data.share_count = parseInt(this.data.share_count || 1) - 1;
+        this.shareCount.textContent = this.data.share_count;
     }
 
     onQuote (e) {
@@ -298,8 +298,8 @@ class PostFooter extends HTMLElement {
 
         new PostCreatorPopup({
             alert: '¡Cita enviada!',
-            target_post_id: this.data.id,
-            title: 'Cita a @'+this.data.creator.username,
+            target_post_id: this.data._id,
+            title: 'Cita a @'+this.data.author.username,
             type: 'quote',
             onSuccess: (post) => {
                 this.increaseQuotesCount();
@@ -310,8 +310,8 @@ class PostFooter extends HTMLElement {
     }
 
     increaseQuotesCount () {
-        this.data.quotes_count = parseInt(this.data.quotes_count || 0) + 1;
-        this.quoteCount.textContent = this.data.quotes_count;
+        this.data.quote_count = parseInt(this.data.quote_count || 0) + 1;
+        this.quoteCount.textContent = this.data.quote_count;
     }
 
     setQuoteIcon (icon) {
@@ -328,24 +328,24 @@ class PostFooter extends HTMLElement {
 
     onReply (e) {
         e.stopPropagation();
-        router.navigateTo('/post/'+this.data.id+'/comments');
+        router.navigateTo('/post/'+this.data._id+'/comments');
     }
 
     increaseRepliesCount () {
-        this.data.comments_count = parseInt(this.data.comments_count || 0) + 1;
-        this.repliesCount.textContent = this.data.comments_count;
+        this.data.comment_count = parseInt(this.data.comment_count || 0) + 1;
+        this.repliesCount.textContent = this.data.comment_count;
     };
 
     update (data) {
-        this.relativeDate.textContent = `(${getTimeElapsedSince(new Date(this.data.date))})`;
+        this.relativeDate.textContent = `(${getTimeElapsedSince(new Date(this.data.created_at))})`;
 
         if (!data) return;
         this.data = data;
 
-        this.upvoteCount.textContent = this.data.upvotes_count || 0;
-        this.shareCount.textContent = this.data.shared_count || 0;
-        this.quoteCount.textContent = this.data.quotes_count || 0;
-        this.repliesCount.textContent = this.data.comments_count || 0;
+        this.upvoteCount.textContent = this.data.upvote_count || 0;
+        this.shareCount.textContent = this.data.share_count || 0;
+        this.quoteCount.textContent = this.data.quote_count || 0;
+        this.repliesCount.textContent = this.data.comment_count || 0;
 
         this.data.is_upvoted ?
             this.setUpvoteIcon('on') :

@@ -1,13 +1,26 @@
 import Service from "../modules/Service.js";
 
+const publicationAPI = '/api/publication';
+
 const get = async (data = {
-    username,
-    offset,
-    replies,
-    shared
+    _id,
+    authorUsername,
+    olderPublicationId,
+    targetPublicationId,
+    rootPublicationId,
+    type
 }) => {
     try {
-        return await Service.Fetch(`/api/post?${data.username ? 'username='+data.username : ''}${data.offset ? '&offset='+data.offset : '&offset=0'}${data.replies ? '&replies='+data.replies : ''}${data.shared ? '&shared='+data.shared : ''}`, {
+        const RESOURCE_LOCATOR = 
+            publicationAPI + '?' +
+            (data._id ? ('_id='+data._id+'&') : ('')) +
+            (data.olderPublicationId ? ('olderPublicationId='+data.olderPublicationId+'&') : ('')) +
+            (data.username ? ('authorUsername='+data.username+'&') : ('')) +
+            (data.targetPublicationId ? ('targetPublicationId='+data.targetPublicationId+'&') : ('')) +
+            (data.rootPublicationId ? ('rootPublicationId='+data.rootPublicationId+'&') : ('')) +
+            (data.type ? ('type='+data.type+'&') : (''));
+
+        return await Service.Fetch(RESOURCE_LOCATOR, {
             method: "GET",
         });
     } catch (error) {
@@ -20,7 +33,7 @@ const getFollowing = async (data = {
     offset: 0
 }) => {
     try {
-        return await Service.Fetch(`/api/post/following?offset=${data.offset}`, {
+        return await Service.Fetch(`${publicationAPI}/following?offset=${data.offset}`, {
             method: "GET",
         });
     } catch (error) {
@@ -57,7 +70,7 @@ const post = async (data = {
 
         if (data.target_id) form.append('target_id', data.target_id);
 
-        return await Service.Fetch(`/api/post`, {
+        return await Service.Fetch(publicationAPI, {
             method: 'POST',
             body: form
         });
@@ -71,9 +84,13 @@ const getById = async (data = {
     id
 }) => {
     try {
-        return await Service.Fetch(`/api/post/`+data.id, {
-            method: "GET"
-        });
+        return (await get({
+            _id: data.id
+        }))[0];
+
+        // return await Service.Fetch(`/api/post/`+data.id, {
+        //     method: "GET"
+        // });
     } catch (error) {
         console.error(error);
         throw error;
@@ -85,8 +102,13 @@ const getReplies = async (data = {
     offset: 0
 }) => {
     try {
-        return await Service.Fetch(`/api/post/${data.id}/replies?offset=${data.offset}`, {
-            method: "GET"
+        // return await Service.Fetch(`/api/post/${data.id}/replies?offset=${data.offset}`, {
+        //     method: "GET"
+        // });
+
+        return await get({
+            parentPublicationId: data.id,
+            olderPublicationId: null
         });
     } catch (error) {
         console.error(error);
@@ -98,7 +120,7 @@ const getThread = async (data = {
     id,
     offset: 0
 }) => {
-    return await Service.Fetch(`/api/post/${data.id}/thread?offset=${data.offset}`, {
+    return await Service.Fetch(`${publicationAPI}/${data.id}/thread?offset=${data.offset}`, {
         method: "GET"
     });
 };
@@ -106,7 +128,7 @@ const getThread = async (data = {
 const remove = async (data = {
     id
 }) => {
-    return await Service.Fetch(`/api/post/${data.id}`, {
+    return await Service.Fetch(`${publicationAPI}/${data.id}`, {
         method: "DELETE"
     });
 };
@@ -114,7 +136,7 @@ const remove = async (data = {
 const removeAdmin = async (data = {
     id
 }) => {
-    return await Service.Fetch(`/api/post/${data.id}/admin`, {
+    return await Service.Fetch(`${publicationAPI}/${data.id}/admin`, {
         method: "DELETE"
     });
 };

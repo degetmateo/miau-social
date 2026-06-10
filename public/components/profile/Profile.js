@@ -31,7 +31,7 @@ export default class Profile {
         this.banner.classList.add('profile-banner');
         this.topContainer.appendChild(this.banner);
 
-        this.banner.style.backgroundImage = this.member.banner_url ? `url(${this.member.banner_url})` : 'none';
+        this.banner.style.backgroundImage = this.member.banner.url ? `url(${this.member.banner.url})` : 'none';
 
         this.topContainer.onclick = () => {
             this.member.banner_url ?
@@ -53,13 +53,13 @@ export default class Profile {
         this.icon.classList.add('profile-icon');
         this.iconContainer.appendChild(this.icon);
 
-        this.icon.src = this.member.icon_url ?
-            this.member.icon_url : 
+        this.icon.src = this.member.icon.url ?
+            this.member.icon.url : 
             URL_NO_IMAGE;
 
         this.icon.onclick = () => {
-            this.member.icon_url ?
-                new ImageViewer({ url: this.member.icon_url }) :
+            this.member.icon.url ?
+                new ImageViewer({ url: this.member.icon.url }) :
                 null;
         }
 
@@ -191,8 +191,8 @@ export default class Profile {
         this.followersContainer.appendChild(this.followersText);
 
         this.followedNumber.textContent = this.member.followed_count;
-        this.followersNumber.textContent = this.member.followers_count;
-        this.banner.style.backgroundImage = this.member.banner_url ? `url(${this.member.banner_url})` : 'none';
+        this.followersNumber.textContent = this.member.follower_count;
+        this.banner.style.backgroundImage = this.member.banner.url ? `url(${this.member.banner.url})` : 'none';
 
         this.followedContainer.onclick = () => {
             router.navigateTo(`/member/${this.member.username}/followed`);
@@ -202,7 +202,7 @@ export default class Profile {
             router.navigateTo(`/member/${this.member.username}/followers`);
         }
 
-        loadImage(this.member.icon_url)
+        loadImage(this.member.icon.url)
             .catch(() => {
                 this.icon.src = URL_NO_IMAGE;
             });
@@ -210,14 +210,14 @@ export default class Profile {
 
     update (member) {
         this.member = member;
-        this.setIcon(member.icon_url);
-        this.setBanner(member.banner_url);
+        this.setIcon(member.icon.url);
+        this.setBanner(member.banner.url);
         this.setName(member.name);
         this.setUsername(member.username);
         this.setLocation(member.location);
         this.setLink(member.link);
         this.setFollowed(member.followed_count);
-        this.setFollowers(member.followers_count);
+        this.setFollowers(member.follower_count);
     }
 
     setIcon (url) {

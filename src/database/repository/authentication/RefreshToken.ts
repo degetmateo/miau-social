@@ -28,14 +28,11 @@ export default async function RefreshToken (data: {
                     m.name,
                     m.username,
                     m.role,
-                    m.email,
-                    i.url as icon_url
+                    m.email
                 FROM
                     session s
                 LEFT JOIN
-                    oomfy m ON m.id = s.oomfy
-                LEFT JOIN
-                    icon i ON i.id = m.id
+                    oomfy m ON m.id = s.oomfy_id
                 WHERE
                     s.oomfy_id = ${member.id} AND
                     s.token = ${data.token};
@@ -47,7 +44,6 @@ export default async function RefreshToken (data: {
                 id: session.id,
                 name: session.name,
                 username: session.username,
-                icon_url: session.icon_url,
                 role: session.role,
                 email: session.email
             }, "15m");

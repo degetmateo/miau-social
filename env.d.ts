@@ -3,7 +3,7 @@ import { Request } from 'express';
 declare module 'express' {
   interface Request {
     member?: { 
-      id: number; 
+      id: string; 
       username: string;
       role: string;
       email: string;
@@ -28,7 +28,8 @@ declare global {
         MAILER_PASSWORD: string;
         MAILER_USER: string;
         PRODUCTION: "TRUE" | "FALSE";
-        
+        ENV: "dev" | "prod";
+
         PG_DATABASE_URI: string;
         PG_DATABASE_CA: string;
 

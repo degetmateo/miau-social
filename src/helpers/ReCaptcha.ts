@@ -8,6 +8,13 @@ class ReCaptcha {
 
     async Verify (token: string) {
         try {
+            if (process.env.ENV === 'dev') {
+                return {
+                    score: 10,
+                    success: true
+                };
+            };
+
             const request = await fetch(this.API_URL + `?secret=${process.env.RECAPTCHA_KEY}&response=${token}`, { 
                 method: 'POST'
             });

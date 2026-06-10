@@ -10,7 +10,9 @@
 
     "build-cert": "ts-node scripts/ca.ts",
     "members-to-oomfies": "ts-node scripts/members_to_oomfies.ts",
-    "migrate-follows": "ts-node scripts/migrate_follows.ts"
+    "migrate-follows": "ts-node scripts/migrate_follows.ts",
+    "publications-to-mongo": "ts-node scripts/publications_to_mongo.ts",
+    "public-members": "ts-node scripts/public_members.ts"
   },
   "keywords": [],
   "author": "degetmateo",

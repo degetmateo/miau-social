@@ -75,7 +75,7 @@ const verify = async (data: {
     if (!data.token) throw new UnauthorizedError("Ha ocurrido un error de autorización.");
 
     const tokenData: {
-        id: number;
+        id: string;
         username: string;
         email: string;
         role: string;

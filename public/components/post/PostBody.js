@@ -24,10 +24,10 @@ class PostBody extends HTMLElement {
             this.append(this.content);
         };
 
-        if (this.data.media.length > 0) {
+        if (this.data.images && this.data.images.length > 0) {
             this.media = document.createElement('div');
             this.media.classList.add('post-body-media');
-            const mediaContainer = new MediaContainer({ media: this.data.media, editable: false });
+            const mediaContainer = new MediaContainer({ media: this.data.images, editable: false });
             mediaContainer.render(this.media);
             this.append(this.media);
         };

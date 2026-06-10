@@ -4,7 +4,9 @@ import cors from 'cors';
 import Postgres from "./database/Postgres";
 import memberRouter from "./routes/memberRouter";
 import authenticationRouter from "./routes/authenticationRouter";
-import postRouter from "./routes/postRouter";
+
+import publicationsRouter from "./routes/publications.router";
+
 import notificationRouter from "./routes/notificationRouter";
 import upvoteRouter from "./routes/upvoteRouter";
 import followRouter from "./routes/followRouter";
@@ -17,7 +19,7 @@ import chatRouter from './routes/chatRouter';
 
 import http from 'http';
 import WebSocket from "./socket/WebSocket";
-import mongodb from "./database/mongo/mongodb";
+import { init } from "./database/mongo/mongodb";
 
 const requestIp = require('request-ip');
 const cookieParser = require('cookie-parser');
@@ -69,7 +71,7 @@ export default class Server {
         docs: '/api/docs',
         admin: '/api/admin',
         authentication: '/api/authentication',
-        post: '/api/post',
+        publication: '/api/publication',
         member: '/api/member',
         notification: '/api/notification',
         upvote: '/api/upvote',
@@ -130,13 +132,13 @@ export default class Server {
 
     private database = () => {
         Postgres.init();
-        mongodb.init();
+        init();
     };
 
     private routes = () => {
         this.app.use(this.paths.authentication, authenticationRouter);
         this.app.use(this.paths.member, memberRouter);
-        this.app.use(this.paths.post, postRouter);
+        this.app.use(this.paths.publication, publicationsRouter);
         this.app.use(this.paths.notification, notificationRouter);
         this.app.use(this.paths.upvote, upvoteRouter);
         this.app.use(this.paths.follow, followRouter);

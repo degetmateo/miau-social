@@ -52,9 +52,11 @@ export default class extends AbstractView {
                 try {
                     followers = await followService.get({
                         username: this.members[this.i].username, 
-                        offset: this.members[this.i].offset, 
+                        olderId: this.olderId, 
                         type: 'followers' 
                     });
+                    const follower = followers[followers.length - 1];
+                    if (follower) this.olderId = follower._id;
                 } catch (error) {
                     new Alert(error.message, { error: true });
                     followers = [];
@@ -96,7 +98,9 @@ export default class extends AbstractView {
 
             let followers = [];
             try {
-                followers = await followService.get({ username: this.params.username, offset: this.offset, type: 'followers' });
+                followers = await followService.get({ username: this.params.username, olderId: this.olderId, type: 'followers' });
+                const follower = followers[followers.length - 1];
+                if (follower) this.olderId = follower._id;
             } catch (error) {
                 new Alert(error.message, { error: true });
                 return;
@@ -130,7 +134,7 @@ class FollowsContainer {
 
     draw (follows) {
         for (const follow of follows) {
-            this.container.append(new MemberCard(follow, { bio: follow.bio }));
+            this.container.append(new MemberCard(follow.follower, { bio: follow.bio }));
         }
     }
 

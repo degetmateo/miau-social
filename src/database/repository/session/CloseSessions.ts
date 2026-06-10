@@ -11,7 +11,7 @@ export default async function CloseSessions (data: {
             DELETE FROM
                 session
             WHERE
-                member_id = ${data.member.id} AND
+                oomfy_id = ${data.member.id} AND
                 token != ${data.token};
         `;
     } catch (error) {

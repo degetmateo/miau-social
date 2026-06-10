@@ -1,3 +1,5 @@
+const uuid = require('uuid');
+
 import AlreadyUsedError from "../../../errors/AlreadyUsedError";
 import DatabaseError from "../../../errors/DatabaseError";
 import GenericError from "../../../errors/GenericError";
@@ -36,8 +38,11 @@ export default async function Signup (data: {
 
             data.password = await Password.hash(data.password);
 
+            const oomfyId = uuid.v7();
+
             const member = (await transaction`
                 INSERT INTO oomfy (
+                    id,
                     username,
                     name,
                     password,
@@ -47,6 +52,7 @@ export default async function Signup (data: {
                     email
                 )
                 VALUES (
+                    ${oomfyId},
                     ${data.username},
                     ${data.name},
                     ${data.password},
@@ -58,8 +64,16 @@ export default async function Signup (data: {
                 RETURNING *;
             `)[0];
 
+            (await transaction`
+                INSERT INTO icon (id, oomfy_id) VALUES (${oomfyId}, ${oomfyId});
+            `);
+
+            (await transaction`
+                INSERT INTO banner (id, oomfy_id) VALUES (${oomfyId}, ${oomfyId});
+            `);
+
             const TOKEN = await JWT.Generate({
-                id: member.id_member,
+                id: member.id,
                 username: data.username,
                 email: data.email,
                 role: 'member'

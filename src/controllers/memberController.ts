@@ -3,11 +3,17 @@ import { ResponseError, ResponseOk, SetRefreshToken } from "../helpers/Controlle
 import { RESPONSES } from "../static/responses";
 import { memberService } from "../services/memberService";
 import BadGatewayError from "../errors/BadGatewayError";
+import { membersRepository } from "../database/mongo/repositories/members/members.repository";
 
 const getByUsername = async (req: Request, res: Response) => {
     try {
-        const response = await memberService.getByUsername({
-            id_logged_member: req.member.id,
+        // const response = await memberService.getByUsername({
+        //     id_logged_member: req.member.id,
+        //     username: req.params.username
+        // });
+
+        const response = await membersRepository.get({
+            id: null,
             username: req.params.username
         });
 
@@ -15,13 +21,13 @@ const getByUsername = async (req: Request, res: Response) => {
     } catch (error) {
         console.error(error);
         ResponseError(res, error);
-    }
-}
+    };
+};
 
 const updateName = async (req: Request, res: Response) => {
     try {
         const response = await memberService.updateName({
-            id_member: req.member.id,
+            id_member: req.member.id as any,
             name: req.body.name
         });
 
@@ -52,7 +58,7 @@ const updateUsername = async (req: Request, res: Response) => {
 const updateBio = async (req: Request, res: Response) => {
     try {
         const response = await memberService.updateBio({
-            id_member: req.member.id,
+            id_member: req.member.id as any,
             bio: req.body.bio
         });
 
@@ -82,7 +88,7 @@ const updatePassword = async (req: Request, res: Response) => {
 const updateIconURL = async (req: Request, res: Response) => {
     try {
         const response = await memberService.updateIconURL({
-            id_member: req.member.id,
+            id_member: req.member.id as any,
             url: req.body.url
         });
 
@@ -96,7 +102,7 @@ const updateIconURL = async (req: Request, res: Response) => {
 const updateIconImage = async (req: Request, res: Response) => {
     try {
         const response = await memberService.updateIconImage({
-            id_member: req.member.id,
+            id_member: req.member.id as any,
             buffer: req.file.buffer
         });
 
@@ -110,7 +116,7 @@ const updateIconImage = async (req: Request, res: Response) => {
 const updateBannerURL = async (req: Request, res: Response) => {
     try {
         const response = await memberService.updateBannerURL({
-            id_member: req.member.id,
+            id_member: req.member.id as any,
             url: req.body.url as string
         });
 
@@ -124,7 +130,7 @@ const updateBannerURL = async (req: Request, res: Response) => {
 const updateBannerImage = async (req: Request, res: Response) => {
     try {
         const response = await memberService.updateBannerImage({
-            id_member: req.member.id,
+            id_member: req.member.id as any,
             buffer: req.file.buffer
         });
 
@@ -140,7 +146,7 @@ const updateProfile = async (req: Request, res: Response) => {
         const files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
         const response = await memberService.updateProfile({
-            id_member: req.member.id,
+            id_member: req.member.id as any,
             name: req.body.name,
             bio: req.body.bio ? req.body.bio : '',
             location: req.body.location ? req.body.location : '',

@@ -5,8 +5,8 @@ import Follow from "./follow/Follow";
 import Unfollow from "./follow/Unfollow";
 
 const follow = async (data: {
-    id_member_follower: number;
-    id_member_followed: number;
+    id_member_follower: string;
+    id_member_followed: string;
 }) => {
     try {
         return Follow(data);
@@ -20,8 +20,8 @@ const follow = async (data: {
 }
 
 const unfollow = async (data: {
-    id_member_follower: number;
-    id_member_followed: number;
+    id_member_follower: string;
+    id_member_followed: string;
 }) => {
     try {
         return Unfollow(data);
@@ -41,22 +41,22 @@ const getFollowed = async (data: {
     try {
         const response = await Postgres.query()`
             SELECT
-                m2.id_member AS id,
-                m2.name_member AS name,
-                m2.username_member AS username,
-                m2.role_member AS role,
-                m2.bio_member AS bio,
-                icon.url AS icon_url
+                m2.id,
+                m2.name,
+                m2.username,
+                m2.role,
+                m2.bio,
+                i.url AS icon_url
             FROM
-                follow f, member m1, member m2
+                follow f, oomfy m1, oomfy m2
             LEFT JOIN
-                image icon ON icon.member_id = m2.id_member AND icon.type = 'icon'
+                icon i ON i.id = m2.id
             WHERE
-                m1.username_member = ${data.username} AND
-                f.id_member_follower = m1.id_member AND
-                f.id_member_followed = m2.id_member
+                m1.username = ${data.username} AND
+                f.oomfy_id_follower = m1.id AND
+                f.oomfy_id_followed = m2.id
             ORDER BY
-                m2.id_member DESC
+                m2.created_at DESC
             OFFSET
                 ${data.offset}
             LIMIT
@@ -80,22 +80,22 @@ const getFollowers = async (data: {
     try {
         const response = await Postgres.query()`
             SELECT
-                m2.id_member AS id,
-                m2.username_member AS username,
-                m2.name_member AS name,
-                m2.role_member AS role,
-                m2.bio_member AS bio,
-                icon.url AS icon_url
+                m2.id,
+                m2.username,
+                m2.name,
+                m2.role,
+                m2.bio,
+                i.url AS icon_url
             FROM
-                follow f, member m1, member m2
+                follow f, oomfy m1, oomfy m2
             LEFT JOIN
-                image icon ON icon.member_id = m2.id_member AND icon.type = 'icon'
+                icon i ON i.id = m2.id
             WHERE
-                m1.username_member = ${data.username} AND
-                f.id_member_follower = m2.id_member AND
-                f.id_member_followed = m1.id_member
+                m1.username = ${data.username} AND
+                f.oomfy_id_follower = m2.id AND
+                f.oomfy_id_followed = m1.id
             ORDER BY
-                m2.id_member DESC
+                m2.created_at DESC
             OFFSET
                 ${data.offset}
             LIMIT
@@ -118,20 +118,20 @@ const getRandomFollowers = async (data: {
     try {
         const response = await Postgres.query()`
             SELECT
-                m2.id_member AS id,
-                m2.username_member AS username,
-                m2.name_member AS name,
-                m2.role_member AS role,
-                m2.bio_member AS bio,
-                icon.url AS icon_url
+                m2.id,
+                m2.username,
+                m2.name,
+                m2.role,
+                m2.bio,
+                i.url AS icon_url
             FROM
-                follow f, member m1, member m2
+                follow f, oomfy m1, oomfy m2
             LEFT JOIN
-                image icon ON icon.member_id = m2.id_member AND icon.type = 'icon'
+                icon i ON i.id = m2.id
             WHERE
-                m1.username_member = ${data.member.username} AND
-                f.id_member_follower = m2.id_member AND
-                f.id_member_followed = m1.id_member
+                m1.username = ${data.member.username} AND
+                f.oomfy_id_follower = m2.id AND
+                f.oomfy_id_followed = m1.id
             ORDER BY
                 RANDOM()
             LIMIT

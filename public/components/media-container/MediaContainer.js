@@ -20,7 +20,7 @@ export default class MediaContainer {
         this.data.media = this.data.media.map(m => {
             const image = new Image();
             image.classList.add('media-container-image');
-            image.src = m;
+            image.src = m.url;
             image.onclick = () => new ImageViewer({ url: image.src });
             image.onerror = () => {
                 this.container.classList.remove('media-container--'+this.data.media.length);
